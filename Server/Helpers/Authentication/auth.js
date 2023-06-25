@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt")
 const accountModel = require("../../Models/account.js")
 
 async function hashPassword(plaintextPassword) {
-	const hash = await bcrypt.hash(plaintextPassword, 10);
+	const hash = await bcrypt.hash(plaintextPassword, 5);
 	return hash
 }
 
