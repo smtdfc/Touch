@@ -1,4 +1,5 @@
 let origin = window.origin
+const userInfo = {}
 function checkServerURL(){
 	try {
 		new URL(localStorage.getItem("server"))
@@ -11,6 +12,7 @@ function checkServerURL(){
 document.onreadystatechange = async function(e){
 	if(document.readyState == "complete"){
 		await import("./axios.min.js")
+		await import("./api.js")
 		
 		window.dispatchEvent(new CustomEvent("pageready"))
 	}else{

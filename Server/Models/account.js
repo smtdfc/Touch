@@ -16,9 +16,9 @@ const Account = sequelize.define('account', {
 	password: {
 		type: DataTypes.STRING
 	},
-	rule: {
+	role: {
 		type: DataTypes.STRING,
-		default: "username"
+		default: "user"
 	},
 	attr: {
 		type: DataTypes.STRING,

@@ -26,7 +26,7 @@ async function login(username, password) {
 		if (await comparePassword(password,user.password)) {
 			return {
 				name: user.username,
-				rule: user.rule
+				role: user.role
 			}
 		} else {
 			throw {
@@ -51,7 +51,7 @@ async function getUserInfo(username) {
 	} else {
 		return {
 			name: user.username,
-			rule: user.rule
+			role: user.role
 		}
 
 	}
@@ -95,7 +95,7 @@ async function register(username, password) {
 		await accountModel.create({
 			username: username,
 			password: await hashPassword(password),
-			rule: "user",
+			role: "user",
 			attr: "{}"
 		});
 		return {
@@ -104,6 +104,7 @@ async function register(username, password) {
 		}
 	}
 }
+
 
 module.exports = {
 	login,

@@ -24,7 +24,7 @@ const init = async () => {
 	
 	server.route({
 		method: 'GET',
-		path: '/{param*}',
+		path: '/Client/{param*}',
 		handler: {
 			directory: {
 				path: '.',

@@ -26,11 +26,14 @@ window.addEventListener("pageready",function(e){
 		})
 		
 		.then(()=>{
+			CookieManager.eraseCookie("at")
+			CookieManager.eraseCookie("rt")
 			localStorage.setItem("server",server)
 			window.location ="./index.html"
 		})
 		
-		.catch(()=>{
+		.catch((err)=>{
+			console.log(err);
 			selector.byQuery("#alert").classList.remove("d-none")
 			selector.byQuery("#alert").HTML = "Cannot connect to sever"
 		})

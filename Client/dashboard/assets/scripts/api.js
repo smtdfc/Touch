@@ -82,7 +82,7 @@ class UserInfo {
 	constructor(auth) {
 		this.auth = auth
 		this.username = "unknown"
-		this.rule = "unknown"
+		this.role = "unknown"
 	}
 }
 
@@ -108,7 +108,7 @@ class Authentication {
 		let info = response.data.info
 		let tokens = response.data.tokens
 		this.user.username = info.username
-		this.user.rule = info.rule
+		this.user.role = info.role
 		CookieManager.setCookie("at", tokens.accessToken,"0,0208333333")
 		CookieManager.setCookie("rt", tokens.refreshToken)
 		return this.user
@@ -130,7 +130,7 @@ class Authentication {
 		return {
 			username: username
 		}
-	}a
+	}
 
 	async getUser() {
 		try {
@@ -143,7 +143,7 @@ class Authentication {
 			})
 			let user = new UserInfo(this)
 			user.username = response.data.info.name
-			user.rule = response.data.info.rule
+			user.role = response.data.info.role
 			return user
 		} catch (err) {
 			if(shouldRetryWithNewToken(err)){
@@ -219,3 +219,4 @@ function initApp(configs = {}) {
 }
 
 window.initApp = initApp
+window.CookieManager = CookieManager
