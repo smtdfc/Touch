@@ -1,5 +1,22 @@
 let selector = new Turtle.Selector()
 
+Turtle.render(selector.byId("root"),`
+	<div class="overlay active" id="overlay1">
+			<div class="loader navbar-loader " id="loader">
+				<div class="bar"></div>
+			</div>
+	</div>
+	<div class="d-flex flex-flow-col align-items-center text-align-center">
+		<h2>Connect Server</h2>
+		<div class="note note-danger d-none" id="alert"></div>
+		<form action="#" id="form1" class="form d-flex flex-flow-col align-items-center ">
+			<input type="text" class="form-input" style="width: 300px;" placeholder="Server URL">
+			<button class="btn btn-rounded btn-outline-info ">Connect</button>
+		</form>
+	</div>
+
+`)
+
 window.addEventListener("pageready",function(e){
 	selector.byQuery("#overlay1").classList.remove("active")
 	selector.byQuery("#form1").on("submit", function(e) {

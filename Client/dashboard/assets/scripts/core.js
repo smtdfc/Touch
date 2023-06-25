@@ -1,5 +1,5 @@
 let origin = window.origin
-const userInfo = {}
+var userInfo = {}
 function checkServerURL(){
 	try {
 		new URL(localStorage.getItem("server"))

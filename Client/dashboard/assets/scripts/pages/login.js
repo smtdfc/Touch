@@ -1,5 +1,30 @@
+import(`${window.location.origin}/Client/dashboard/assets/scripts/components/navbar.js`)
 let selector = new Turtle.Selector()
 
+Turtle.render(selector.byId("root"), `
+	<div class="overlay active" id="overlay1">
+		<div class="loader navbar-loader " id="loader">
+			<div class="bar"></div>
+		</div>
+	</div>
+	<div style="padding-top:100px; height: 100vh; position:  relative;">
+		<form action="#" id="form-login" class="form d-flex flex-flow-col align-items-center" style="position: relative; min-width: 250px;">
+			<div class="d-none note note-danger" id="login-note"></div>
+			<h1>Login</h1>
+			<div class="field">
+				<input type="text" id="username" class="form-input" style="width: 260px;" placeholder="Username" required>
+			</div><br>
+			<div class="field">
+				<input type="password" class="form-input" style="width: 260px;" placeholder="Password" required>
+			</div><br>
+			<div class="text-align-center">
+				<button class="btn btn-primary" id="login-btn">Login</button>
+				<br><br>
+			</div>
+		</form>
+		
+	</div>
+`)
 let loginBtn = selector.byId("login-btn")
 let loginNote = selector.byId("login-note")
 let overlay1 = selector.byId("overlay1")
