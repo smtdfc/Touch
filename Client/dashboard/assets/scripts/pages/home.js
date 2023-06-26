@@ -19,6 +19,8 @@ window.addEventListener("pageready", function(e) {
 
 	app.auth.getUser()
 		.then((user) => {
+			selector.byQuery("#overlay1").classList.remove("active")
+
 			if (user == null) {
 				window.location = `${window.location.origin}/Client/dashboard/login.html`
 				selector.byQuery("#overlay1").classList.remove("active")
@@ -32,6 +34,5 @@ window.addEventListener("pageready", function(e) {
 		})
 
 	checkServerURL()
-	selector.byQuery("#overlay1").classList.remove("active")
-
+	
 })
