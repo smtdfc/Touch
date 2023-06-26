@@ -13,7 +13,7 @@ window.Turtle.createComponent("side-bar",{
 					<li class=""><a href="#"><i class="sidebar-icon fa fa-user"></i><span>Account</span></a></li>
 					<li class=""><a href="#"><i class="sidebar-icon fa fa-database"></i><span>Database</span></a></li>
 					<hr><br><br>
-					<li class=""><a href="#"><i class="sidebar-icon fa fa-sign-out"></i><span>Logout</span></a></li>
+					<li class=""><a href="${window.location.origin}/Client/dashboard/logout.html"><i class="sidebar-icon fa fa-sign-out"></i><span>Logout</span></a></li>
 				</ul>
 			</div>
 		`
