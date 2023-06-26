@@ -204,6 +204,31 @@ class Authentication {
 	}
 }
 
+
+class DataTables{
+	static async list(){
+		try {
+			let response = await axios({
+				method: "post",
+				url: `${this.app.configs.base}/dt/list`,
+				headers: {
+					"Authorization": `Token ${CookieManager.getCookie("at")}`
+				},
+			})
+		} catch (err) {
+			if (shouldRetryWithNewToken(err)) {
+				let res = await Authentication.getNewTokenAndRetry(this, this.list)
+				if (res.success)
+					return res.data
+				throw res.err
+			} else {
+				throw res.err
+			}
+		}
+		
+		
+	}
+}
 function initApp(configs = {}) {
 	const instance = axios.create({
 		baseURL: configs.base,

@@ -10,8 +10,9 @@ window.Turtle.createComponent("side-bar",{
 				</div>
 				<ul class="sidebar-items">
 					<li class=""><a href="#"><i class="sidebar-icon fa fa-home"></i><span>Home</span></a></li>
-					<li class=""><a href="#"><i class="sidebar-icon fa fa-user"></i><span>Account</span></a></li>
-					<li class=""><a href="#"><i class="sidebar-icon fa fa-database"></i><span>Database</span></a></li>
+					<li class=""><a href="${window.location.origin}/Client/dashboard/admin/datatable.html"><i class="sidebar-icon fa fa-table"></i><span>Data Tables</span></a></li>
+					<li class=""><a href="#"><i class="sidebar-icon fa fa-dashboard"></i><span>Dashboards</span></a></li>
+					<li class=""><a href="#"><i class="sidebar-icon fa fa-user"></i><span>Users</span></a></li>
 					<hr><br><br>
 					<li class=""><a href="${window.location.origin}/Client/dashboard/logout.html"><i class="sidebar-icon fa fa-sign-out"></i><span>Logout</span></a></li>
 				</ul>
