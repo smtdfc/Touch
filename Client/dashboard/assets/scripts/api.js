@@ -2,8 +2,8 @@ function isServerError(err) {
 	return err.response.status == 500
 }
 
-function shouldRetryWithNewToken(err){
-	return ["Authentication Error","Token Error"].includes(err.name)
+function shouldRetryWithNewToken(err) {
+	return ["Authentication Error", "Token Error"].includes(err.name)
 }
 
 axios.interceptors.response.use(function(response) {
@@ -109,7 +109,7 @@ class Authentication {
 		let tokens = response.data.tokens
 		this.user.username = info.username
 		this.user.role = info.role
-		CookieManager.setCookie("at", tokens.accessToken,"0,0208333333")
+		CookieManager.setCookie("at", tokens.accessToken, "0,0208333333")
 		CookieManager.setCookie("rt", tokens.refreshToken)
 		return this.user
 	}
@@ -146,13 +146,13 @@ class Authentication {
 			user.role = response.data.info.role
 			return user
 		} catch (err) {
-			if(shouldRetryWithNewToken(err)){
-				let res = await this.getNewTokenAndRetry(this,this.getUser)
-				if(res.success)
+			if (shouldRetryWithNewToken(err)) {
+				let res = await this.getNewTokenAndRetry(this, this.getUser)
+				if (res.success)
 					return res.data
 				else
 					return null
-			}else{
+			} else {
 				return null
 			}
 		}
@@ -173,7 +173,7 @@ class Authentication {
 		return true
 	}
 
-	async getNewTokenAndRetry(context,callback, ...args) {
+	async getNewTokenAndRetry(context, callback, ...args) {
 		let res = {
 			success: false,
 			data: {},
@@ -182,7 +182,7 @@ class Authentication {
 
 		try {
 			await this.getNewToken()
-			res.data = await callback.apply(context,args)
+			res.data = await callback.apply(context, args)
 			res.success = true
 			return res
 		} catch (err) {
@@ -190,7 +190,7 @@ class Authentication {
 			return res
 		}
 	}
-	async logout(){
+	async logout() {
 		let response = await axios({
 			method: "post",
 			url: `${this.app.configs.base}/auth/logout`,
@@ -205,8 +205,12 @@ class Authentication {
 }
 
 
-class DataTables{
-	static async list(){
+class DataTables {
+	constructor(app) {
+
+		this.app = app
+	}
+	async list() {
 		try {
 			let response = await axios({
 				method: "post",
@@ -215,6 +219,32 @@ class DataTables{
 					"Authorization": `Token ${CookieManager.getCookie("at")}`
 				},
 			})
+			
+			return response.data.list
+		} catch (err) {
+			if (shouldRetryWithNewToken(err)) {
+				let res = await Authentication.getNewTokenAndRetry(this, this.list)
+				if (res.success)
+					return res.data.list
+				throw res.err
+			} else {
+				throw err
+			}
+		}
+	}
+	async create(name) {
+		try {
+			let response = await axios({
+				method: "post",
+				url: `${this.app.configs.base}/dt/create`,
+				headers: {
+					"Authorization": `Token ${CookieManager.getCookie("at")}`
+				},
+				data:{
+					name:name
+				}
+			})
+			
 		} catch (err) {
 			if (shouldRetryWithNewToken(err)) {
 				let res = await Authentication.getNewTokenAndRetry(this, this.list)
@@ -222,13 +252,12 @@ class DataTables{
 					return res.data
 				throw res.err
 			} else {
-				throw res.err
+				throw err
 			}
 		}
-		
-		
 	}
 }
+
 function initApp(configs = {}) {
 	const instance = axios.create({
 		baseURL: configs.base,
@@ -240,6 +269,7 @@ function initApp(configs = {}) {
 	}
 
 	app.auth = new Authentication(app)
+	app.dt = new DataTables(app)
 	return app
 }
 

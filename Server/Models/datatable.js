@@ -33,7 +33,7 @@ const ListDataTable = sequelize.define('listdt', {
 });
 
 function createDTModel(dt_owner, dt_name) {
-	dt_sequelize.define(`${dt_owner}_${dt_name}`, {
+	let model = dt_sequelize.define(`${dt_owner}_${dt_name}`, {
 		fields: {
 			type: DataTypes.STRING,
 			allowNull: false
@@ -52,6 +52,7 @@ function createDTModel(dt_owner, dt_name) {
 		createAt: false,
 		updatedAt: false
 	});
+	return model
 }
 
 module.exports = {ListDataTable,createDTModel}

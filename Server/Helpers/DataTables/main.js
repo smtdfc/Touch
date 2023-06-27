@@ -3,7 +3,7 @@ const ListDTModel = dt.ListDataTable
 
 async function listDT(owner) {
 	try {
-		let r = await ListDTModel.findOne({
+		let r = await ListDTModel.find({
 			where: {
 				owner: owner
 			}
@@ -33,8 +33,14 @@ async function createDT(owner, name) {
 		}
 	} else {
 		try {
+			
 			let dt_model = dt.createDTModel(owner, name)
 			await dt_model.sync()
+			await ListDTModel.create({
+				name:name,
+				owner:owner,
+				attr:"{}"
+			})
 			return {
 				name: name,
 				owner: owner

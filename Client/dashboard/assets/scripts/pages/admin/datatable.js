@@ -11,6 +11,10 @@ Turtle.render(selector.byId("root"), `
 	<side-bar></side-bar>
 	<br><br>
 	<h1>List Data Tables</h1>
+	<div id="list-dt">
+	
+	
+	</div>
 `)
 window.addEventListener("pageready", function(e) {
 	checkServerURL()
@@ -21,11 +25,12 @@ window.addEventListener("pageready", function(e) {
 	})
 
 	app.auth.getUser()
-		.then((user) => {
+		.then(async(user) => {
 			userInfo = user
 			import(`${window.location.origin}/Client/dashboard/assets/scripts/components/admin_sidebar.js`)
 			selector.byQuery("#overlay1").classList.remove("active")
-
+			let list = await app.dt.list()
+			
 			if (user == null) {
 				window.location = `${window.location.origin}/Client/dashboard/login.html`
 			} else {
