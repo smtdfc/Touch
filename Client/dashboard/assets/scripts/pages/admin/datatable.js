@@ -10,37 +10,45 @@ Turtle.render(selector.byId("root"), `
 	<page-navbar > </page-navbar> 
 	<side-bar></side-bar>
 	<br><br>
-	<h1>List Data Tables</h1>
-	<div id="list-dt">
-	
-	
-	</div>
+
+
 `)
+
+function editDT() {
+
+}
+
+function deleteDT() {
+
+}
+
 window.addEventListener("pageready", function(e) {
 	checkServerURL()
-	let server = localStorage.getItem("server")
-
-	let app = initApp({
-		base: server
-	})
-
 	app.auth.getUser()
-		.then(async(user) => {
+		.then((user) => {
 			userInfo = user
 			import(`${window.location.origin}/Client/dashboard/assets/scripts/components/admin_sidebar.js`)
 			selector.byQuery("#overlay1").classList.remove("active")
-			let list = await app.dt.list()
 			
 			if (user == null) {
+				
 				window.location = `${window.location.origin}/Client/dashboard/login.html`
 			} else {
 
 				if (user.role != "admin") {
 					window.location = `${window.location.origin}/Client/dashboard/error/403.html`
 				}
+				main()
 			}
 		})
 
 	checkServerURL()
 
 })
+
+async function main() {
+	import(`${window.location.origin}/Client/dashboard/assets/scripts/components/listDT.js`)
+	selector.byQuery("#root").HTML +=`
+		<list-dt></list-dt>
+	`
+}

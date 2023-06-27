@@ -147,7 +147,7 @@ class Authentication {
 			return user
 		} catch (err) {
 			if (shouldRetryWithNewToken(err)) {
-				let res = await this.getNewTokenAndRetry(this, this.getUser)
+				let res = await this.getNewTokenAndRetry(this, this.getUser,[])
 				if (res.success)
 					return res.data
 				else
@@ -173,7 +173,7 @@ class Authentication {
 		return true
 	}
 
-	async getNewTokenAndRetry(context, callback, ...args) {
+	async getNewTokenAndRetry(context, callback, args) {
 		let res = {
 			success: false,
 			data: {},
@@ -182,10 +182,11 @@ class Authentication {
 
 		try {
 			await this.getNewToken()
-			res.data = await callback.apply(context, args)
+			res.data = await callback.bind(context)(...args)
 			res.success = true
 			return res
 		} catch (err) {
+		
 			res.err = err
 			return res
 		}
@@ -210,7 +211,7 @@ class DataTables {
 
 		this.app = app
 	}
-	async list() {
+	async list(isRetry=false) {
 		try {
 			let response = await axios({
 				method: "post",
@@ -223,7 +224,7 @@ class DataTables {
 			return response.data.list
 		} catch (err) {
 			if (shouldRetryWithNewToken(err)) {
-				let res = await Authentication.getNewTokenAndRetry(this, this.list)
+				let res = await Authentication.getNewTokenAndRetry(this, this.list,[])
 				if (res.success)
 					return res.data.list
 				throw res.err
@@ -232,7 +233,7 @@ class DataTables {
 			}
 		}
 	}
-	async create(name) {
+	async create(name,isRetry=false) {
 		try {
 			let response = await axios({
 				method: "post",
@@ -244,10 +245,11 @@ class DataTables {
 					name:name
 				}
 			})
-			
+			return response.data
 		} catch (err) {
+			
 			if (shouldRetryWithNewToken(err)) {
-				let res = await Authentication.getNewTokenAndRetry(this, this.list)
+				let res = await Authentication.getNewTokenAndRetry(this, this.list,[name,true])
 				if (res.success)
 					return res.data
 				throw res.err
