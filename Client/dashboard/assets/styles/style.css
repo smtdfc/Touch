@@ -1,7 +1,7 @@
 .navbar-loader {
 	margin: 0;
 	width: 100%;
-	height: 5px;
+	height: 4px;
 	background-color: transparent;
 	border-radius: 0px;
 	position: relative;
@@ -60,3 +60,10 @@
 	background-color: rgba(0, 0, 0, 0.3);
 	backdrop-filter: blur(0px);
 }
+
+#root{
+	padding: 16px;
+  padding-top:100px;
+  
+}
+

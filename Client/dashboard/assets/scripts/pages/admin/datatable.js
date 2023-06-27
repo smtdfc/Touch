@@ -9,8 +9,8 @@ Turtle.render(selector.byId("root"), `
 	</div> 
 	<page-navbar > </page-navbar> 
 	<side-bar></side-bar>
+	<br><br>
 	<h1>List Data Tables</h1>
-	
 `)
 window.addEventListener("pageready", function(e) {
 	checkServerURL()
