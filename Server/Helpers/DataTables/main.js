@@ -1,7 +1,6 @@
 const dt = require("../../Models/datatable.js")
 const ListDTModel = dt.ListDataTable
 
-
 async function listDT(owner) {
 	try {
 		let r = await ListDTModel.findOne({
@@ -50,3 +49,7 @@ async function createDT(owner, name) {
 	}
 }
 
+module.exports={
+	listDT,
+	createDT
+}
