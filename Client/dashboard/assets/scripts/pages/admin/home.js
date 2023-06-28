@@ -8,16 +8,10 @@ Turtle.render(selector.byId("root"), `
 		</div>
 	</div> 
 	<page-navbar > </page-navbar> 
-	<side-bar > </side-bar>
+	<side-bar> </side-bar>
 `)
 window.addEventListener("pageready", function(e) {
 	checkServerURL()
-	let server = localStorage.getItem("server")
-
-	let app = initApp({
-		base: server
-	})
-
 	app.auth.getUser()
 		.then((user) => {
 			userInfo = user

@@ -31,12 +31,6 @@ let overlay1 = selector.byId("overlay1")
 
 window.addEventListener("pageready", function(e) {
 	checkServerURL()
-	let server = localStorage.getItem("server")
-
-	let app = initApp({
-		base: server
-	})
-	
 	app.auth.getUser()
 		.then((user) => {
 			if (user == null) {

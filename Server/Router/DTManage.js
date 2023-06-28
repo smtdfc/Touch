@@ -12,4 +12,10 @@ module.exports = function(instance) {
 		path: '/dt/create',
 		handler: DTManageController.createDT
 	});
+	
+	instance.route({
+		method: 'POST',
+		path: '/dt/delete',
+		handler: DTManageController.deleteDT
+	});
 }

@@ -1,14 +1,6 @@
-var app = null
 let selector = new Turtle.Selector()
-
 window.addEventListener("pageready", function() {
 	checkServerURL()
-	let server = localStorage.getItem("server")
-
-	 app = initApp({
-		base: server
-	})
-
 	app.auth.getUser()
 		.then((user) => {
 			if (user) {

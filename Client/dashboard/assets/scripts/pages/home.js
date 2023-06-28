@@ -10,13 +10,7 @@ Turtle.render(selector.byId("root"), `
 `)
 
 window.addEventListener("pageready", function(e) {
-	let server = localStorage.getItem("server")
-
-	let app = initApp({
-		base: server
-	})
-
-
+	checkServerURL()
 	app.auth.getUser()
 		.then((user) => {
 			selector.byQuery("#overlay1").classList.remove("active")
@@ -33,6 +27,6 @@ window.addEventListener("pageready", function(e) {
 			}
 		})
 
-	checkServerURL()
+	
 	
 })

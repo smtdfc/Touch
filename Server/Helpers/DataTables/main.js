@@ -9,7 +9,7 @@ async function listDT(owner) {
 			}
 		})
 		return {
-			list:r
+			list: r
 		}
 	} catch (e) {
 		throw {
@@ -33,13 +33,12 @@ async function createDT(owner, name) {
 		}
 	} else {
 		try {
-			
 			let dt_model = dt.createDTModel(owner, name)
 			await dt_model.sync()
 			await ListDTModel.create({
-				name:name,
-				owner:owner,
-				attr:"{}"
+				name: name,
+				owner: owner,
+				attr: "{}"
 			})
 			return {
 				name: name,
@@ -54,8 +53,44 @@ async function createDT(owner, name) {
 
 	}
 }
+async function deleteDT(owner, name) {
+	let r = await ListDTModel.findOne({
+		where: {
+			name: name,
+			owner: owner
+		}
+	})
+	if (!r) {
+		throw {
+			name: "DataTable Error",
+			message: "DataTable does not exist !"
+		}
+	} else {
+		try {
+			let dt_model = dt.createDTModel(owner, name)
+			await dt_model.drop()
+			await ListDTModel.destroy({
+				where:{
+					name: name,
+					owner: owner
+				}
+			})
+			return {
+				name: name,
+				owner: owner
+			}
+		} catch (e) {
+			throw {
+				name: "DataTable Error",
+				message: "Cannot delete DataTable !"
+			}
+		}
 
-module.exports={
+	}
+}
+
+module.exports = {
 	listDT,
-	createDT
+	createDT,
+	deleteDT
 }
