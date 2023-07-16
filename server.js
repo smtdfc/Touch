@@ -1,6 +1,7 @@
 const path = require("path");
 const fastify = require("fastify")({
 	logger: false,
+	trustProxy: true
 });
 
 const authTokenVerify = require("./Server/Services/Authentication/authTokenVerify.js")

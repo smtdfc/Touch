@@ -1,13 +1,11 @@
 const path = require("path")
-const knex = require('knex')
+const { Sequelize } = require('sequelize');
 
 module.exports = function(name) {
-	const options = {
-		client: 'sqlite3',
-		connection: {
-			filename: path.join(__dirname,`../../Data/db/${name}.db`)
-		}
-	}
-
-	return knex(options);
+	const sequelize = new Sequelize({
+		dialect: 'sqlite',
+		storage: path.join(__dirname,`../../Data/db/${name}.db`)
+	});
+	return sequelize
 }
+
