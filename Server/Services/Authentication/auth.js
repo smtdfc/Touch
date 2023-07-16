@@ -1,10 +1,20 @@
 const UsersModel = require("../../Models/users.model.js")
 
+function isInvaildValue(value){
+	return value == undefined || value == null
+}
 
 async function login(username, password ){
+	if(isInvaildValue(username) || isInvaildValue(password)){
+		throw {
+			name:"Authentication Error",
+			message:"Invalid login information !"
+		}
+	}
+	
 	let user = await UsersModel.findOne({
 		where:{
-			name:name
+			name:username
 		}
 	})
 	if(!user){
