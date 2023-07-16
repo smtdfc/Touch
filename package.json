@@ -2,25 +2,25 @@
 	"name": "Server",
 	"version": "0.0.1",
 	"description": "",
-	"main": "index.js",
+	"main": "server.js",
 	"scripts": {
-		"start": "node index.js",
+		"start": "node server.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
 	"author": "smtdfc",
 	"license": "ISC",
 	"dependencies": {
+		"fastify":"^4.19.2",
+		"knex":"2.5.1",
 		"@fastify/view": "^8.0.0",
 		"@fastify/static": "^6.10.2",
 		"@fastify/formbody": "^7.4.0",
 		"@fastify/cors": "^8.3.0",
 		"socket.io": "^4.6.1",
-		"sequelize": "^6.32.0",
 		"sqlite3": "^5.1.6",
 		"jsonwebtoken": "^9.0.0",
 		"dotenv": "^16.1.4",
-		"body-parser": "^1.20.2",
 		"bcrypt": "^5.1.0"
 	},
 	"engines": {

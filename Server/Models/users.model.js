@@ -1,4 +1,4 @@
-const connect = require("connect.js")
+const connect = require("./connect.js")
 
 module.exports = connect("users").schema.createTableIfNotExists("users", function(table) {
 	table.string("userID")

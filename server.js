@@ -3,15 +3,11 @@ const fastify = require("fastify")({
 	logger: false,
 });
 
-const jsjd = require("./Server/Models/users.model.js")
-fastify.register(require("@fastify/static"), {
-	root: path.join(__dirname, "public"),
-	prefix: "/",
-});
-
 fastify.register(require("@fastify/formbody"));
 fastify.register(require("@fastify/cors"))
-fastify.listen({ host: "0.0.0.0" },
+fastify.addHook('preHandler',authTokenVerify)
+
+fastify.listen({port:3000, host: "0.0.0.0" },
 	function(err, address) {
 		if (err) {
 			console.error(err);
