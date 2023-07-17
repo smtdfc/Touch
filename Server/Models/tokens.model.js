@@ -1,9 +1,23 @@
 const connect = require("./connect.js")
+module.exports = connect("tokens").define("tokens", {
+  "userID": {
+    type: DataTypes.TEXT
+  },
+  "token": {
+    type: DataTypes.TEXT
+  },
+  "info": {
+    type: DataTypes.TEXT,
+    defaultValue: "user"
+  },
+  "status": {
+    type: DataTypes.TEXT,
+    defaultValue: "active"
+  },
 
-module.exports = connect("tokens").schema.createTableIfNotExists("tokens", function(table) {
-	table.string("userID")
-	table.string('createAt')
-	table.string('token')
-	table.string("status").defaultTo("active")
-	table.string("info").defaultTo("unknown")
+}, {
+  freezeTableName: true,
+  timestamps: false,
+  createAt: true,
+  upadateAt: false
 })

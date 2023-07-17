@@ -4,6 +4,7 @@ const fastify = require("fastify")({
 	trustProxy: true
 });
 
+require('dotenv').config()
 const authTokenVerify = require("./Server/Services/Authentication/authTokenVerify.js")
 const router = require("./Server/Routes/main.js")
 
