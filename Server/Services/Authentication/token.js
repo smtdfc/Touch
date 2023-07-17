@@ -5,7 +5,7 @@ async function generateRefreshToken(userInfo, clientInfo) {
   await TokenModel.create({
     userID:userInfo.userID,
     token:token,
-    info:clientInfo,
+    info:JSON.stringify(clientInfo),
     status:"active"
   })
   return token
@@ -51,7 +51,7 @@ async function verifyRefreshToken(token){
 
 function verifyAccessToken(token){
   try {
-    let result = await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
+    let result =  jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
     return result.user
   } catch (err) {
     if(err.message == "invalid token"){

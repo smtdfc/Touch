@@ -1,4 +1,7 @@
 const connect = require("./connect.js")
+const { DataTypes } = require("sequelize")
+
+
 module.exports = connect("tokens").define("tokens", {
   "userID": {
     type: DataTypes.TEXT

@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken")
 const {generateErrorResponse} = require("../../utils.js")
 function verifyAccessToken(token) {
   try {
-    let result = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    let result = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
     return result.user
   } catch (err) {
     if (err.message == "invalid token") {
