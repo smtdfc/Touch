@@ -24,7 +24,7 @@ function verifyAccessToken(token) {
 }
 
 module.exports = function(req, res, done) {
-  let raw = request.headers["authorization"] || ""
+  let raw = req.headers["authorization"] || ""
   let authorization = raw.split(" ")[1] || null
   if (!authorization) {
     done()

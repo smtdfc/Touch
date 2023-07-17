@@ -37,19 +37,19 @@ class AuthController {
         }
       })
     } catch (err) {
-      return generateErrorResponse(res, 400, err.name, err.message)
+      return generateErrorResponse(reply, 400, err.name, err.message)
     }
   }
 
   static async getInfo(request, reply) {
-    if (!req.user) {
+    if (!request.user) {
       return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked ")
     }
-    return reply.code(200).send({ info: user })
+    return reply.code(200).send({ info: request.user })
   }
 
   static async logout(request, reply) {
-    if (!req.user) {
+    if (!request.user) {
       return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked ")
     }
     try {
