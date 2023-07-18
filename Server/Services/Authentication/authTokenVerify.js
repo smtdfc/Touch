@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken")
 const {generateErrorResponse} = require("../../utils.js")
+
 function verifyAccessToken(token) {
   try {
     let result = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
@@ -30,7 +31,7 @@ module.exports = function(req, res, done) {
     done()
   } else {
     try {
-      let result = verifyAccessToken()
+      let result = verifyAccessToken(authorization)
       req.user = result
       done()
     } catch (err) {
