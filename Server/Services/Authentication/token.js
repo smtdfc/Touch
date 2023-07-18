@@ -18,7 +18,9 @@ function generateAccessToken(userInfo){
 
 async function verifyRefreshToken(token){
   let result = await TokenModel.findOne({
+    where:{
     token:token
+    }
   })
   if(!result){
     throw{
