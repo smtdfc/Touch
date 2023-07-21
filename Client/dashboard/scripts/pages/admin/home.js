@@ -9,8 +9,9 @@ Turtle.createComponent("admin-home-page", {
             <div class="card-body">
               <h3>Users</h3>
             </div>
-            <div ref="user-chart"></div>
+            <div class="d-flex align-items-center line-loader bar" ref="user-chart"></div>
           </div>
+          <!--
           <div style="flex:50%;">
             <div class="card-body">
               <h3>Devices</h3>
@@ -22,53 +23,43 @@ Turtle.createComponent("admin-home-page", {
               <h3>Data Tables</h3>
             </div>
             <div ref="dt-chart"></div>
-          </div>
+          </div>-->
       </div>
     `
   },
   onFirstRender:async function() {
     let userStatisticsData = await app.statistics.getUserStatistics()
-    new ApexCharts(this.ref("user-chart").HTMLElement, {
+    let userStatisticsChart = new ApexCharts(this.ref("user-chart").HTMLElement, {
       chart: {
-        type: 'bar'
+        type: 'bar',
+        height:"300px"
       },
       series: [{
         data: [{
           x: 'Total User',
-          y: 10
+          y: userStatisticsData.totalUser || 0
         }, {
           x: 'Total Admin',
-          y: 18
+          y: userStatisticsData.totalAdmin || 0
+        },{
+          x: 'Total User Active',
+          y: userStatisticsData.totalUserActive || 0
         }]
       }],
-    }).render()
-    new ApexCharts(this.ref("device-chart").HTMLElement, {
-      chart: {
-        type: 'bar'
-      },
-      series: [{
-        data: [{
-          x: 'Active now',
-          y: 10
-        }, {
-          x: 'Connected',
-          y: 18
-        }]
-      }],
-    }).render()
-    new ApexCharts(this.ref("dt-chart").HTMLElement, {
-      chart: {
-        type: 'bar'
-      },
-      series: [{
-        data: [{
-          x: 'Locked',
-          y: 17
-        }, {
-          x: 'Created',
-          y: 33
-        }]
-      }],
-    }).render()
+      yaxis: {
+        labels: {
+          formatter: function(val) {
+            return Math.floor(val)
+          }
+        }
+      }
+    })
+    this.ref("user-chart").classList.remove("line-loader")
+    this.ref("user-chart").classList.remove("bar")
+
+    queueMicrotask(()=>{
+      userStatisticsChart.render()
+    })
+
   }
 })

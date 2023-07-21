@@ -8,16 +8,15 @@ Turtle.createComponent("admin-menu",{
         </div>
         <div class="offcanvas-body">
           <ul class="offcanvas-nav">
-            <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
-            <li><a href="#"><i class="fa fa-database"></i>Data Storage</a></li>
-            <li><a href="#"><i class="fa fa-dashboard"></i>Dashboards</a></li>
-            <li><a href="#"><i class="fa fa-users"></i>Users</a></li>
-            <li><a href="#"><i class="fa fa-microchip"></i>Devices</a></li>
-            <li><a href="#"><i class="fa fa-bar-chart"></i>Statistical</a></li>
-            <li><a href="#"><i class="fa fa-server"></i>Server</a></li>
-            <li><a href="#"><i class="fa fa-user"></i>Home</a></li>
-            <li><a href="#"><i class="fa fa-cog"></i>Settings</a></li>
-
+            <li><link-to to="/admin"><i class="fa fa-home"></i>Home</link-to></li>
+            <li><link-to to="/admin/dt"><i class="fa fa-database"></i>Data Storage</link-to></li>
+            <li><link-to to="#"><i class="fa fa-dashboard"></i>Dashboards</link-to></li>
+            <li><link-to to="#"><i class="fa fa-users"></i>Users</link-to></li>
+            <li><link-to to="#"><i class="fa fa-microchip"></i>Devices</link-to></li>
+            <li><link-to to="#"><i class="fa fa-bar-chart"></i>Statistical</link-to></li>
+            <li><link-to to="#"><i class="fa fa-server"></i>Server</link-to></li>
+            <li><link-to to="#"><i class="fa fa-user"></i>Home</link-to></li>
+            <li><link-to to="#"><i class="fa fa-cog"></i>Settings</link-to></li>
           </ul>
         </div>
       </div>

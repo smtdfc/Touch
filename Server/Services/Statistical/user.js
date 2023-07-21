@@ -12,5 +12,13 @@ async function countUserActive(){
   return result
 }
 
+async function countAdmin(){
+  let result = await global.models.UsersModel.count({
+    where: {
+      role: "admin"
+    }
+  })
+  return result
+}
 
-module.exports = {countUser,countUserActive}
+module.exports = {countUser,countUserActive,countAdmin}

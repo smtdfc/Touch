@@ -97,14 +97,17 @@ class Statistics {
           Authorization: `Token ${CookieManager.getCookie("at")}`
         }
       })
-      let data = response.data
+      let data = response.data.data
       this.data.user = data
       return data
     } catch (err) {
       if (shouldGetNewToken(err)) {
-        let result = await this.retryWithNewToken(
+        let result = await this.app.auth.retryWithNewToken(
           this.getUserStatistics.bind(this), []
         )
+        if(result.success){
+          return result.returnValue
+        }
         throw {
           message:"Cannot get data statistics !"
         }

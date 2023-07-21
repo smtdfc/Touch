@@ -47,6 +47,13 @@ async function main() {
     }
   })
   Turtle.startRouter()
+  Turtle.setRouterEventListener("loadcontent",function(){
+    openOverlay()
+  })
+  
+  Turtle.setRouterEventListener("contentloaded",function(){
+    closeOverlay()
+  })
   closeOverlay()
 }
 init()
