@@ -1,4 +1,4 @@
-const UsersModel = require("../../Models/users.model.js")
+const UsersModel = global.models.UsersModel
 
 function isInvaildValue(value){
 	return value == undefined || value == null

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken")
-const TokenModel = require("../../Models/tokens.model.js")
+const TokenModel = global.models.TokenModel
 async function generateRefreshToken(userInfo, clientInfo) {
   let token = jwt.sign({ user: userInfo, date: Date.now() }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "10d" })
   await TokenModel.create({

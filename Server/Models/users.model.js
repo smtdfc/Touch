@@ -2,7 +2,7 @@ const connect = require("./connect.js")
 const { DataTypes } = require("sequelize")
 
 
-module.exports = connect("users").define("users", {
+global.models.UsersModel = connect("users").define("users", {
 	"userID": {
 		type: DataTypes.TEXT
 	},
