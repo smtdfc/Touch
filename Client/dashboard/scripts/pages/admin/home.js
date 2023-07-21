@@ -26,7 +26,8 @@ Turtle.createComponent("admin-home-page", {
       </div>
     `
   },
-  onFirstRender: function() {
+  onFirstRender:async function() {
+    let userStatisticsData = await app.statistics.getUserStatistics()
     new ApexCharts(this.ref("user-chart").HTMLElement, {
       chart: {
         type: 'bar'

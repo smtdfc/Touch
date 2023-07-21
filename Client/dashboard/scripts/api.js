@@ -73,6 +73,45 @@ class UserInfo {
   }
 }
 
+class Statistics {
+  constructor(app){
+    this.app = app
+    this.base = this.app.server
+    this.data ={
+      user:null
+    }
+  }
+  
+  async getUserStatistics(){
+    if(this.app.auth.currentUser.role != "admin"){
+      throw "Permission has been blocked"
+    }
+    if(this.data.user != null){
+      return this.data.user
+    }
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/statistics/user`,
+        headers: {
+          Authorization: `Token ${CookieManager.getCookie("at")}`
+        }
+      })
+      let data = response.data
+      this.data.user = data
+      return data
+    } catch (err) {
+      if (shouldGetNewToken(err)) {
+        let result = await this.retryWithNewToken(
+          this.getUserStatistics.bind(this), []
+        )
+        throw {
+          message:"Cannot get data statistics !"
+        }
+      }
+    }
+  }
+}
 
 class Authentication {
   #user
@@ -238,6 +277,7 @@ class App {
     this.server = configs.base
     this.configs = configs
     this.auth = new Authentication(this)
+    this.statistics = new Statistics(this)
     this.events = {}
   }
 
