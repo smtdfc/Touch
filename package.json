@@ -17,6 +17,7 @@
 		"@fastify/static": "^6.10.2",
 		"@fastify/formbody": "^7.4.0",
 		"@fastify/cors": "^8.3.0",
+		"@fastify/static":"^6.10.2",
 		"socket.io": "^4.6.1",
 		"sqlite3": "^5.1.6",
 		"jsonwebtoken": "^9.0.0",

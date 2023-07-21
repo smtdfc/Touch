@@ -4,6 +4,11 @@ const fastify = require("fastify")({
 	trustProxy: true
 });
 
+fastify.register(require('@fastify/static'), {
+  root: path.join(__dirname, './Client/dashboard'),
+  prefix: '/Client/dashboard/', 
+})
+
 global.models ={}
 require("./Server/Models/main.js")
 require('dotenv').config()
