@@ -1,17 +1,11 @@
 async function createDTModel(name,owners){
   await global.models.ListDTModel.create({
     name:name,
+    dt_id:Date.now(),
     status:"active",
     attr:"{}",
     owners:[
       {userID:owners}
-    ]
-  },{
-    include:[
-      {
-        association:global.models.ListDTOwnersModel,
-        as:"owners"
-      }
     ]
   })
 }

@@ -1,8 +1,16 @@
 const connect = require("./connect.js")
 const { DataTypes } = require("sequelize")
 
-
-global.models.ListDTModel = connect("list_datatable").define("list", {
+let conn = connect("list_datatable")
+models.ListDTModel = conn.define('list', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  "dt_id": {
+    type: DataTypes.TEXT
+  },
   "createAt": {
     type: DataTypes.TEXT
   },
@@ -17,25 +25,40 @@ global.models.ListDTModel = connect("list_datatable").define("list", {
     type: DataTypes.TEXT,
     defaultValue: "{}"
   },
-
-
 }, {
   freezeTableName: true,
   timestamps: false,
   createAt: true,
   upadateAt: false
-})
+});
 
-global.models.ListDTOwnersModel = connect("list_datatable").define("owners", {
+models.DTOwnersModel = conn.define('owners', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   "userID": {
     type: DataTypes.TEXT
   },
 }, {
   freezeTableName: true,
   timestamps: false,
-  createAt: true,
+  createAt: false,
   upadateAt: false
-})
+});
 
-global.models.ListDTModel.hasMany(global.models.ListDTOwnersModel,{as:"owners"})
-global.models.ListDTModel.sync()
+
+models.ListDTModel.belongsToMany(models.DTOwnersModel, {
+  as:"owners",
+  foreignKey: 'dt_id',
+  otherKey: 'owner_id',
+  through: 'dt_owners',
+});
+
+models.DTOwnersModel.belongsToMany(models.ListDTModel, {
+  foreignKey: 'owner_id',
+  otherKey: 'dt_id',
+  through: 'dt_owners',
+});
+conn.sync({ force: true })
