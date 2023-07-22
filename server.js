@@ -12,7 +12,7 @@ fastify.register(require('@fastify/static'), {
 global.models ={}
 require("./Server/Models/main.js")
 require('dotenv').config()
-
+require("./Server/Services/DataTable/main.js")
 const authTokenVerify = require("./Server/Services/Authentication/authTokenVerify.js")
 const router = require("./Server/Routes/main.js")
 

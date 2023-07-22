@@ -3,9 +3,9 @@ async function createDTModel(name,owners){
     name:name,
     status:"active",
     attr:"{}",
-    owners:{
-      
-    }
+    owners:[
+      {userID:owners}
+    ]
   },{
     include:[
       {
@@ -21,3 +21,4 @@ function getAllDTModel(owners){
   
 }
 
+createDTModel("399382","3829299292")
