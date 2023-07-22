@@ -1,8 +1,11 @@
-function createDTModel(name,owners){
+async function createDTModel(name,owners){
   await global.models.ListDTModel.create({
     name:name,
     status:"active",
-    attr:"{}"
+    attr:"{}",
+    owners:{
+      
+    }
   },{
     include:[
       {

@@ -38,3 +38,4 @@ global.models.ListDTOwnersModel = connect("list_datatable").define("owners", {
 })
 
 global.models.ListDTModel.hasMany(global.models.ListDTOwnersModel,{as:"owners"})
+global.models.ListDTModel.sync()
