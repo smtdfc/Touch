@@ -1,11 +1,29 @@
+ const { Sequelize } = require('sequelize');
+
+const Op = Sequelize.Op;
 async function createDTModel(name,owners){
-  await models.ListDTModel.create({
-    name:name,
-    dt_id:Date.now(),
-    status:"active",
-    attr:"{}",
-    owners:owners
-  })
+  try {
+    let id = (Math.floor(Math.random() * 9999) * Date.now()).toFixed(16)
+    await models.ListDTModel.create({
+      name: name,
+      dt_id: id,
+      status: "active",
+      attr: "{}",
+      owners: owners
+    })
+    return {
+      owners:owners.split(","),
+      status:"active",
+      name:name,
+      id:id
+    }
+  } catch (err) {
+    throw {
+      name:"Action Error",
+      message:"Cannot create new DT !"
+    }
+  }
+  
 }
 
 
@@ -13,4 +31,6 @@ function getAllDTModel(owners){
   
 }
 
-createDTModel("399382","3829299292")
+module.exports = {
+  createDTModel
+}
