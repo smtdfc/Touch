@@ -58,6 +58,48 @@ class CookieManager {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   }
 }
+
+class DTManager{
+  constructor(app){
+    this.app = app
+    this.base = app.server
+  }
+  
+  async getAll(limit=10,offset=5){
+    if (this.app.auth.currentUser.role != "admin") {
+      throw "Permission has been blocked"
+    }
+    
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/admin/dt/getAll`,
+        headers: {
+          Authorization: `Token ${CookieManager.getCookie("at")}`
+        },
+        data:{
+          limit,offset
+        }
+      })
+      let list = response.data.list
+      return list
+    } catch (err) {
+      if (shouldGetNewToken(err)) {
+        let result = await this.app.auth.retryWithNewToken(
+          this.getAll.bind(this), []
+        )
+        if (result.success) {
+          return result.returnValue
+        }
+        throw {
+          message: "Cannot get data statistics !"
+        }
+      }
+    }
+  }
+  
+}
+
 class UserInfo {
   constructor() {
     this.logedin = false
@@ -281,6 +323,7 @@ class App {
     this.configs = configs
     this.auth = new Authentication(this)
     this.statistics = new Statistics(this)
+    this.datatables = new DTManager(this)
     this.events = {}
   }
 

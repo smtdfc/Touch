@@ -26,6 +26,7 @@ Turtle.createComponent("page-navbar",{
     this.refresh = function(){
       if (isAdmin() || isUser()) {
         if(isAdmin()){
+          app.datatables.getAll()
           this.ref("menu").HTML = `<admin-menu></admin-menu>`
         }
         this.ref("menu-btn").classList.remove("d-none")

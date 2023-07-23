@@ -1,7 +1,7 @@
  const { Sequelize } = require('sequelize');
 
 const Op = Sequelize.Op;
-async function createDTModel(name,owners){
+async function createDT(name,owners){
   try {
     let id = (Math.floor(Math.random() * 9999) * Date.now()).toFixed(16)
     await models.ListDTModel.create({
@@ -27,10 +27,23 @@ async function createDTModel(name,owners){
 }
 
 
-function getAllDTModel(owners){
-  
+function getAllDT(limit=0,offset=0){
+  try {
+    let results = await models.ListDTModel.findAll({
+      where:{},
+      limit: limit,
+      offset: offset,
+    })
+    return results
+  } catch (err) {
+    throw {
+      name: "Action Error",
+      message: "Cannot get all DT !"
+    }
+  }
 }
 
 module.exports = {
-  createDTModel
+  createDT,
+  getAllDT
 }
