@@ -64,7 +64,37 @@ class DTManager{
     this.app = app
     this.base = app.server
   }
-  
+  async create(name){
+    if (this.app.auth.currentUser.username == null) {
+      throw "Permission has been blocked"
+    }
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/admin/dt/create`,
+        headers: {
+          Authorization: `Token ${CookieManager.getCookie("at")}`
+        },
+        data:{
+          name:name
+        }
+      })
+      let info = response.data.info
+      return info
+    } catch (err) {
+      if (shouldGetNewToken(err)) {
+        let result = await this.app.auth.retryWithNewToken(
+          this.create.bind(this), []
+        )
+        if (result.success) {
+          return result.returnValue
+        }
+        throw {
+          message: "Cannot create new  DT !"
+        }
+      }
+    }
+  }
   async getAll(limit=10,offset=5){
     if (this.app.auth.currentUser.role != "admin") {
       throw "Permission has been blocked"

@@ -5,7 +5,7 @@ let conn = connect("list_datatable")
 models.ListDTModel = conn.define('list', {
   id: {
     type: DataTypes.INTEGER,
-    privateKey: true,
+    primaryKey: true,
     autoIncrement: true
   },
   "dt_id": {

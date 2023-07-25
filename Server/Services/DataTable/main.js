@@ -1,12 +1,12 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize,DataTypes } = require('sequelize');
 const connect = require("../../Models/connect.js")
 const Op = Sequelize.Op;
 async function generateDTModels(dt_id) {
   let conn = connect("datatables")
-  let dt = conn.define('list', {
+  let dt = conn.define(dt_id, {
     id: {
       type: DataTypes.INTEGER,
-      privateKey: true,
+      primaryKey: true,
       autoIncrement: true
     },
     "lastUpadate": {
