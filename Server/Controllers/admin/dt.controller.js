@@ -6,7 +6,6 @@ class DTController {
     if (!request.user && request.user.role == "admin") {
       return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked ")
     }
-
     try {
       let body = request.body
       let limit = body.limit ?? 0
@@ -42,7 +41,20 @@ class DTController {
     }
     try {
       let body = request.body
-      let info = await DTManager.createDT(body.name, request.user.userID)
+      let info = await DTManager.createDT(body.name, request.user.name)
+      return reply.code(200).send({ info: info })
+    } catch (err) {
+      return generateErrorResponse(reply, 400, err.name, err.message)
+    }
+  }
+  
+  static async remove(request, reply) {
+    if (!request.user && request.user.role == "admin") {
+      return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked ")
+    }
+    try {
+      let body = request.body
+      let info = await DTManager.removeDT(body.id, request.user.name)
       return reply.code(200).send({ info: info })
     } catch (err) {
       return generateErrorResponse(reply, 400, err.name, err.message)

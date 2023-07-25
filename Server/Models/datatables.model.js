@@ -5,8 +5,8 @@ let conn = connect("list_datatable")
 models.ListDTModel = conn.define('list', {
   id: {
     type: DataTypes.INTEGER,
-     privateKey:true,
-     autoIncrement:true
+    privateKey: true,
+    autoIncrement: true
   },
   "dt_id": {
     type: DataTypes.TEXT
@@ -25,14 +25,17 @@ models.ListDTModel = conn.define('list', {
     type: DataTypes.TEXT,
     defaultValue: "{}"
   },
-    "owners": {
-      type: DataTypes.TEXT,
-      defaultValue: "unknown"
-    },
+  "owners": {
+    type: DataTypes.TEXT,
+    defaultValue: "unknown"
+  },
+  "createBy": {
+    type: DataTypes.TEXT,
+    defaultValue: "unknown"
+  },
 }, {
   freezeTableName: true,
   timestamps: false,
   createAt: true,
   upadateAt: false
 });
-

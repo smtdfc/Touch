@@ -9,7 +9,7 @@ Turtle.createComponent("admin-menu",{
         <div class="offcanvas-body">
           <ul class="offcanvas-nav">
             <li><link-to to="/admin"><i class="fa fa-home"></i>Home</link-to></li>
-            <li><link-to to="/admin/dt"><i class="fa fa-database"></i>Data Storage</link-to></li>
+            <li><link-to to="/admin/datatable"><i class="fa fa-database"></i>Data Storage</link-to></li>
             <li><link-to to="#"><i class="fa fa-dashboard"></i>Dashboards</link-to></li>
             <li><link-to to="#"><i class="fa fa-users"></i>Users</link-to></li>
             <li><link-to to="#"><i class="fa fa-microchip"></i>Devices</link-to></li>

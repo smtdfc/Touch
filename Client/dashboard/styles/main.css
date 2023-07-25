@@ -16,3 +16,10 @@
   	--offcanvas-nav-item-hover-color: #00FF3091;
   	font-weight: none;
 }
+
+.armorial.success{
+  padding: 5px;
+  border-radius: 5px;
+  background: var(--success-color);
+}
+
