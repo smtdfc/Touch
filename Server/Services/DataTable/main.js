@@ -32,7 +32,7 @@ async function generateDTModels(dt_id) {
 
 async function createDT(name, owners) {
   try {
-    let id = (Math.floor(Math.random() * 9999) * Date.now()).toFixed(16)
+    let id = (Math.floor(Math.random() * 9999) * Date.now()).toString(16)
     await models.ListDTModel.create({
       name: name,
       dt_id: id,
@@ -48,7 +48,7 @@ async function createDT(name, owners) {
       createBy: owners,
       status: "active",
       name: name,
-      id: id
+      dt_id: id
     }
   } catch (err) {
     throw {
