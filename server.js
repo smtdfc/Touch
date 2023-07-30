@@ -16,7 +16,7 @@ const router = require("./Server/Routes/main.js")
 
 fastify.register(require("@fastify/formbody"));
 fastify.register(require("@fastify/cors"))
-router(fastify)
+//router(fastify)
 
 
 fastify.listen({port:3000, host: "0.0.0.0" },

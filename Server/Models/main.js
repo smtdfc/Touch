@@ -1,0 +1,91 @@
+const { Sequelize, DataTypes } = require("sequelize")
+const path = require("path")
+
+
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: path.join(__dirname, "../../Data/db/touchdb.db")
+});
+
+models.Users = sequelize.define("users", {
+  user_id: {
+    type: DataTypes.TEXT,
+    primaryKey: true,
+  },
+  name: {
+    type: DataTypes.TEXT,
+  },
+  role: {
+    type: DataTypes.TEXT,
+  },
+  status: {
+    type: DataTypes.TEXT,
+  },
+  attr: {
+    type: DataTypes.TEXT,
+  },
+  group_id: {
+    type: DataTypes.TEXT,
+  }
+}, {
+  freezeTableName: true,
+  timestamps: false
+})
+
+models.Datatables = sequelize.define("datatables", {
+  dt_id: {
+    type: DataTypes.TEXT,
+    primaryKey: true,
+  },
+  name: {
+    type: DataTypes.TEXT
+  },
+  status: {
+    type: DataTypes.TEXT
+  }
+}, {
+  freezeTableName: true,
+  timestamps: false
+})
+
+const DT_Users = sequelize.define('ActorMovies', {
+  user_id: {
+    type: DataTypes.TEXT,
+    references: {
+      model: models.Users,
+      key: 'user_id'
+    }
+  },
+  dt_id: {
+    type: DataTypes.TEXT,
+    references: {
+      model: models.Datatables,
+      key: 'dt_id'
+    }
+  }
+});
+
+models.Users.belongsToMany(models.Datatables, { through: DT_Users });
+models.Datatables.belongsToMany(models.Users, { through: DT_Users });
+
+async function test(){
+  const user = await models.Users.create({ 
+    user_id:(Math.floor(Math.random())*99999999).toString(16),
+    name:"Abc",
+    role:"user",
+    status:"active",
+    attr:"{}",
+    group_id:""
+  })
+  
+  const dt = await models.Datatables.create({
+    dt_id:(Math.floor(Math.random())*99999999).toString(16),
+    name:"status",
+    status:"active",
+  })
+  
+  await DataTypes.addUsers(user)
+  
+}
+
+test()
