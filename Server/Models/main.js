@@ -15,6 +15,9 @@ models.Users = sequelize.define("users", {
   name: {
     type: DataTypes.TEXT,
   },
+  password:{
+    type:DataTypes.TEXT
+  },
   role: {
     type: DataTypes.TEXT,
   },
@@ -31,7 +34,7 @@ models.Users = sequelize.define("users", {
   freezeTableName: true,
   timestamps: false
 })
-
+/*
 models.Users = sequelize.define("login_history", {
   token: {
     type: DataTypes.TEXT,
@@ -46,7 +49,7 @@ models.Users = sequelize.define("login_history", {
   freezeTableName: true,
   timestamps: false
 })
-
+*/
 models.Datatables = sequelize.define("datatables", {
   dt_id: {
     type: DataTypes.TEXT,
@@ -86,24 +89,8 @@ const DT_Users = sequelize.define('dt_user', {
 models.Users.belongsToMany(models.Datatables, { through: DT_Users });
 models.Datatables.belongsToMany(models.Users, { through: DT_Users });
 
-async function test() {
-  let id = (Math.floor(Math.random()) * Date.now()).toString(16)
-  const user = await models.Users.create({
-    user_id: id,
-    name: "Abc",
-    role: "user",
-    status: "active",
-    attr: "{}",
-    group_id: ""
-  })
-
-  const dt = await models.Datatables.create({
-    dt_id: id,
-    name: "status",
-    status: "active",
-  })
-
-  await DataTypes.addUser(user)
+async function setup() {
+  await DT_Users.sync()
 }
 
 test()
