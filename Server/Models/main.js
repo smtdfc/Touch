@@ -32,6 +32,21 @@ models.Users = sequelize.define("users", {
   timestamps: false
 })
 
+models.Users = sequelize.define("login_history", {
+  token: {
+    type: DataTypes.TEXT,
+  },
+  info: {
+    type: DataTypes.TEXT,
+  },
+  loginAt: {
+    type: DataTypes.TEXT,
+  }
+}, {
+  freezeTableName: true,
+  timestamps: false
+})
+
 models.Datatables = sequelize.define("datatables", {
   dt_id: {
     type: DataTypes.TEXT,
@@ -48,7 +63,7 @@ models.Datatables = sequelize.define("datatables", {
   timestamps: false
 })
 
-const DT_Users = sequelize.define('ActorMovies', {
+const DT_Users = sequelize.define('dt_user', {
   user_id: {
     type: DataTypes.TEXT,
     references: {
@@ -63,29 +78,32 @@ const DT_Users = sequelize.define('ActorMovies', {
       key: 'dt_id'
     }
   }
+}, {
+  freezeTableName: true,
+  timestamps: false
 });
 
 models.Users.belongsToMany(models.Datatables, { through: DT_Users });
 models.Datatables.belongsToMany(models.Users, { through: DT_Users });
 
-async function test(){
-  const user = await models.Users.create({ 
-    user_id:(Math.floor(Math.random())*99999999).toString(16),
-    name:"Abc",
-    role:"user",
-    status:"active",
-    attr:"{}",
-    group_id:""
+async function test() {
+  let id = (Math.floor(Math.random()) * Date.now()).toString(16)
+  const user = await models.Users.create({
+    user_id: id,
+    name: "Abc",
+    role: "user",
+    status: "active",
+    attr: "{}",
+    group_id: ""
   })
-  
+
   const dt = await models.Datatables.create({
-    dt_id:(Math.floor(Math.random())*99999999).toString(16),
-    name:"status",
-    status:"active",
+    dt_id: id,
+    name: "status",
+    status: "active",
   })
-  
-  await DataTypes.addUsers(user)
-  
+
+  await DataTypes.addUser(user)
 }
 
 test()
