@@ -12,13 +12,10 @@ fastify.register(require('@fastify/static'), {
 global.models ={}
 require("./Server/Models/main.js")
 require('dotenv').config()
-
-const authTokenVerify = require("./Server/Services/Authentication/authTokenVerify.js")
 const router = require("./Server/Routes/main.js")
 
 fastify.register(require("@fastify/formbody"));
 fastify.register(require("@fastify/cors"))
-fastify.addHook('preHandler',authTokenVerify)
 router(fastify)
 
 
