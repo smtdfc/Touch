@@ -87,11 +87,11 @@ const DT_Users = sequelize.define('dt_user', {
   timestamps: false
 });
 
-models.Users.belongsToMany(models.Datatables, { through: DT_Users });
+models.Users.belongsToMany(models.Datatables, { through: DT_Users  });
 models.Datatables.belongsToMany(models.Users, { through: DT_Users });
 
 async function setup() {
-  await DT_Users.sync()
+  await DT_Users.sync({alter: true})
 }
 
 setup()
