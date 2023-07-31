@@ -3,5 +3,9 @@ const list_route =[
 ]
 
 module.exports = function(fastify){
-  list_route(fastify)
+  
+  list_route.forEach((r,i)=>{
+    r(fastify)
+    console.info(`Init RESTful API [${i+1}/${list_route.length}]`)
+  })
 }

@@ -2,6 +2,7 @@ const { Sequelize, DataTypes } = require("sequelize")
 const path = require("path")
 
 
+console.info("Connecting Database ")
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: path.join(__dirname, "../../Data/db/touchdb.db")
@@ -93,4 +94,4 @@ async function setup() {
   await DT_Users.sync()
 }
 
-test()
+setup()
