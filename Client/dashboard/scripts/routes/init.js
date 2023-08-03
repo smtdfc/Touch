@@ -1,4 +1,4 @@
-const Router = Turtle.RouterControl
+
 export async function init(){ 
   let ErrorRoutes = (await import("./error.route.js")).ErrorRoutes
   let AuthRoutes = (await import("./auth.route.js")).AuthRoutes
