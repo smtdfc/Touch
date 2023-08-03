@@ -35,8 +35,8 @@ models.Users = sequelize.define("users", {
   freezeTableName: true,
   timestamps: false
 })
-/*
-models.Users = sequelize.define("login_history", {
+
+models.LoginHistory = sequelize.define("login_history", {
   token: {
     type: DataTypes.TEXT,
   },
@@ -50,7 +50,7 @@ models.Users = sequelize.define("login_history", {
   freezeTableName: true,
   timestamps: false
 })
-*/
+
 models.Datatables = sequelize.define("datatables", {
   dt_id: {
     type: DataTypes.TEXT,

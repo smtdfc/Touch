@@ -1,38 +1,95 @@
 const TokenService = require("./token.js")
 class AuthService {
 
-  static async login(username, password) {
+  static async login(username, password, info) {
+    if (!info || !user || !password) {
+      throw {
+        name: "Auth Error",
+        message: "Missing login information !"
+      }
+    }
+
     let user = await models.Users.findOne({
       where: {
         name: username
       }
     })
-    if(!user){
+    if (!user) {
       throw {
-        name:"Auth Error",
-        message:"Incorrect username or password "
+        name: "Auth Error",
+        message: "Incorrect username or password "
       }
-    }else{
-      if(password != user.password){
+    } else {
+      if (password != user.password) {
         throw {
           name: "Auth Error",
           message: "Incorrect username or password "
         }
       }
-      
-      if(user.status == "lock"){
+
+      if (user.status == "lock") {
         throw {
           name: "Auth Error",
           message: "Account has been locked ! "
         }
       }
-      
+
+      let tokens = {
+        accessToken: null,
+        refreshToken: null
+      }
+
+      tokens.accessToken = await TokenService.generate({
+        type: "access token",
+        user_id: user.user_id
+      }, "1h")
+
+      tokens.refreshToken = await TokenService.generate({
+        type: "refresh token",
+        user_id: user.user_id
+      }, "2d")
+
+      await models.LoginHistory.create({
+        token: token.refreshToken,
+        info: JSON.stringify(info),
+        loginAt: Date.now()
+      })
+
       return {
-        id:user.user_id,
-        name:user.name,
-        status:user.status,
-        role:user.role,
-        group:user.group_id
+        id: user.user_id,
+        name: user.name,
+        status: user.status,
+        role: user.role,
+        group: user.group_id,
+        tokens: tokens
+      }
+    }
+  }
+
+  static getInfo(user_id) {
+    let user = await models.Users.findOne({
+      where: {
+        name: username
+      }
+    })
+    if (!user) {
+      throw {
+        name: "Auth Error",
+        message: "User does not exist ! "
+      }
+    } else {
+      if (user.status == "lock") {
+        throw {
+          name: "Auth Error",
+          message: "Account has been locked ! "
+        }
+      }
+      return {
+        id: user.user_id,
+        name: user.name,
+        status: user.status,
+        role: user.role,
+        group: user.group_id,
       }
     }
   }

@@ -11,4 +11,4 @@ class TokenService{
   }
   
 }
-module.exports = {}
+module.exports = TokenService

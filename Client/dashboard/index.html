@@ -5,22 +5,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title></title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./libraries/turtleUI/turtleui.min.css">
+  <link rel="stylesheet" href="./styles/main.css">
+  <script src="./libraries/turtle/turtle.min.js"></script>
+  <script src="./libraries/axios/axios.min.js"></script>
 </head>
 
 <body>
-<script >
   
-  fetch("https://jolly-good-anger.glitch.me/api/v1/auth/login",{
-    method:"post",
-    headers:{
-      "content-type":"application/json"
-    },
-    body:JSON.stringify({
-      username:"smtdfc",
-      password:"123456"
-    })
-  })
-</script>
+
+  <main-app></main-app>
+  <script src="./scripts/api.js"></script>
+  <script src="./libraries/turtleUI/turtleui.min.js"></script>
+  <script src="./scripts/app.js"></script>
 </body>
 
 </html>
