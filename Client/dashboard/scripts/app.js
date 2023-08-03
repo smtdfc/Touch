@@ -1,5 +1,5 @@
 const selector = new Turtle.TurtleSelector()
-const Router = Turtle.RouterControl
+window.Router = Turtle.RouterControl
 function showLoader() {
   selector.byId("main-loader").classList.remove("d-none")
 }
