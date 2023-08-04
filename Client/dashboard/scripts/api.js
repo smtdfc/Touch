@@ -103,7 +103,6 @@ class TouchClientAuth {
       this.app.eventManager.emitEvent("authstatechange",this.currentUser)
       return this.currentUser
     } catch (err) {
-      console.log(err);
       if (err.isAxiosError) throw getResponseErr(err)
     }
   }

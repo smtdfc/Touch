@@ -1,7 +1,7 @@
 Turtle.createComponent("account-menu",{
   render:function(){
     return `
-      <div class="offcanvas offcanvas-right" id="account-menu">
+      <div class="offcanvas offcanvas-right" id="account-menu" style="transition:0.2s;" >
         <div class="offcanvas-header">
           <h3 class="offcanvas-title">Account</h3>
           <button class="fa fa-times offcanvas-close-btn" data-action="toggle-offcanvas" data-offcanvas="#account-menu"></button>

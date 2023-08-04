@@ -25,7 +25,7 @@ Turtle.createStaticComponent("main-app", {
       <page-navbar></page-navbar>
       <br><br><br><br><br>
       <div class="sidebar-container" id="sidebar-container" >
-        <div class="sidebar d-none sidebar-icon" id="main-sidebar" ></div>
+        <div class="sidebar d-none sidebar-icon" id="main-sidebar" style="transition:0.2s;" ></div>
         <div class="container" style="padding:10px;" id="content"></div>
       </div>
     `
