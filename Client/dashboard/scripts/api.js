@@ -1,5 +1,11 @@
 window.TOUCH_CLIENT_APP_EVENTS = {}
 
+axios.defaults.cache = {
+  type: "memory",
+  maxAge: 300000,
+  maxEntries: 10,
+};
+
 function shouldReAuth(err){
    err = getResponseErr(err)
    return ["Invalid Token","Auth Error","Token Error","Permission Error"].includes(err.name)
@@ -130,7 +136,7 @@ class TouchClientAuth {
       return this.#user
     } catch (err) {
       if(shouldReAuth(err)){
-        let result = this.retryWithNewToken(this.info,this,[])  
+        let result = await this.retryWithNewToken(this.info,this,[])  
         if(result.returnValue) return result.returnValue
       }
     }

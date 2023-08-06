@@ -1,5 +1,6 @@
 const selector = new Turtle.TurtleSelector()
 window.Router = Turtle.RouterControl
+
 function showLoader() {
   selector.byId("main-loader").classList.remove("d-none")
 }
@@ -8,7 +9,8 @@ function hideLoader() {
   selector.byId("main-loader").classList.add("d-none")
 }
 
-function isAdmin(){
+function isAdmin() {
+  console.log(app.auth.currentUser);
   return app.auth.currentUser.user_id != null && app.auth.currentUser.role == "admin"
 }
 
@@ -20,16 +22,17 @@ const app = createApp({
   base: "https://jolly-good-anger.glitch.me"
 })
 
+async function main() {
+  app.auth.info()
+    .then(async () => {
+      await Promise.all([
+        import("./components/navbar.js"),
+        import("./components/sidebar.js"),
+        import("./routes/init.js")
+      ])
+    })
 
-
-async function main(){
-  await app.auth.info()
-  await Promise.all([
-      import("./components/navbar.js"),
-      import("./components/sidebar.js"),
-      import("./routes/init.js")
-  ])
-  hideLoader()
+ // hideLoader()
 }
 
 Turtle.createStaticComponent("main-app", {
