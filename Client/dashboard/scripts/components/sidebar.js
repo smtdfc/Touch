@@ -15,9 +15,12 @@ Turtle.createStaticComponent("admin-sidebar",{
   },
 })
 
-app.eventManager.addEventListener("authstatechange",function(user){
-  if(user.role == "admin"){
+function loadSidebar(){
+  if (app.auth.currentUser.role == "admin") {
     selector.byId("main-sidebar").classList.remove("d-none")
-    selector.byId("main-sidebar").HTML =`<admin-sidebar>`
+    selector.byId("main-sidebar").HTML = `<admin-sidebar>`
   }
-})
+}
+
+loadSidebar()
+app.eventManager.addEventListener("authstatechange",loadSidebar)

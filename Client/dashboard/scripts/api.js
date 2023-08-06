@@ -102,27 +102,30 @@ class TouchClientAuth {
       }
     }
   }
-  
+
   get currentUser() {
     return Object.freeze(Object.assign({}, this.#user))
   }
-  
-  async info(){
-    if(this.#user.user_id == null){
-      throw "No login "
+
+  async info() {
+    try {
+      let response = await axios({
+        url: `${this.base}/api/v1/auth/info`,
+        method: "post",
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+      })
+      let info = response.data.info
+      this.#user.user_id = info.id
+      this.#user.username = info.name
+      this.#user.role = info.role
+      this.#user.group_id = info.group
+    } catch (err) {
+      
     }
-    
-    let response = await axios({
-      url: `${this.base}/api/v1/auth/info`,
-      method: "post",
-      headers:{
-         authorization:`token ${TouchCookieManager.getCookie("at")}`
-      },
-      data: {
-        
-      }
-    })
   }
+  
   async login(username, password) {
     try {
       let response = await axios({
@@ -143,16 +146,16 @@ class TouchClientAuth {
       this.#user.username = info.name
       this.#user.role = info.role
       this.#user.group_id = info.group
-      TouchCookieManager.setCookie("at",tokens.accessToken)
-      TouchCookieManager.setCookie("rt",tokens.refreshToken)
+      TouchCookieManager.setCookie("at", tokens.accessToken)
+      TouchCookieManager.setCookie("rt", tokens.refreshToken)
       this.app.eventManager.emitEvent("authstatechange", this.currentUser)
       return this.currentUser
     } catch (err) {
       if (err.isAxiosError) throw getResponseErr(err)
     }
   }
-  
-  async getNewToken(){}
+
+  async getNewToken() {}
 }
 
 class TouchClientApp {

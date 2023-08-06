@@ -53,5 +53,10 @@ Turtle.createComponent("login-page",{
           ctx.ref("btn").HTMLElement.disabled = false
         })
     })
+  },
+  onCreate:function(){
+    if(!isNotLoggedIn()){
+      Router.redirect("/",true)
+    }
   }
 })

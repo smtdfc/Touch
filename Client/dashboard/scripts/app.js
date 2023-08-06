@@ -8,6 +8,10 @@ function hideLoader() {
   selector.byId("main-loader").classList.add("d-none")
 }
 
+function isAdmin(){
+  return app.auth.currentUser.user_id != null && app.auth.currentUser.role == "admin"
+}
+
 function isNotLoggedIn() {
   return app.auth.currentUser.user_id == null
 }
@@ -32,7 +36,18 @@ Turtle.createStaticComponent("main-app", {
   }
 })
 
-import("./components/navbar.js")
-import("./components/sidebar.js")
-import("./routes/init.js")
+//showLoader()
+async function main(){
+  
+  
+  await app.auth.info()
+  await Promise.all([
+      import("./components/navbar.js"),
+      import("./components/sidebar.js"),
+      import("./routes/init.js")
+    ])
+  
+}
 
+
+main()

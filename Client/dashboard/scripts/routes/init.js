@@ -13,6 +13,9 @@ export async function init(){
           if (isNotLoggedIn()) {
             Router.redirect("/auth/login", true)
           }
+          if(isAdmin()){
+            Router.redirect("/admin/home",true)
+          }
         }
       },
       ...AuthRoutes,

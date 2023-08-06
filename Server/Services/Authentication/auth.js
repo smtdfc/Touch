@@ -47,7 +47,7 @@ class AuthService {
       tokens.refreshToken = await TokenService.generate({
         type: "refresh token",
         user_id: user.user_id
-      },process.env.REFRESHTOKEN_SECRET, "1d")
+      }, process.env.REFRESHTOKEN_SECRET, "1d")
 
       await models.LoginHistory.create({
         token: tokens.refreshToken,
@@ -69,7 +69,7 @@ class AuthService {
   static async getInfo(user_id) {
     let user = await models.Users.findOne({
       where: {
-        user_id:user_id
+        user_id: user_id
       }
     })
     if (!user) {
@@ -91,6 +91,41 @@ class AuthService {
         role: user.role,
         group: user.group_id,
       }
+    }
+  }
+
+  static getNewToken(refreshToken) {
+    if (!refreshToken) {
+      throw {
+        name: "Auth Error",
+        message: "Missing auth information !"
+      }
+    }
+
+    let token = await models.LoginHistory.findOne({
+      where: {
+        token: refreshToken
+      },
+      attributes: ["token"]
+    })
+    if (!token) {
+      throw {
+        name: "Auth Error",
+        message: "Token Error !"
+      }
+    }else{
+      let payload = await TokenService.verify(token,process.env.REFRESHTOKEN_SECRET)
+      let user_id = payload.user_id
+      let tokens = {
+        accessToken: null,
+        refreshToken: refreshToken
+      }
+
+      tokens.accessToken = await TokenService.generate({
+        type: "access token",
+        user_id: user_id
+      }, process.env.ACCESSTOKEN_SECRET, "1h")
+      return tokens
     }
   }
 

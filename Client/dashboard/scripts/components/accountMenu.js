@@ -11,7 +11,7 @@ Turtle.createComponent("account-menu",{
             <div class="avatar ml-0">
               <img src="https://static2.yan.vn/YanNews/2167221/202102/facebook-cap-nhat-avatar-doi-voi-tai-khoan-khong-su-dung-anh-dai-dien-e4abd14d.jpg" data-action="toggle-offcanvas" data-offcanvas="#offcanvas1" alt="">
             </div>
-            <span ref="username">???</span>
+            <span ref="username">${app.auth.currentUser.username??"???"}</span>
           </div>
           <br>
           <ul class="offcanvas-nav-items">

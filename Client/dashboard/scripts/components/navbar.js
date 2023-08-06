@@ -20,6 +20,9 @@ Turtle.createStaticComponent("page-navbar", {
         selector.byId("main-navbar").classList.remove("d-none")
       }
     }
+    if (!isNotLoggedIn()) {
+      selector.byId("main-navbar").classList.remove("d-none")
+    }
     app.eventManager.addEventListener("authstatechange", this.onAuthStateChange.bind(this))
   }
 })
