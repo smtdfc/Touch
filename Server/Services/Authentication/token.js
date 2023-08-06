@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken")
 class TokenService{
-  static generate(payload,secret, expired){
+  static generate(payload,secret, expiresIn){
     return jwt.sign(payload,secret,{
-      expired:expired
+      expiresIn:expiresIn
     })
   }
   

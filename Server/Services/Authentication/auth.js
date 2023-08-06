@@ -2,7 +2,7 @@ const TokenService = require("./token.js")
 class AuthService {
 
   static async login(username, password, info) {
-    if (!info || !user || !password) {
+    if (!info || !username || !password) {
       throw {
         name: "Auth Error",
         message: "Missing login information !"
@@ -47,10 +47,10 @@ class AuthService {
       tokens.refreshToken = await TokenService.generate({
         type: "refresh token",
         user_id: user.user_id
-      }, "2d")
+      }, "1d")
 
       await models.LoginHistory.create({
-        token: token.refreshToken,
+        token: tokens.refreshToken,
         info: JSON.stringify(info),
         loginAt: Date.now()
       })
@@ -66,7 +66,7 @@ class AuthService {
     }
   }
 
-  static getInfo(user_id) {
+  static async getInfo(user_id) {
     let user = await models.Users.findOne({
       where: {
         name: username
