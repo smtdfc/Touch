@@ -69,7 +69,7 @@ class AuthService {
   static async getInfo(user_id) {
     let user = await models.Users.findOne({
       where: {
-        name: username
+        user_id:user_id
       }
     })
     if (!user) {

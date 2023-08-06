@@ -112,7 +112,16 @@ class TouchClientAuth {
       throw "No login "
     }
     
-    
+    let response = await axios({
+      url: `${this.base}/api/v1/auth/info`,
+      method: "post",
+      headers:{
+         authorization:`token ${TouchCookieManager.getCookie("at")}`
+      },
+      data: {
+        
+      }
+    })
   }
   async login(username, password) {
     try {
@@ -143,9 +152,7 @@ class TouchClientAuth {
     }
   }
   
-  async getNewToken(){
-    
-  }
+  async getNewToken(){}
 }
 
 class TouchClientApp {

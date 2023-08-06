@@ -11,7 +11,7 @@ fastify.register(require('@fastify/static'), {
   prefix: '/Client/dashboard/', 
 })
 
-fastify.on("preHandler",verifyToken)
+fastify.addHook("preHandler",verifyToken)
 global.models ={}
 require("./Server/Models/main.js")
 require('dotenv').config()
