@@ -42,12 +42,12 @@ class AuthService {
       tokens.accessToken = await TokenService.generate({
         type: "access token",
         user_id: user.user_id
-      }, "1h")
+      }, process.env.ACCESSTOKEN_SECRET, "1h")
 
       tokens.refreshToken = await TokenService.generate({
         type: "refresh token",
         user_id: user.user_id
-      }, "1d")
+      },process.env.REFRESHTOKEN_SECRET, "1d")
 
       await models.LoginHistory.create({
         token: tokens.refreshToken,
