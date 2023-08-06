@@ -1,4 +1,5 @@
 window.TOUCH_CLIENT_APP_EVENTS = {}
+
 function getResponseErr(err) {
   if (err.isAxiosError) {
     return {
@@ -37,20 +38,44 @@ function getBrowserName(userAgent = window.navigator.userAgent) {
   }
 }
 
-class TouchClientAppEventManager{
-  
-  static addEventListener(name,callback){
-    if(!window.TOUCH_CLIENT_APP_EVENTS[name]) window.TOUCH_CLIENT_APP_EVENTS[name] = []
+class TouchCookieManager {
+  static setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  }
+  static getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+  static eraseCookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+}
+class TouchClientAppEventManager {
+
+  static addEventListener(name, callback) {
+    if (!window.TOUCH_CLIENT_APP_EVENTS[name]) window.TOUCH_CLIENT_APP_EVENTS[name] = []
     window.TOUCH_CLIENT_APP_EVENTS[name].push(callback)
   }
-  
-  static emitEvent(name,data){
-    if(!window.TOUCH_CLIENT_APP_EVENTS[name]) window.TOUCH_CLIENT_APP_EVENTS[name] = []
-    window.TOUCH_CLIENT_APP_EVENTS[name].forEach(callback=>{
+
+  static emitEvent(name, data) {
+    if (!window.TOUCH_CLIENT_APP_EVENTS[name]) window.TOUCH_CLIENT_APP_EVENTS[name] = []
+    window.TOUCH_CLIENT_APP_EVENTS[name].forEach(callback => {
       callback(data)
     })
   }
-  
+
 }
 
 class TouchServerConnection {
@@ -77,8 +102,17 @@ class TouchClientAuth {
       }
     }
   }
-  get currentUser(){
-    return Object.freeze(Object.assign({},this.#user))
+  
+  get currentUser() {
+    return Object.freeze(Object.assign({}, this.#user))
+  }
+  
+  async info(){
+    if(this.#user.user_id == null){
+      throw "No login "
+    }
+    
+    
   }
   async login(username, password) {
     try {
@@ -100,11 +134,17 @@ class TouchClientAuth {
       this.#user.username = info.name
       this.#user.role = info.role
       this.#user.group_id = info.group
-      this.app.eventManager.emitEvent("authstatechange",this.currentUser)
+      TouchCookieManager.setCookie("at",tokens.accessToken)
+      TouchCookieManager.setCookie("rt",tokens.refreshToken)
+      this.app.eventManager.emitEvent("authstatechange", this.currentUser)
       return this.currentUser
     } catch (err) {
       if (err.isAxiosError) throw getResponseErr(err)
     }
+  }
+  
+  async getNewToken(){
+    
   }
 }
 
