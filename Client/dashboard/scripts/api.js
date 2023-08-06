@@ -1,5 +1,10 @@
 window.TOUCH_CLIENT_APP_EVENTS = {}
 
+function shouldReAuth(err){
+   err = getResponseErr(err)
+   return ["Invalid Token","Auth Error","Token Error","Permission Error"].includes(err.name)
+}
+
 function getResponseErr(err) {
   if (err.isAxiosError) {
     return {
@@ -108,6 +113,7 @@ class TouchClientAuth {
   }
 
   async info() {
+    
     try {
       let response = await axios({
         url: `${this.base}/api/v1/auth/info`,
@@ -121,8 +127,19 @@ class TouchClientAuth {
       this.#user.username = info.name
       this.#user.role = info.role
       this.#user.group_id = info.group
+      return this.#user
     } catch (err) {
-      
+      if(shouldReAuth(err)){
+        let result = this.retryWithNewToken(this.info,this,[])  
+        if(result.returnValue) return result.returnValue
+      }
+    }
+    
+    return {
+      user_id:null,
+      username:null,
+      role:"unknown",
+      status:"locked"
     }
   }
   
@@ -155,7 +172,38 @@ class TouchClientAuth {
     }
   }
 
-  async getNewToken() {}
+  async getNewToken() {
+    try {
+      let response = await axios({
+        url: `${this.base}/api/v1/auth/token`,
+        method: "post",
+        data: {
+          refreshToken:TouchCookieManager.getCookie("rt")
+        }
+      })
+      let tokens = response.data.tokens
+      TouchCookieManager.setCookie("at", tokens.accessToken)
+      TouchCookieManager.setCookie("rt", tokens.refreshToken)
+
+    } catch (err) {
+      throw err
+    }
+  }
+  async retryWithNewToken(callback,context,arg){
+    let result ={
+      success:false,
+      returnValue:null,
+      error:null
+    }
+    try {
+      await this.getNewToken()
+      result.returnValue = await callback.bind(this)(...arg)
+      result.success = true
+    } catch (err) {
+      result.error = err
+    }
+    return result
+  }
 }
 
 class TouchClientApp {

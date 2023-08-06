@@ -20,6 +20,18 @@ const app = createApp({
   base: "https://jolly-good-anger.glitch.me"
 })
 
+
+
+async function main(){
+  await app.auth.info()
+  await Promise.all([
+      import("./components/navbar.js"),
+      import("./components/sidebar.js"),
+      import("./routes/init.js")
+  ])
+  hideLoader()
+}
+
 Turtle.createStaticComponent("main-app", {
   render: function() {
     return `
@@ -30,24 +42,18 @@ Turtle.createStaticComponent("main-app", {
       <br><br><br><br><br>
       <div class="sidebar-container" id="sidebar-container" >
         <div class="sidebar d-none sidebar-icon" id="main-sidebar" ></div>
-        <div class="container" style="padding:10px;" id="content"></div>
+        <div class="container" style="padding:10px;" id="content">
+          <div class="d-flex flex-flow-col align-items-center text-align-center">
+            <div class="circle-loader" style="border-color:#00FF6E4D; border-top-color:#00FF6E;" ></div>
+            <br>
+            <h4>
+              We are checking login information.We are checking login information. Please wait 
+            </h4>
+          </div>
+        </div>
       </div>
     `
   }
 })
-
-//showLoader()
-async function main(){
-  
-  
-  await app.auth.info()
-  await Promise.all([
-      import("./components/navbar.js"),
-      import("./components/sidebar.js"),
-      import("./routes/init.js")
-    ])
-  
-}
-
 
 main()

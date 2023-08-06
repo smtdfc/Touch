@@ -94,7 +94,7 @@ class AuthService {
     }
   }
 
-  static getNewToken(refreshToken) {
+  static async getNewToken(refreshToken) {
     if (!refreshToken) {
       throw {
         name: "Auth Error",

@@ -31,10 +31,6 @@ class AuthController {
   }
   
   static async token(request, reply) {
-    if (!request.user) {
-      return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked !")
-    }
-  
     try {
       let tokens = await AuthService.getNewToken(
         request.body.refreshToken

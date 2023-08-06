@@ -11,7 +11,7 @@ class TokenService {
       jwt.verify(token, secret, function(err, decoded) {
         if (err) {
           reject({
-            name:"Invalid Token",
+            name:"Token Error",
             message:"Invalid or expired token !"
           })
         }
