@@ -17,8 +17,6 @@ Turtle.createComponent("page-admin-dt", {
       <h1>List DataTable</h1>
       <div class="d-flex">
           <button class="btn btn-primary" data-action="toggle-modal" data-modal="#create-dt-modal"><i class="fa fa-plus"></i> Add</button>
-          <button class="btn btn-primary"><i class="fa fa-refresh"></i> Refresh</button>
-          <button class="btn btn-primary">Add</button>
       </div>
       <br><br>
       <div class="table-responsive">
@@ -31,12 +29,13 @@ Turtle.createComponent("page-admin-dt", {
           </tr>
           
         </table>
-        <div ref="loader" class="d-none d-flex justify-content-center d-nk">
-            <div class="circle-loader" style="border-color:#00FF6E4D; border-top-color:#00FF6E;" ></div>
-        </div>
-        <div class="d-flex justify-content-center">
-          <button ref="load-more" class="btn btn-outline-success">Load more</button>
-        </div>
+
+      </div>
+      <div ref="loader" class="d-none d-flex justify-content-center d-nk">
+         <div class="circle-loader" style="border-color:#00FF6E4D; border-top-color:#00FF6E;" ></div>
+      </div> 
+      <div class = "d-flex justify-content-center" >
+         <button ref="load-more" class="btn btn-outline-success">Load more</button>
       </div>
       <div class="modal" id="create-dt-modal">
         <div class="modal-content">
@@ -103,7 +102,10 @@ Turtle.createComponent("page-admin-dt", {
     this.displayDTInfo = async function() {
       offset = limit * count
       count++
-      let list = await app.DT.getAll(limit, offset)
+      let list = await app.DT.getAll(limit, offset);
+      if(list.length==0){
+        count=count-1
+      }
       list.forEach(dt_info => {
         if (ctx.data.caches[dt_info.dt_id] == undefined) {
           ctx.addNewDT(dt_info )
