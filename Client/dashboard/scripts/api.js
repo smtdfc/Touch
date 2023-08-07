@@ -171,6 +171,33 @@ class TouchDTManager{
       }
     }
   }
+  async remove(id) {
+    if (this.app.auth.currentUser.notLogin()) {
+      throw {
+        name: "Auth Err",
+        message: "Access has been denied !"
+      }
+    }
+  
+    try {
+      let response = await axios({
+        url: `${this.base}/api/v1/${this.app.auth.currentUser.role}/dt/remove`,
+        method: "post",
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: {
+          dt_id: id
+        }
+      })
+      return response.data.info
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.retryWithNewToken(this.getAll, this, [limit, offset])
+        if (result.returnValue) return result.returnValue
+      }
+    }
+  }
 }
 
 class TouchClientAuth {

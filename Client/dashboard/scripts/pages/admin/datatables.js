@@ -1,3 +1,16 @@
+window.rmDT = function rm(r) {
+  let dt_id = r.dataset.dt
+  if( !confirm("Delete Datatable ? This will cause your data to be lost. Do you want to continue ?")) return
+  showLoader()
+  app.DT.remove(dt_id)
+    .then(()=>{
+      selector.byId(`dt_${dt_id}`).HTMLElement.remove()
+    })
+    .finally(()=>{
+      hideLoader()
+    })
+}
+
 Turtle.createComponent("page-admin-dt", {
   render: function() {
     return `
@@ -14,6 +27,7 @@ Turtle.createComponent("page-admin-dt", {
             <th>ID</th>
             <th>Name</th>
             <th>Status</th>
+            <th></th>
           </tr>
           
         </table>
@@ -47,52 +61,56 @@ Turtle.createComponent("page-admin-dt", {
     let limit = 5
     let offset = -1
     let count = 0
-    this.ref("load-more").on("click",async function(e){
+    this.ref("load-more").on("click", async function(e) {
       ctx.ref("loader").classList.remove("d-none")
       e.target.classList.add("d-none")
       await ctx.displayDTInfo()
       e.target.classList.remove("d-none")
       ctx.ref("loader").classList.add("d-none")
     })
-    
+
     this.ref("create-dt-btn").on("click", function() {
       let dtName = ctx.ref("dt-name").val
       showLoader()
       app.DT.create(dtName)
         .then((info) => {
-          ctx.data.caches[info.dt_id] = true
-          let tr = Turtle.createElement("tr")
-          tr.HTML = `
-            <td>${info.dt_id}</td>
-          `
-          ctx.ref("table").addChild(tr)
+          ctx.addNewDT(info)
         })
         .catch(err => {
           alert(err.message)
         })
         .finally(() => {
+          hideLoader()
           selector.byId("create-dt-modal").classList.remove("active")
         })
     })
-
+    
+    this.addNewDT = function(dt_info){
+      ctx.data.caches[dt_info.dt_id] = true
+      let tr = Turtle.createElement("tr")
+      tr.id = `dt_${dt_info.dt_id}`
+      tr.HTML = `
+                  <td>${dt_info.dt_id}</td>
+                  <td>${dt_info.name}</td>
+                  <td>${dt_info.status}</td>
+                  <td>
+                    <button class="btn btn-danger" data-dt="${dt_info.dt_id}" onclick="rmDT(this)">Remove</button>
+                  </td>
+                `
+      ctx.ref("table").addChild(tr)
+    }
+    
     this.displayDTInfo = async function() {
-      offset = limit*count
+      offset = limit * count
       count++
       let list = await app.DT.getAll(limit, offset)
       list.forEach(dt_info => {
-       
         if (ctx.data.caches[dt_info.dt_id] == undefined) {
-          ctx.data.caches[dt_info.dt_id] = true
-          let tr = Turtle.createElement("tr")
-          tr.HTML = `
-            <td>${dt_info.dt_id}</td>
-            <td>${dt_info.name}</td>
-            <td>${dt_info.status}</td>
-          `
-          ctx.ref("table").addChild(tr)
+          ctx.addNewDT(dt_info )
         }
       })
     }
+    
     this.displayDTInfo()
     this.displayDTInfo()
     this.displayDTInfo()
@@ -103,6 +121,6 @@ Turtle.createComponent("page-admin-dt", {
     this.data.caches = {}
   },
   onRemove: function() {
-   // document.body.removeEventListener("scroll", this.infinityScroll)
+    // document.body.removeEventListener("scroll", this.infinityScroll)
   }
 })

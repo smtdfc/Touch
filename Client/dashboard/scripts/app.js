@@ -2,11 +2,12 @@ const selector = new Turtle.TurtleSelector()
 window.Router = Turtle.RouterControl
 
 function showLoader() {
-  selector.byId("main-loader").classList.remove("d-none")
+  console.log(1);
+  selector.byId("main-loader").classList.add("active")
 }
 
 function hideLoader() {
-  selector.byId("main-loader").classList.add("d-none")
+  selector.byId("main-loader").classList.remove("active")
 }
 
 function isAdmin() {
@@ -37,11 +38,12 @@ async function main() {
 Turtle.createStaticComponent("main-app", {
   render: function() {
     return `
-
-      <page-navbar></page-navbar>
-      <div id="main-loader" class="d-none line-loader" style="height:5px;" >
-        <span class="bar"></span>
+      <div class=" overlay " id="main-loader" >
+        <div class=" line-loader" style="height:5px;">
+          <span class="bar"></span>
+        </div>
       </div>
+      <page-navbar></page-navbar>
       <br><br><br><br><br>
       <div class="sidebar-container" id="sidebar-container" >
         <div class="sidebar d-none sidebar-icon" id="main-sidebar" ></div>
