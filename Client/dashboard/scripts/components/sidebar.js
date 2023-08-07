@@ -19,6 +19,9 @@ function loadSidebar(){
   if (app.auth.currentUser.role == "admin") {
     selector.byId("main-sidebar").classList.remove("d-none")
     selector.byId("main-sidebar").HTML = `<admin-sidebar>`
+  }else{
+    selector.byId("main-sidebar").classList.add("d-none")
+    selector.byId("main-sidebar").HTML = ``
   }
 }
 

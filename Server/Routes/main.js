@@ -1,5 +1,6 @@
 const list_route =[
-  require("./auth.route.js")
+  require("./auth.route.js"),
+  require("./datatables.route.js")
 ]
 
 module.exports = function(fastify){

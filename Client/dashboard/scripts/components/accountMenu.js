@@ -1,7 +1,7 @@
 Turtle.createComponent("account-menu",{
   render:function(){
     return `
-      <div class="offcanvas offcanvas-right" id="account-menu">
+      <div class="offcanvas offcanvas-right" id="account-menu" ref="menu">
         <div class="offcanvas-header">
           <h3 class="offcanvas-title">Account</h3>
           <button class="fa fa-times offcanvas-close-btn" data-action="toggle-offcanvas" data-offcanvas="#account-menu" ></button>
@@ -34,10 +34,11 @@ Turtle.createComponent("account-menu",{
       app.auth.logout()
         .then(()=>{
           alert("You are logged out !")
-          Router.redirect("/auth/login")
+          Router.redirect("/auth/login",true)
         })
         
-        .catch(()=>{
+        .catch((e)=>{
+          console.log(e);
           alert("Can't log out now!")
         })
         
@@ -49,6 +50,10 @@ Turtle.createComponent("account-menu",{
     this.onAuthStateChange = function(user) {
       if (!isNotLoggedIn()) {
         this.ref("username").text = `@${user.username}`
+      }else{
+        this.ref("username").text = "???"
+        let menu = new Turtle.UI.Components.TurtleUIOffcanvas("#account-menu")
+        menu.setState("toggle")
       }
     }
     app.eventManager.addEventListener("authstatechange", this.onAuthStateChange.bind(this))

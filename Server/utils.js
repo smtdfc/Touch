@@ -6,3 +6,7 @@ module.exports.generateErrorResponse = function (res, code=400, name, message) {
       }
    })
 }
+
+module.exports.generateID = function(){
+  return (Math.floor(Math.random()*9999999)*Date.now()).toString(16)
+}

@@ -18,6 +18,8 @@ Turtle.createStaticComponent("page-navbar", {
     this.onAuthStateChange = function(user) {
       if (!isNotLoggedIn()) {
         selector.byId("main-navbar").classList.remove("d-none")
+      }else{
+        selector.byId("main-navbar").classList.add("d-none")
       }
     }
     if (!isNotLoggedIn()) {

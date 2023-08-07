@@ -7,6 +7,7 @@ axios.defaults.cache = {
 };
 
 function shouldReAuth(err) {
+  console.log(err);
   err = getResponseErr(err)
   return ["Invalid Token", "Auth Error", "Token Error", "Permission Error"].includes(err.name)
 }
@@ -73,6 +74,16 @@ class TouchCookieManager {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   }
 }
+
+function isCookiesExist(cookies = []) {
+  let pass = true
+  cookies.forEach(cookie_name => {
+    let r = TouchCookieManager.getCookie(cookie_name)
+    if (r == null) pass = false
+  })
+  return pass
+}
+
 class TouchClientAppEventManager {
 
   static addEventListener(name, callback) {
@@ -113,7 +124,7 @@ class TouchClientAuth {
       },
       reset: function() {
         this.user_id = null
-        this.username=null
+        this.username = null
         this.role = null
         this.group_id = null
       }
@@ -125,28 +136,30 @@ class TouchClientAuth {
   }
 
   async info() {
+    if (isCookiesExist(["at", "rt"])) {
 
-    try {
-      let response = await axios({
-        url: `${this.base}/api/v1/auth/info`,
-        method: "post",
-        headers: {
-          authorization: `token ${TouchCookieManager.getCookie("at")}`
-        },
-      })
-      let info = response.data.info
-      this.#user.user_id = info.id
-      this.#user.username = info.name
-      this.#user.role = info.role
-      this.#user.group_id = info.group
-      return this.currentUser
-    } catch (err) {
-      if (shouldReAuth(err)) {
-        let result = await this.retryWithNewToken(this.info, this, [])
-        if (result.returnValue) return result.returnValue
+
+      try {
+        let response = await axios({
+          url: `${this.base}/api/v1/auth/info`,
+          method: "post",
+          headers: {
+            authorization: `token ${TouchCookieManager.getCookie("at")}`
+          },
+        })
+        let info = response.data.info
+        this.#user.user_id = info.id
+        this.#user.username = info.name
+        this.#user.role = info.role
+        this.#user.group_id = info.group
+        return this.currentUser
+      } catch (err) {
+        if (shouldReAuth(err)) {
+          let result = await this.retryWithNewToken(this.info, this, [])
+          if (result.returnValue) return result.returnValue
+        }
       }
     }
-
     return {
       user_id: null,
       username: null,
@@ -223,7 +236,7 @@ class TouchClientAuth {
       if (shouldReAuth(err)) {
         let result = await this.retryWithNewToken(this.info, this, [])
         if (result.returnValue) return result.returnValue
-      }else{
+      } else {
         throw err
       }
     }

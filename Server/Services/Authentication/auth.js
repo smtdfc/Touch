@@ -129,6 +129,29 @@ class AuthService {
     }
   }
 
+  static async getUserRole(user_id) {
+let user = await models.Users.findOne({
+  where: {
+    user_id: user_id
+  },
+  attributes:["role","status"]
+})
+if (!user) {
+  throw {
+    name: "Auth Error",
+    message: "User does not exist ! "
+  }
+} else {
+  if (user.status == "lock") {
+    throw {
+      name: "Auth Error",
+      message: "Account has been locked ! "
+    }
+  }
+  return user.role
+}
+  }
+  
   static getUserStatus(user_id) {
 
   }
@@ -140,7 +163,27 @@ class AuthService {
       }
     })
   }
-
+  static async findUser(user_id) {
+    let user = await models.Users.findOne({
+      where: {
+        user_id: user_id
+      }
+    })
+    if (!user) {
+      throw {
+        name: "Auth Error",
+        message: "User does not exist ! "
+      }
+    } else {
+      if (user.status == "lock") {
+        throw {
+          name: "Auth Error",
+          message: "Account has been locked ! "
+        }
+      }
+      return user
+    }
+  }
 }
 
 module.exports = AuthService
