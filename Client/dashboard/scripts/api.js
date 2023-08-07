@@ -116,7 +116,7 @@ class TouchDTManager{
   }
   
   async getAll(limit = 5,offset = 0){
-    if(this.app.auth.notLogin()){
+    if(this.app.auth.currentUser.notLogin()){
       throw {
         name:"Auth Err",
         message:"Access has been denied !"
@@ -139,6 +139,34 @@ class TouchDTManager{
     } catch (err) {
       if (shouldReAuth(err)) {
         let result = await this.retryWithNewToken(this.getAll, this, [limit,offset])
+        if (result.returnValue) return result.returnValue
+      }
+    }
+  }
+  
+  async create(name="No name") { 
+    if (this.app.auth.currentUser.notLogin()) {
+      throw {
+        name: "Auth Err",
+        message: "Access has been denied !"
+      }
+    }
+  
+    try {
+      let response = await axios({
+        url: `${this.base}/api/v1/${this.app.auth.currentUser.role}/dt/create`,
+        method: "post",
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: {
+          name:name
+        }
+      })
+      return response.data.info
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.retryWithNewToken(this.getAll, this, [limit, offset])
         if (result.returnValue) return result.returnValue
       }
     }
@@ -274,6 +302,7 @@ class TouchClientAuth {
       if (shouldReAuth(err)) {
         let result = await this.retryWithNewToken(this.info, this, [])
         if (result.returnValue) return result.returnValue
+        else throw result.error
       } else {
         throw err
       }

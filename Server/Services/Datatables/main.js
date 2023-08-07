@@ -29,7 +29,7 @@ class DatatablesService {
         name:dt_name,
         status:"active"
       })
-      await dt.addUser(dt_id)
+      await dt.addUser(user)
       return {
         dt_id:dt_id,
         name:dt_name,
@@ -42,7 +42,40 @@ class DatatablesService {
       }
     }
   }
-  
+  static async remove(dt_id,force = false) {
+    let dt = await models.Datatables.findOne({
+      where: {
+        dt_id: dt_id
+      }
+    })
+    
+    if (!dt) {
+      throw {
+        name:"Datatable Error",
+        message:"Datatable does not exist "
+      }
+    }else{
+      if(dt.status == "lock" && !force){
+        throw {
+          name: "Datatable Error",
+          message: "Datatable has been locked "
+        }
+      }
+    }
+    
+    try {
+      await dt.setUsers([])
+      await dt.destroy()
+      return {
+        dt_id: dt_id,
+      }
+    } catch (err) {
+      throw {
+        name: "Action Error",
+        message: "Cannot remove datatable !"
+      }
+    }
+  }
   
 }
 

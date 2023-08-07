@@ -18,6 +18,22 @@ class DatatablesController {
     }
   }
   
+  static async adminRemoveDT(request, reply) {
+    if (!request.user) {
+      return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked !")
+    }
+  
+    try {
+      let info = await DatatablesService.remove(
+        request.body.dt_id,
+        true
+      )
+      return reply.code(200).send({ info })
+    } catch (err) {
+      return generateErrorResponse(reply, 400, err.name, err.message)
+    }
+  }
+  
   static async create(request, reply) {
     if (!request.user) {
       return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked !")

@@ -9,7 +9,7 @@ function isAdmin() {
         return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked !")
       }
       try {
-        let role = await AuthService.getUserRole()
+        let role = await AuthService.getUserRole(request.user.user_id)
         if (role == "admin") {
           return
         } else {
@@ -26,6 +26,7 @@ function isAdmin() {
 }
 
 module.exports = function(fastify) {
-  fastify.post("/api/v1/admin/dt/list",isAdmin(),DatatablesController.adminGetAllDT),
-  fastify.post("/api/v1/admin/dt/create",DatatablesController.create)
+  fastify.post("/api/v1/admin/dt/list", isAdmin(), DatatablesController.adminGetAllDT)
+  fastify.post("/api/v1/admin/dt/remove", isAdmin(), DatatablesController.adminRemoveDT)
+  fastify.post("/api/v1/admin/dt/create", DatatablesController.create)
 }
