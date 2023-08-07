@@ -109,6 +109,42 @@ class TouchServerConnection {
   }
 }
 
+class TouchDTManager{
+  constructor(app){
+    this.app = app
+    this.base = app.base
+  }
+  
+  async getAll(limit = 5,offset = 0){
+    if(this.app.auth.notLogin()){
+      throw {
+        name:"Auth Err",
+        message:"Access has been denied !"
+      }
+    }
+    
+    try {
+      let response = await axios({
+        url: `${this.base}/api/v1/${this.app.auth.currentUser.role}/dt/list`,
+        method: "post",
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: {
+          limit:limit,
+          offset:offset
+        }
+      })
+      return response.data.list
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.retryWithNewToken(this.getAll, this, [limit,offset])
+        if (result.returnValue) return result.returnValue
+      }
+    }
+  }
+}
+
 class TouchClientAuth {
   #user
   constructor(app) {
@@ -127,6 +163,9 @@ class TouchClientAuth {
         this.username = null
         this.role = null
         this.group_id = null
+      },
+      notLogin:function(){
+        return this.user_id == null
       }
     }
   }
@@ -209,7 +248,6 @@ class TouchClientAuth {
       let tokens = response.data.tokens
       TouchCookieManager.setCookie("at", tokens.accessToken)
       TouchCookieManager.setCookie("rt", tokens.refreshToken)
-
     } catch (err) {
       throw err
     }
@@ -266,6 +304,7 @@ class TouchClientApp {
     this.eventManager = TouchClientAppEventManager
     this.server = new TouchServerConnection(this.base)
     this.auth = new TouchClientAuth(this)
+    this.DT = new TouchDTManager(this)
   }
 }
 

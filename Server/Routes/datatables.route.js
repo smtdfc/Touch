@@ -1,5 +1,6 @@
 const DatatablesController = require("../Controllers/datatables.controller.js")
 const AuthService = require("../Services/Authentication/auth.js")
+const { generateErrorResponse } = require("../utils.js")
 
 function isAdmin() {
   return {
@@ -25,5 +26,6 @@ function isAdmin() {
 }
 
 module.exports = function(fastify) {
-  fastify.post("/api/v1/admin/dt/list",isAdmin(),DatatablesController.adminGetAllDT)
+  fastify.post("/api/v1/admin/dt/list",isAdmin(),DatatablesController.adminGetAllDT),
+  fastify.post("/api/v1/admin/dt/create",DatatablesController.create)
 }

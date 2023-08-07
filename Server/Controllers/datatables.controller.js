@@ -17,6 +17,22 @@ class DatatablesController {
       return generateErrorResponse(reply, 400, err.name, err.message)
     }
   }
+  
+  static async create(request, reply) {
+    if (!request.user) {
+      return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked !")
+    }
+  
+    try {
+      let info = await DatatablesService.create(
+        request.user.user_id,
+        request.body.name ?? "Untitled"
+      )
+      return reply.code(200).send({ info })
+    } catch (err) {
+      return generateErrorResponse(reply, 400, err.name, err.message)
+    }
+  }
 }
 
 module.exports = DatatablesController

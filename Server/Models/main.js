@@ -5,6 +5,7 @@ const path = require("path")
 console.info("Connecting Database ")
 const sequelize = new Sequelize({
   dialect: 'sqlite',
+  logging:false,
   storage: path.join(__dirname, "../../Data/db/touchdb.db")
 });
 

@@ -1,4 +1,4 @@
-const AuthService = require("../Services/Authentication")
+const AuthService = require("../Authentication/auth.js")
 const {generateID} = require("../../utils.js")
 class DatatablesService {
   static async getByUserId(user_id, limit = 5, offset = 0) {
