@@ -133,7 +133,7 @@ class AuthService {
 
   }
 
-  static logout(user_id, refresh_token) {
+  static async logout(user_id, refresh_token) {
     await models.LoginHistory.destroy({
       where: {
         token: tokens.refreshToken
