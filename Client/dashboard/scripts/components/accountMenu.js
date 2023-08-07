@@ -15,14 +15,37 @@ Turtle.createComponent("account-menu",{
           </div>
           <br>
           <ul class="offcanvas-nav-items">
-            <li><a  href="#"> <i class="icon fa fa-sign-out"></i>Logout</a></li>
-            <li><a  href="#"><i class="icon fa fa-gear"></i>Settings</a></li>
+            <li><a href="#"><i class="icon fa fa-gear"></i>Settings</a></li>
           </ul>
+          <br>
+          <div class="d-flex flex-flow-col align-items-center">
+              <button ref="logout" class="btn btn-outline-danger fa fa-sign-out" style="width:90%">Logout</button>
+          </div>
         </div>
       </div>
     `
   },
   onRender:function(){
+    this.ref("logout").on("click",function(e){
+      let s = confirm("Log out ? Do you want to continue ?")
+      if(!s) return
+      showLoader()
+      
+      app.auth.logout()
+        .then(()=>{
+          alert("You are logged out !")
+          Router.redirect("/auth/login")
+        })
+        
+        .catch(()=>{
+          alert("Can't log out now!")
+        })
+        
+        .finally(()=>{
+          hideLoader()
+          e.preventDefault()
+        })
+    })
     this.onAuthStateChange = function(user) {
       if (!isNotLoggedIn()) {
         this.ref("username").text = `@${user.username}`

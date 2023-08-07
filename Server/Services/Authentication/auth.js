@@ -113,8 +113,8 @@ class AuthService {
         name: "Auth Error",
         message: "Token Error !"
       }
-    }else{
-      let payload = await TokenService.verify(token,process.env.REFRESHTOKEN_SECRET)
+    } else {
+      let payload = await TokenService.verify(token, process.env.REFRESHTOKEN_SECRET)
       let user_id = payload.user_id
       let tokens = {
         accessToken: null,
@@ -134,7 +134,11 @@ class AuthService {
   }
 
   static logout(user_id, refresh_token) {
-
+    await models.LoginHistory.destroy({
+      where: {
+        token: tokens.refreshToken
+      }
+    })
   }
 
 }

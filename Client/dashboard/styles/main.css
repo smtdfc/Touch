@@ -2,7 +2,7 @@
   padding-right: 0;
 }
 
-.container ,form {
+.sidebar-container,.container,.sidebar{
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
   -o-animation-name: fadeIn;
@@ -13,3 +13,17 @@
   animation-duration: 0.3s;
 }
 
+.navbar{
+  -webkit-animation-name: fadeInDown;
+  -moz-animation-name: fadeInDown;
+  -o-animation-name: fadeInDown;
+  animation-name: fadeInDown;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+}
+
+.overlay.main{
+  backdrop-filter: blur(16px);
+}

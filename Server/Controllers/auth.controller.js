@@ -40,6 +40,21 @@ class AuthController {
       return generateErrorResponse(reply, 400, err.name, err.message)
     }
   }
+  
+  static async logout(request,reply){
+        if (!request.user) {
+          return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked !")
+        }
+    try {
+      let results = await AuthService.logout(
+        request.user.user_id,
+        request.body.refreshToken
+      )
+      return reply.code(200).send({ results })
+    } catch (err) {
+      return generateErrorResponse(reply, 400, err.name, err.message)
+    }
+  }
 }
 
 module.exports = AuthController

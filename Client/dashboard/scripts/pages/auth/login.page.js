@@ -31,7 +31,7 @@ Turtle.createComponent("login-page",{
   },
   onFirstRender:function(){
     let ctx = this
-    console.log(Router);
+   // console.log(Router);
     this.ref("form").on("submit",function(e){
       ctx.ref("btn").HTMLElement.disabled = true
       ctx.ref("note").text = ""

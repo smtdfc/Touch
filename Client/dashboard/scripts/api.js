@@ -6,9 +6,9 @@ axios.defaults.cache = {
   maxEntries: 10,
 };
 
-function shouldReAuth(err){
-   err = getResponseErr(err)
-   return ["Invalid Token","Auth Error","Token Error","Permission Error"].includes(err.name)
+function shouldReAuth(err) {
+  err = getResponseErr(err)
+  return ["Invalid Token", "Auth Error", "Token Error", "Permission Error"].includes(err.name)
 }
 
 function getResponseErr(err) {
@@ -110,6 +110,12 @@ class TouchClientAuth {
       group_id: null,
       [Symbol.toPrimitive]: function() {
         return `Touch User ${user_id} `
+      },
+      reset: function() {
+        this.user_id = null
+        this.username=null
+        this.role = null
+        this.group_id = null
       }
     }
   }
@@ -119,7 +125,7 @@ class TouchClientAuth {
   }
 
   async info() {
-    
+
     try {
       let response = await axios({
         url: `${this.base}/api/v1/auth/info`,
@@ -133,22 +139,22 @@ class TouchClientAuth {
       this.#user.username = info.name
       this.#user.role = info.role
       this.#user.group_id = info.group
-      return this.#user
+      return this.currentUser
     } catch (err) {
-      if(shouldReAuth(err)){
-        let result = await this.retryWithNewToken(this.info,this,[])  
-        if(result.returnValue) return result.returnValue
+      if (shouldReAuth(err)) {
+        let result = await this.retryWithNewToken(this.info, this, [])
+        if (result.returnValue) return result.returnValue
       }
     }
-    
+
     return {
-      user_id:null,
-      username:null,
-      role:"unknown",
-      status:"locked"
+      user_id: null,
+      username: null,
+      role: "unknown",
+      status: "locked"
     }
   }
-  
+
   async login(username, password) {
     try {
       let response = await axios({
@@ -184,7 +190,7 @@ class TouchClientAuth {
         url: `${this.base}/api/v1/auth/token`,
         method: "post",
         data: {
-          refreshToken:TouchCookieManager.getCookie("rt")
+          refreshToken: TouchCookieManager.getCookie("rt")
         }
       })
       let tokens = response.data.tokens
@@ -195,11 +201,39 @@ class TouchClientAuth {
       throw err
     }
   }
-  async retryWithNewToken(callback,context,arg){
-    let result ={
-      success:false,
-      returnValue:null,
-      error:null
+
+  async logout() {
+    try {
+      let response = await axios({
+        url: `${this.base}/api/v1/auth/logout`,
+        method: "post",
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: {
+          refreshToken: TouchCookieManager.getCookie("rt")
+        }
+      })
+      TouchCookieManager.eraseCookie("at")
+      TouchCookieManager.eraseCookie("rt")
+      this.#user.reset()
+      this.app.eventManager.emitEvent("authstatechange", this.currentUser)
+      return this.currentUser
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.retryWithNewToken(this.info, this, [])
+        if (result.returnValue) return result.returnValue
+      }else{
+        throw err
+      }
+    }
+  }
+
+  async retryWithNewToken(callback, context, arg) {
+    let result = {
+      success: false,
+      returnValue: null,
+      error: null
     }
     try {
       await this.getNewToken()
