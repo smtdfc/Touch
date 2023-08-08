@@ -109,20 +109,20 @@ class TouchServerConnection {
   }
 }
 
-class TouchDTManager{
-  constructor(app){
+class TouchDTManager {
+  constructor(app) {
     this.app = app
     this.base = app.base
   }
-  
-  async getAll(limit = 5,offset = 0){
-    if(this.app.auth.currentUser.notLogin()){
+
+  async getAll(limit = 5, offset = 0) {
+    if (this.app.auth.currentUser.notLogin()) {
       throw {
-        name:"Auth Err",
-        message:"Access has been denied !"
+        name: "Auth Err",
+        message: "Access has been denied !"
       }
     }
-    
+
     try {
       let response = await axios({
         url: `${this.base}/api/v1/${this.app.auth.currentUser.role}/dt/list`,
@@ -131,26 +131,26 @@ class TouchDTManager{
           authorization: `token ${TouchCookieManager.getCookie("at")}`
         },
         data: {
-          limit:limit,
-          offset:offset
+          limit: limit,
+          offset: offset
         }
       })
       return response.data.list
     } catch (err) {
       if (shouldReAuth(err)) {
-        let result = await this.retryWithNewToken(this.getAll, this, [limit,offset])
+        let result = await this.retryWithNewToken(this.getAll, this, [limit, offset])
         if (result.returnValue) return result.returnValue
       }
     }
   }
-  async info(dt_id){
+  async info(dt_id) {
     if (this.app.auth.currentUser.notLogin()) {
       throw {
         name: "Auth Err",
         message: "Access has been denied !"
       }
     }
-    
+
     try {
       let response = await axios({
         url: `${this.base}/api/v1/${this.app.auth.currentUser.role}/dt/info`,
@@ -170,14 +170,14 @@ class TouchDTManager{
       }
     }
   }
-  async create(name="No name") { 
+  async create(name = "No name") {
     if (this.app.auth.currentUser.notLogin()) {
       throw {
         name: "Auth Err",
         message: "Access has been denied !"
       }
     }
-  
+
     try {
       let response = await axios({
         url: `${this.base}/api/v1/${this.app.auth.currentUser.role}/dt/create`,
@@ -186,7 +186,7 @@ class TouchDTManager{
           authorization: `token ${TouchCookieManager.getCookie("at")}`
         },
         data: {
-          name:name
+          name: name
         }
       })
       return response.data.info
@@ -204,7 +204,7 @@ class TouchDTManager{
         message: "Access has been denied !"
       }
     }
-  
+
     try {
       let response = await axios({
         url: `${this.base}/api/v1/${this.app.auth.currentUser.role}/dt/remove`,
@@ -226,50 +226,73 @@ class TouchDTManager{
   }
 }
 
-class TouchDataIO{
-  constructor(app){
+class TouchDataIO {
+  constructor(app) {
     this.app = app
     this.base = app.base
-    this.data ={}
+    this.data = {}
     this.socket = app.socket
     this.auth = null
+    this.listening = []
     let ctx = this
-    this.socket.emit("auth",{
-      accessToken:TouchCookieManager.getCookie("at")
+    this.socket.emit("auth", {
+      accessToken: TouchCookieManager.getCookie("at")
     })
-    
-    this.socket.on("auth:success",function(data){
+
+    this.socket.on("auth:success", function(data) {
       ctx.auth = app.auth.currentUser
     })
-    
+
     this.socket.on("auth:err", function(data) {
       console.log(data);
       ctx.auth = null
     })
 
-    app.eventManager.addEventListener("authstatechange",function(user){
-      if(user.user_id != null){
+    app.eventManager.addEventListener("authstatechange", function(user) {
+      if (user.user_id != null) {
         ctx.socket.emit("auth", {
           accessToken: TouchCookieManager.getCookie("at")
         })
-      }else{
+      } else {
         ctx.auth = null
       }
-        
+
     })
   }
-  
-  async addListener(dt_id){
+
+  addListener(dt_id) {
     
-    
-    socket.emit("listener:add",{
-      dt_id:dt_id
+    return new Promise((resolve, reject) => {
+      let ctx = this
+
+      function onSuccess(data) {
+        console.log(data);
+        ctx.listening[data.dt_id] = function(data) {
+          ctx.app.eventManager.emitEvent("datachange", {
+            dt_id: dt_id,
+            data: data
+          })
+          socket.on(`set_${dt_id}`, ctx.listening[data.dt_id])
+        }
+      }
+
+      let socket = this.socket
+      socket.emit("listener:add", {
+        dt_id: dt_id
+      })
+
+      socket.on("add-listener success", function(data) {
+        onSuccess(data)
+        resolve()
+      })
+
+
+
     })
-    
-    
+
   }
-  
-  
+
+
 }
 
 class TouchClientAuth {
@@ -291,7 +314,7 @@ class TouchClientAuth {
         this.role = null
         this.group_id = null
       },
-      notLogin:function(){
+      notLogin: function() {
         return this.user_id == null
       }
     }

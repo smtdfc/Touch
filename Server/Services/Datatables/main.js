@@ -1,5 +1,27 @@
 const AuthService = require("../Authentication/auth.js")
 const {generateID} = require("../../utils.js")
+const {  DataTypes } = require("sequelize")
+
+async function createDTModel(dt_id){
+  let model = models.conn.sequelize_dt.define(`dt_${dt_id}`,{
+    field:{
+      type:DataTypes.TEXT
+    },
+    value:{
+      type:DataTypes.TEXT
+    },
+    lastUpdate:{
+      type:DataTypes.TEXT
+    }
+    
+  },{
+    freezeTableName: true,
+      timestamps: false
+  })
+  await model.sync()
+  return model
+}
+
 class DatatablesService {
   static async getDT(dt_id,force){
     let dt = await models.Datatables.findOne({
@@ -54,6 +76,7 @@ class DatatablesService {
         status:"active"
       })
       await dt.addUser(user)
+      await createDTModel(dt_id)
       return {
         dt_id:dt_id,
         name:dt_name,

@@ -29,7 +29,12 @@ Turtle.createComponent("page-admin-edit-dt",{
          </div>
        </div>
        <div>
-         
+          <table class="table table-border" ref="dt-data" style="width:100%" >
+            <tr>
+              <th>Field Name</th>
+              <th>Field Value</th>
+            </tr>
+          </table>
        </div>
       </div>
     </div>
@@ -55,6 +60,10 @@ Turtle.createComponent("page-admin-edit-dt",{
       this.ref("dt-status").classList.add("active")
     }
     
+    app.DataIO.addListener(this.data.dt)
+      .then(()=>{
+        
+      })
   },
 
   onCreate:function(){

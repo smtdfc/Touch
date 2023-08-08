@@ -91,6 +91,16 @@ const DT_Users = sequelize.define('dt_user', {
 models.Users.belongsToMany(models.Datatables, { through: DT_Users , foreignKey:"dt_id" });
 models.Datatables.belongsToMany(models.Users, { through: DT_Users,foreignKey:"user_id" });
 
+const sequelize_dt = new Sequelize({
+  dialect: 'sqlite',
+  logging:false,
+  storage: path.join(__dirname, "../../Data/db/touchdt.db")
+});
+
+models.conn ={
+  sequelize_dt
+}
+
 async function setup() {
   await DT_Users.sync({alter: true})
 }
