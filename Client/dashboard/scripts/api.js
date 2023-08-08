@@ -226,6 +226,52 @@ class TouchDTManager{
   }
 }
 
+class TouchDataIO{
+  constructor(app){
+    this.app = app
+    this.base = app.base
+    this.data ={}
+    this.socket = app.socket
+    this.auth = null
+    let ctx = this
+    this.socket.emit("auth",{
+      accessToken:TouchCookieManager.getCookie("at")
+    })
+    
+    this.socket.on("auth:success",function(data){
+      ctx.auth = app.auth.currentUser
+    })
+    
+    this.socket.on("auth:err", function(data) {
+      console.log(data);
+      ctx.auth = null
+    })
+
+    app.eventManager.addEventListener("authstatechange",function(user){
+      if(user.user_id != null){
+        ctx.socket.emit("auth", {
+          accessToken: TouchCookieManager.getCookie("at")
+        })
+      }else{
+        ctx.auth = null
+      }
+        
+    })
+  }
+  
+  async addListener(dt_id){
+    
+    
+    socket.emit("listener:add",{
+      dt_id:dt_id
+    })
+    
+    
+  }
+  
+  
+}
+
 class TouchClientAuth {
   #user
   constructor(app) {
@@ -388,6 +434,7 @@ class TouchClientApp {
     this.auth = new TouchClientAuth(this)
     this.DT = new TouchDTManager(this)
     this.socket = io(this.base)
+    this.DataIO = new TouchDataIO(this)
   }
 }
 
