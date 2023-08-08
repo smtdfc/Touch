@@ -1,6 +1,29 @@
 const AuthService = require("../Authentication/auth.js")
 const {generateID} = require("../../utils.js")
 class DatatablesService {
+  static async getDT(dt_id,force){
+    let dt = await models.Datatables.findOne({
+      where: {
+        dt_id: dt_id
+      }
+    })
+    
+    if (!dt) {
+      throw {
+        name: "Datatable Error",
+        message: "Datatable does not exist "
+      }
+    } else {
+      if (dt.status == "lock" && !force) {
+        throw {
+          name: "Datatable Error",
+          message: "Datatable has been locked "
+        }
+      }
+    }
+    
+    return dt
+  }
   static async getByUserId(user_id, limit = 5, offset = 0) {
 
   }
@@ -42,27 +65,30 @@ class DatatablesService {
       }
     }
   }
-  static async remove(dt_id,force = false) {
-    let dt = await models.Datatables.findOne({
-      where: {
-        dt_id: dt_id
+  
+  static async info(dt_id){
+    let dt = await this.getDT(dt_id,force)
+    try {
+      
+      return {
+        dt_id: dt.dt_id,
+        name:dt.name,
+        status:dt.status,
+        owners: await dt.getUsers({
+          attributes: ['name','user_id'],
+        })
       }
-    })
-    
-    if (!dt) {
+      
+    } catch (err) {
       throw {
-        name:"Datatable Error",
-        message:"Datatable does not exist "
-      }
-    }else{
-      if(dt.status == "lock" && !force){
-        throw {
-          name: "Datatable Error",
-          message: "Datatable has been locked "
-        }
+        name: "Action Error",
+        message: "Cannot remove datatable !"
       }
     }
-    
+  }
+  
+  static async remove(dt_id,force = false) {
+    let dt = await this.getDT(dt_id,force)
     try {
       await dt.setUsers([])
       await dt.destroy()

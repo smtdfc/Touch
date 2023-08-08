@@ -1,14 +1,19 @@
 window.rmDT = function rm(r) {
   let dt_id = r.dataset.dt
-  if( !confirm("Delete Datatable ? This will cause your data to be lost. Do you want to continue ?")) return
+  if (!confirm("Delete Datatable ? This will cause your data to be lost. Do you want to continue ?")) return
   showLoader()
   app.DT.remove(dt_id)
-    .then(()=>{
+    .then(() => {
       selector.byId(`dt_${dt_id}`).HTMLElement.remove()
     })
-    .finally(()=>{
+    .finally(() => {
       hideLoader()
     })
+}
+
+window.editDT = function(r){
+  let dt_id = r.dataset.dt
+  Router.redirect(`/admin/datatables/${dt_id}`)
 }
 
 Turtle.createComponent("page-admin-dt", {
@@ -27,9 +32,7 @@ Turtle.createComponent("page-admin-dt", {
             <th>Status</th>
             <th></th>
           </tr>
-          
         </table>
-
       </div>
       <div ref="loader" class="d-none d-flex justify-content-center d-nk">
          <div class="circle-loader" style="border-color:#00FF6E4D; border-top-color:#00FF6E;" ></div>
@@ -55,10 +58,10 @@ Turtle.createComponent("page-admin-dt", {
       </div>
     `
   },
-  onFirstRender: function() {
+  onFirstRender: async function() {
     let ctx = this
     let limit = 5
-    let offset = -1
+    let offset = 0
     let count = 0
     this.ref("load-more").on("click", async function(e) {
       ctx.ref("loader").classList.remove("d-none")
@@ -83,8 +86,8 @@ Turtle.createComponent("page-admin-dt", {
           selector.byId("create-dt-modal").classList.remove("active")
         })
     })
-    
-    this.addNewDT = function(dt_info){
+
+    this.addNewDT = function(dt_info) {
       ctx.data.caches[dt_info.dt_id] = true
       let tr = Turtle.createElement("tr")
       tr.id = `dt_${dt_info.dt_id}`
@@ -94,29 +97,26 @@ Turtle.createComponent("page-admin-dt", {
                   <td>${dt_info.status}</td>
                   <td>
                     <button class="btn btn-danger" data-dt="${dt_info.dt_id}" onclick="rmDT(this)">Remove</button>
+                    <button class="btn btn-danger" data-dt="${dt_info.dt_id}" onclick="editDT(this)">Edit</button>
                   </td>
                 `
       ctx.ref("table").addChild(tr)
     }
-    
+
     this.displayDTInfo = async function() {
-      offset = limit * count
-      count++
       let list = await app.DT.getAll(limit, offset);
-      if(list.length==0){
-        count=count-1
-      }
+      offset += list.length
       list.forEach(dt_info => {
         if (ctx.data.caches[dt_info.dt_id] == undefined) {
-          ctx.addNewDT(dt_info )
+          ctx.addNewDT(dt_info)
         }
       })
     }
-    
-    this.displayDTInfo()
-    this.displayDTInfo()
-    this.displayDTInfo()
-    this.displayDTInfo()
+
+    await this.displayDTInfo()
+    await this.displayDTInfo()
+    await this.displayDTInfo()
+    await this.displayDTInfo()
     //document.body.addEventListener("scroll", this.infinityScroll)
   },
   onCreate: function() {

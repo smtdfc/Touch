@@ -34,6 +34,21 @@ class DatatablesController {
     }
   }
   
+  static async admingetInfoDT(request, reply) {
+    if (!request.user) {
+      return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked !")
+    }
+  
+    try {
+      let info = await DatatablesService.info(
+        request.body.dt_id
+      )
+      return reply.code(200).send({ info })
+    } catch (err) {
+      return generateErrorResponse(reply, 400, err.name, err.message)
+    }
+  }
+  
   static async create(request, reply) {
     if (!request.user) {
       return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked !")
@@ -49,6 +64,7 @@ class DatatablesController {
       return generateErrorResponse(reply, 400, err.name, err.message)
     }
   }
+  
 }
 
 module.exports = DatatablesController

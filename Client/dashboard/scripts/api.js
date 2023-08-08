@@ -143,7 +143,33 @@ class TouchDTManager{
       }
     }
   }
-  
+  async info(dt_id){
+    if (this.app.auth.currentUser.notLogin()) {
+      throw {
+        name: "Auth Err",
+        message: "Access has been denied !"
+      }
+    }
+    
+    try {
+      let response = await axios({
+        url: `${this.base}/api/v1/${this.app.auth.currentUser.role}/dt/info`,
+        method: "post",
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: {
+          dt_id: dt_id
+        }
+      })
+      return response.data.info
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.retryWithNewToken(this.info, this, [limit, offset])
+        if (result.returnValue) return result.returnValue
+      }
+    }
+  }
   async create(name="No name") { 
     if (this.app.auth.currentUser.notLogin()) {
       throw {
@@ -166,7 +192,7 @@ class TouchDTManager{
       return response.data.info
     } catch (err) {
       if (shouldReAuth(err)) {
-        let result = await this.retryWithNewToken(this.getAll, this, [limit, offset])
+        let result = await this.retryWithNewToken(this.create, this, [limit, offset])
         if (result.returnValue) return result.returnValue
       }
     }
@@ -193,7 +219,7 @@ class TouchDTManager{
       return response.data.info
     } catch (err) {
       if (shouldReAuth(err)) {
-        let result = await this.retryWithNewToken(this.getAll, this, [limit, offset])
+        let result = await this.retryWithNewToken(this.remove, this, [limit, offset])
         if (result.returnValue) return result.returnValue
       }
     }
