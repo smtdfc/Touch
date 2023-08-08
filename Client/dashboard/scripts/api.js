@@ -85,7 +85,18 @@ function isCookiesExist(cookies = []) {
 }
 
 class TouchClientAppEventManager {
-
+static removeEventListener(name, callback) {
+  if (!window.TOUCH_CLIENT_APP_EVENTS[name]) window.TOUCH_CLIENT_APP_EVENTS[name] = []
+  let i = null
+  window.TOUCH_CLIENT_APP_EVENTS[name].forEach((c,idx)=>{
+    if(c === callback){
+      i = idx
+    }
+  })
+  if(i){
+    window.TOUCH_CLIENT_APP_EVENTS[name].splice(i,1)
+  }
+}
   static addEventListener(name, callback) {
     if (!window.TOUCH_CLIENT_APP_EVENTS[name]) window.TOUCH_CLIENT_APP_EVENTS[name] = []
     window.TOUCH_CLIENT_APP_EVENTS[name].push(callback)
@@ -244,7 +255,6 @@ class TouchDataIO {
     })
 
     this.socket.on("auth:err", function(data) {
-      console.log(data);
       ctx.auth = null
     })
 
@@ -261,22 +271,22 @@ class TouchDataIO {
   }
 
   addListener(dt_id) {
-    
+
     return new Promise((resolve, reject) => {
       let ctx = this
 
       function onSuccess(data) {
-        console.log(data);
         ctx.listening[data.dt_id] = function(data) {
           ctx.app.eventManager.emitEvent("datachange", {
             dt_id: dt_id,
             data: data
           })
-          socket.on(`set_${dt_id}`, ctx.listening[data.dt_id])
         }
+        socket.on(`set_${dt_id}`, ctx.listening[data.dt_id])
       }
 
       let socket = this.socket
+
       socket.emit("listener:add", {
         dt_id: dt_id
       })
@@ -286,12 +296,47 @@ class TouchDataIO {
         resolve()
       })
 
-
-
     })
-
   }
 
+  removeListener(dt_id) {
+    return new Promise((resolve, reject) => {
+      let ctx = this
+
+      function onSuccess(data) {
+        socket.off(`set_${dt_id}`, ctx.listening[data.dt_id])
+        delete ctx.listening[data.dt_id]
+      }
+
+      let socket = this.socket
+
+      socket.emit("listener:remove", {
+        dt_id: dt_id
+      })
+
+      socket.on("remove-listener success", function(data) {
+        onSuccess(data)
+        resolve()
+      })
+
+    })
+  }
+
+  setData(dt_id, field, value) {
+    this.socket.emit("set dt", {
+      dt_id,
+      field,
+      value
+    })
+  }
+  
+  getData(dt_id,limit=5,offset=0){
+    this.socket.emit("get dt", {
+      dt_id,
+      limit,
+      offset
+    })
+  }
 
 }
 

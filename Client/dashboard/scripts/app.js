@@ -1,6 +1,29 @@
 const selector = new Turtle.TurtleSelector()
 window.Router = Turtle.RouterControl
 
+function getDifference(timestamp) {
+			const now = luxon.DateTime.now();
+			const pastTime = luxon.DateTime.fromJSDate(new Date(timestamp));
+			const timeDifference = now.diff(pastTime);
+
+			let differenceString = '';
+			
+			if (timeDifference.days > 0) {
+				differenceString += timeDifference.days + ' days ago';
+			} else if (timeDifference.hours > 0) {
+				differenceString += timeDifference.hours + ' hours ago';
+			} else if (timeDifference.minutes > 0) {
+				differenceString += timeDifference.minutes + ' minutes ago';
+			} else if (timeDifference.seconds > 0) {
+				differenceString += timeDifference.seconds + ' seconds ago';
+			} else {
+				differenceString = 'now';
+			}
+
+			return differenceString;
+		}
+
+
 function showLoader() {
   console.log(1);
   selector.byId("main-loader").classList.add("active")

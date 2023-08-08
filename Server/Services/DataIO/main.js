@@ -43,10 +43,67 @@ module.exports = function(fastify) {
         }
       })
 
-      socket.on("set dt", function(data) {
+      socket.on("listener:remove", async function(data) {
         let dt_id = data.dt_id
         if (!socket.data.auth) {
-          socket.emit("add-listener err", {
+          socket.emit("remove-listener err", {
+            name: "Auth Error",
+            message: "Unauthorized !"
+          })
+        } else {
+          let role = await AuthService.getUserRole(socket.data.auth.user_id)
+          if (role == "admin") {
+            socket.data.listeners = socket.data.listeners.filter(id => id != dt_id)
+            socket.emit("remove-listener success", {
+              dt_id: dt_id
+            })
+            socket.leave(dt_id)
+          } else {
+            socket.emit("remove-listener err", {
+              name: "Permission Error",
+              message: "Access has been blocked !"
+            })
+          }
+        }
+      })
+      
+      socket.on("get dt",async function (data) {
+        let dt_id = data.dt_id
+        if (!socket.data.auth) {
+          socket.emit("get-dt err", {
+            name: "Auth Error",
+            message: "Unauthorized !"
+          })
+        } else {
+          if (socket.data.listeners.includes(dt_id)) {
+            try {
+              let res = await DatatableIOService.getData(
+                dt_id,
+                data.limit ?? 5,
+                data.offset ?? 0
+              )
+              
+              socket.emit(`set_${dt_id}`,{
+                dt_id:dt_id,
+                data:res
+              })
+              
+            } catch (err) {
+              socket.emit("get-dt err", err)
+            }
+          } else {
+            socket.emit("get-dt err", {
+              name: "Permission Error",
+              message: "Access has been blocked !"
+            })
+          }
+        }
+      })
+      
+      socket.on("set dt", async function(data) {
+        let dt_id = data.dt_id
+        if (!socket.data.auth) {
+          socket.emit("set-dt err", {
             name: "Auth Error",
             message: "Unauthorized !"
           })
@@ -64,9 +121,9 @@ module.exports = function(fastify) {
                 value: data.value
               })
             } catch (err) {
-              socket.emit("set-dt err",err)
+              socket.emit("set-dt err", err)
             }
-          }else{
+          } else {
             socket.emit("set-dt err", {
               name: "Permission Error",
               message: "Access has been blocked !"
