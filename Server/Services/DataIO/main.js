@@ -1,6 +1,7 @@
 const {verify} = require("../Authentication/token.js")
 module.exports = function(fastify ){
   console.log("Init WebSocket Protocol ...")
+  fastify.ready().then(() => {
   fastify.io.on("connection",function(socket){
     socket.auth = null
     socket.on("auth",async function(data){
@@ -13,5 +14,6 @@ module.exports = function(fastify ){
         socket.emit("auth:err",err)
       }
     })
+  })
   })
 }
