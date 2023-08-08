@@ -34,14 +34,15 @@ class DatatablesController {
     }
   }
   
-  static async admingetInfoDT(request, reply) {
+  static async adminGetInfoDT(request, reply) {
     if (!request.user) {
       return generateErrorResponse(reply, 403, "Permission Error", "Access has been blocked !")
     }
   
     try {
       let info = await DatatablesService.info(
-        request.body.dt_id
+        request.body.dt_id,
+        true
       )
       return reply.code(200).send({ info })
     } catch (err) {

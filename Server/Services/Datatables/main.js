@@ -24,6 +24,7 @@ class DatatablesService {
     
     return dt
   }
+  
   static async getByUserId(user_id, limit = 5, offset = 0) {
 
   }
@@ -66,7 +67,7 @@ class DatatablesService {
     }
   }
   
-  static async info(dt_id){
+  static async info(dt_id,force){
     let dt = await this.getDT(dt_id,force)
     try {
       

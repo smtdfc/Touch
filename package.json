@@ -21,7 +21,8 @@
 		"sqlite3": "^5.1.6",
 		"jsonwebtoken": "^9.0.0",
 		"dotenv": "^16.1.4",
-		"bcrypt": "^5.1.0" 
+		"bcrypt": "^5.1.0",
+		"fastify-socket.io":"^4.0.0"
 	},
 	"engines": {
 		"node": "14.x"

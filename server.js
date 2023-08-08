@@ -6,10 +6,12 @@ const fastify = require("fastify")({
 	trustProxy: true
 });
 
+
 fastify.register(require('@fastify/static'), {
   root: path.join(__dirname, './Client/dashboard'),
   prefix: '/Client/dashboard/', 
 })
+
 
 fastify.addHook("preHandler",verifyToken)
 global.models ={}
@@ -19,6 +21,13 @@ const router = require("./Server/Routes/main.js")
 
 fastify.register(require("@fastify/formbody"));
 fastify.register(require("@fastify/cors"))
+fastify.register(require("fastify-socket.io"),{
+  cors:{
+    origin:"*"
+  }
+})
+
+require("./Server/Services/DataIO/main.js")(fastify)
 router(fastify)
 
 

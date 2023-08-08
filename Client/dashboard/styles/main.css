@@ -27,3 +27,15 @@
 .overlay.main{
   backdrop-filter: blur(16px);
 }
+.armorial{
+  margin: 0;
+  padding: 4px;
+  border: solid;
+  border-radius: 20px;
+  background: transparent;
+}
+
+.armorial.active{
+  border-color: #26FF00;
+  background: #00FF6E45;
+}

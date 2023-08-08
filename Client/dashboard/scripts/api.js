@@ -387,6 +387,7 @@ class TouchClientApp {
     this.server = new TouchServerConnection(this.base)
     this.auth = new TouchClientAuth(this)
     this.DT = new TouchDTManager(this)
+    this.socket = io(this.base)
   }
 }
 
