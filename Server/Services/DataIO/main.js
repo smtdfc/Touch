@@ -27,7 +27,7 @@ module.exports = function(fastify) {
             message: "Unauthorized !"
           })
         } else {
-          let role = await AuthService.getUserRole(socket.auth.user_id)
+          let role = await AuthService.getUserRole(socket.data.auth.user_id)
           if (role == "admin") {
             socket.data.listeners.push(dt_id)
             socket.join(dt_id)
@@ -45,7 +45,7 @@ module.exports = function(fastify) {
             message: "Unauthorized !"
           })
         } else {
-          let role = await AuthService.getUserRole(socket.auth.user_id)
+          let role = await AuthService.getUserRole(socket.data.auth.user_id)
           if (role == "admin") {
             socket.data.listeners = socket.data.listeners.filter(n=> n!=dt_id)
             socket.leave(dt_id)
@@ -63,7 +63,7 @@ module.exports = function(fastify) {
             message: "Unauthorized !"
           })
         } else {
-          let role = await AuthService.getUserRole(socket.auth.user_id)
+          let role = await AuthService.getUserRole(socket.data.auth.user_id)
           if (role == "admin") {
             if (socket.data.listeners.includes(dt_id)) {
               let list = await DatatableIOService.getData(
@@ -89,7 +89,7 @@ module.exports = function(fastify) {
             message: "Unauthorized !"
           })
         } else {
-          let role = await AuthService.getUserRole(socket.auth.user_id)
+          let role = await AuthService.getUserRole(socket.data.auth.user_id)
           if (role == "admin") {
             if (socket.data.listeners.includes(dt_id)) {
              await DatatableIOService.setData(

@@ -246,6 +246,20 @@ class TouchDataIO {
     this.auth = null
     this.listening = []
     let ctx = this
+
+    ctx.socket.on("get_dt_data:success", function(d) {
+      let data = d.data.reverse().map(v => {
+        return {
+          value: v.value,
+          timestamp: v.lastUpdate
+        }
+      })
+      ctx.data[d.dt_id].push(...data)
+      ctx.app.eventManager.emitEvent("data_loaded", {
+        dt_id: d.dt_id,
+        data: data
+      })
+    })
     this.socket.emit("auth", {
       accessToken: TouchCookieManager.getCookie("at")
     })
@@ -271,7 +285,34 @@ class TouchDataIO {
   }
 
   addListener(dt_id) {
-    
+    let ctx = this
+    return new Promise((resolve, reject) => {
+      ctx.socket.on("add_listener:success", function(data) {
+        ctx.data[dt_id] = []
+        ctx.listening[dt_id] = function(d) {
+
+          let val = {
+            value: d.value,
+            timestamp: Date.now()
+          }
+          ctx.data[dt_id].unshift(val)
+          ctx.app.eventManager.emitEvent("data_added", {
+            dt_id: dt_id,
+            value: val
+          })
+
+        }
+        ctx.socket.on(`set_${dt_id}`, ctx.listening[dt_id])
+
+
+
+        resolve()
+      })
+
+      ctx.socket.emit("add_listener", {
+        dt_id: dt_id
+      })
+    })
   }
 
   removeListener(dt_id) {
@@ -285,11 +326,11 @@ class TouchDataIO {
 
       let socket = this.socket
 
-      socket.emit("listener:remove", {
+      socket.emit("remove_listener", {
         dt_id: dt_id
       })
 
-      socket.on("remove-listener success", function(data) {
+      socket.on("remove_listener:success", function(data) {
         onSuccess(data)
         resolve()
       })
@@ -297,16 +338,15 @@ class TouchDataIO {
     })
   }
 
-  setData(dt_id, field, value) {
-    this.socket.emit("set dt", {
+  setData(dt_id, value) {
+    this.socket.emit("set_dt_data", {
       dt_id,
-      field,
       value
     })
   }
 
   getData(dt_id, limit = 5, offset = 0) {
-    this.socket.emit("get dt", {
+    this.socket.emit("get_dt_data", {
       dt_id,
       limit,
       offset

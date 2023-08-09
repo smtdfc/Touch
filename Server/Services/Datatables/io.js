@@ -6,7 +6,7 @@ function getDTModel(dt_id) {
       type: DataTypes.TEXT
     },
     lastUpdate: {
-      type: DataTypes.TEXT
+      type: DataTypes.INTEGER
     }
 
   }, {
@@ -22,7 +22,7 @@ module.exports = class DataTableIOService {
       let model = await getDTModel(dt_id)
       return await model.findAll({
         orderBy: [
-          ["lastUpdate", "DESC"]
+          ["lastUpdate", "DES"]
         ],
         limit: limit,
         offset: offset

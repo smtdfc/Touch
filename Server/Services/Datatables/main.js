@@ -8,7 +8,7 @@ async function createDTModel(dt_id){
       type:DataTypes.TEXT
     },
     lastUpdate:{
-      type:DataTypes.TEXT
+      type:DataTypes.INTEGER
     }
     
   },{

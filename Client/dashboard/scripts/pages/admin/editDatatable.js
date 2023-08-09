@@ -32,8 +32,8 @@ Turtle.createComponent("page-admin-edit-dt", {
           Last Updated :<span ref="dt-data-lastupdate">${getDifference(Date.now())}</span>
           <table class="table table-border" ref="dt-data" style="width:100%" >
             <tr>
-              <th>Field Name</th>
-              <th>Field Value</th>
+              <th>Time </th>
+              <th>Values</th>
             </tr>
           </table>
        </div>
@@ -45,7 +45,7 @@ Turtle.createComponent("page-admin-edit-dt", {
 
   onFirstRender: async function() {
     let ctx = this
-    this.data.fields =[]
+    this.data.fields = []
     this.data.limit = 0
     this.data.offset = 0
     this.data.dt_info = {}
@@ -69,47 +69,49 @@ Turtle.createComponent("page-admin-edit-dt", {
 
     this.connected = false
     this.onDataChange = function(data) {
-      if(!ctx.data.fields.includes(data.data.field)){
-        ctx.data.fields.push(data.data.field)
+
+      if (data.dt_id == ctx.data.dt) {
+
         let tr = document.createElement("tr")
-        tr.dataset.field = `field_${data.field}`
+        //tr.dataset.field = `field_${field}`
         tr.innerHTML = `
-            <tr>
-              <td>${data.data.field}</td>
-              <td>${data.data.value}</td>
-            </tr>
-          `
-          ctx.ref("dt-data").addChild(tr)
-      }else{
-        (document.querySelector(`[data-field="field_${data.data.field}"]`) ).innerHTML = `
           <tr>
-              <td>${data.data.field}</td>
-              <td>${data.data.value}</td>
+            <td>${new Date(data.value.timestamp).toISOString()}</td>
+            <td>${data.value.value}</td>
           </tr>
         `
+        ctx.ref("dt-data").addChild(tr)
       }
     }
-    
-    app.DataIO.addListener(this.data.dt)
-      .then((fields) => {
-        ctx.data.fields.push(...fields)
-        fields.forEach(field=>{
+    this.onDataLoaded = function(data) {
+
+      if (data.dt_id == ctx.data.dt) {
+        let d = data.data ?? []
+        d.forEach((k) => {
           let tr = document.createElement("tr")
-          tr.dataset.field = `field_${field}`
+          //tr.dataset.field = `field_${field}`
           tr.innerHTML = `
-            <tr>
-              <td>${ field}</td>
-              <td> Loading . . . </td>
-            </tr>
-          `
+                        <tr>
+                          <td>${new Date(parseInt(k.timestamp)).toISOString()}</td>
+                          <td>${k.value}</td>
+                        </tr>
+                      `
           ctx.ref("dt-data").addChild(tr)
         })
-        
+
+      }
+    }
+
+    app.DataIO.addListener(this.data.dt)
+      .then((fields) => {
         ctx.connected = true
-        app.eventManager.addEventListener("datachange", this.onDataChange)
-        //app.DataIO.getData(this.data.dt, 10, this.offset)
+        app.eventManager.addEventListener("data_added", this.onDataChange)
+        app.eventManager.addEventListener("data_loaded", this.onDataLoaded)
+
+        app.DataIO.getData(this.data.dt, 10, this.offset)
+
       })
-      
+
   },
 
   onCreate: function() {
@@ -118,6 +120,10 @@ Turtle.createComponent("page-admin-edit-dt", {
 
   onRemove: function() {
     app.DataIO.removeListener(this.data.dt)
-    if (this.connected) app.eventManager.removeEventListener("datachange", this.onDataChange)
+
+    if (this.connected) {
+      app.eventManager.removeEventListener("data_added", this.onDataChange)
+      app.eventManager.removeEventListener("data_loaded", this.onDataLoaded)
+    }
   }
 })
