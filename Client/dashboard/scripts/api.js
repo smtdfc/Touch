@@ -85,18 +85,18 @@ function isCookiesExist(cookies = []) {
 }
 
 class TouchClientAppEventManager {
-static removeEventListener(name, callback) {
-  if (!window.TOUCH_CLIENT_APP_EVENTS[name]) window.TOUCH_CLIENT_APP_EVENTS[name] = []
-  let i = null
-  window.TOUCH_CLIENT_APP_EVENTS[name].forEach((c,idx)=>{
-    if(c === callback){
-      i = idx
+  static removeEventListener(name, callback) {
+    if (!window.TOUCH_CLIENT_APP_EVENTS[name]) window.TOUCH_CLIENT_APP_EVENTS[name] = []
+    let i = null
+    window.TOUCH_CLIENT_APP_EVENTS[name].forEach((c, idx) => {
+      if (c === callback) {
+        i = idx
+      }
+    })
+    if (i) {
+      window.TOUCH_CLIENT_APP_EVENTS[name].splice(i, 1)
     }
-  })
-  if(i){
-    window.TOUCH_CLIENT_APP_EVENTS[name].splice(i,1)
   }
-}
   static addEventListener(name, callback) {
     if (!window.TOUCH_CLIENT_APP_EVENTS[name]) window.TOUCH_CLIENT_APP_EVENTS[name] = []
     window.TOUCH_CLIENT_APP_EVENTS[name].push(callback)
@@ -277,11 +277,16 @@ class TouchDataIO {
 
       function onSuccess(data) {
         ctx.listening[data.dt_id] = function(data) {
+         // if (!ctx.data[dt_id]) ctx.data[dt_id] = {}
+         console.log(data);
+          if (!ctx.data[dt_id][data.field]) ctx.data[dt_id][data.field] = []
+          ctx.data[dt_id][data.field].push(data.value)
           ctx.app.eventManager.emitEvent("datachange", {
             dt_id: dt_id,
             data: data
           })
         }
+        ctx.data[dt_id] = {}
         socket.on(`set_${dt_id}`, ctx.listening[data.dt_id])
       }
 
@@ -329,8 +334,8 @@ class TouchDataIO {
       value
     })
   }
-  
-  getData(dt_id,limit=5,offset=0){
+
+  getData(dt_id, limit = 5, offset = 0) {
     this.socket.emit("get dt", {
       dt_id,
       limit,

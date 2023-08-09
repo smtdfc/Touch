@@ -38,7 +38,8 @@ class DataTableIOService{
       let model = await getDTModel(dt_id)
        await model.create({
         field:field,
-        value:value
+        value:value,
+        lastUpdate:Date.now()
       })
       return {
         field,value

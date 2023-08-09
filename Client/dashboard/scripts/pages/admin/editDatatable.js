@@ -45,6 +45,7 @@ Turtle.createComponent("page-admin-edit-dt", {
 
   onFirstRender: async function() {
     let ctx = this
+    this.data.fields =[]
     this.data.limit = 0
     this.data.offset = 0
     this.data.dt_info = {}
@@ -68,39 +69,34 @@ Turtle.createComponent("page-admin-edit-dt", {
 
     this.connected = false
     this.onDataChange = function(data) {
-
-      if (data.dt_id == ctx.data.dt) {
-        let d = data.data
-        if (d instanceof Array) {
-          offset += d.length
-          d.forEach(data => {
-            let tr = document.createElement("tr")
-            tr.innerHTML = `
-                      <tr>
-                        <td>${data.data.field}</td>
-                        <td>${data.data.value}</td>
-                      </tr>
-                    `
-            ctx.ref("dt-data").addChild(tr)
-          })
-        }
-
+      if(!ctx.data.fields.includes(data.data.field)){
+        ctx.data.fields.push(data.data.field)
         let tr = document.createElement("tr")
+        tr.dataset.field = `field_${data.field}`
         tr.innerHTML = `
+            <tr>
+              <td>${data.data.field}</td>
+              <td>${data.data.value}</td>
+            </tr>
+          `
+          ctx.ref("dt-data").addChild(tr)
+      }else{
+        document.querySelector(`[data-field="field_${data.fields}"]`).innerHTML = `
           <tr>
-            <td>${data.data.field}</td>
-            <td>${data.data.value}</td>
+              <td>${data.data.field}</td>
+              <td>${data.data.value}</td>
           </tr>
         `
-        ctx.ref("dt-data").addChild(tr)
       }
+      
     }
+
 
     app.DataIO.addListener(this.data.dt)
       .then(() => {
         ctx.connected = true
         app.eventManager.addEventListener("datachange", this.onDataChange)
-        app.DataIO.getData(this.data.dt, this.data.limit, this.offset)
+        app.DataIO.getData(this.data.dt, 10, this.offset)
       })
   },
 
