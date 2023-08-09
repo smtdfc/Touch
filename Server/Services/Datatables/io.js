@@ -1,3 +1,5 @@
+const {  DataTypes } = require("sequelize")
+
 function getDTModel(dt_id) {
   let model = models.conn.sequelize_dt.define(`dt_${dt_id}`, {
     field: {
@@ -17,7 +19,7 @@ function getDTModel(dt_id) {
   return model
 }
 
-class DataTableIOService{
+module.exports = class DataTableIOService{
   static async getData(dt_id,limit=5,offset=0){
     try {
       let model = await getDTModel(dt_id)

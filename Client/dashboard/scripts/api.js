@@ -278,7 +278,7 @@ class TouchDataIO {
       function onSuccess(data) {
         ctx.listening[data.dt_id] = function(data) {
          // if (!ctx.data[dt_id]) ctx.data[dt_id] = {}
-         console.log(data);
+        
           if (!ctx.data[dt_id][data.field]) ctx.data[dt_id][data.field] = []
           ctx.data[dt_id][data.field].push(data.value)
           ctx.app.eventManager.emitEvent("datachange", {
@@ -300,7 +300,9 @@ class TouchDataIO {
         onSuccess(data)
         resolve()
       })
-
+socket.on("add-listener err", function(data) {
+  console.log(data);
+})
     })
   }
 

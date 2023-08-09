@@ -69,6 +69,7 @@ Turtle.createComponent("page-admin-edit-dt", {
 
     this.connected = false
     this.onDataChange = function(data) {
+      console.log(data);
       if(!ctx.data.fields.includes(data.data.field)){
         ctx.data.fields.push(data.data.field)
         let tr = document.createElement("tr")
@@ -94,10 +95,12 @@ Turtle.createComponent("page-admin-edit-dt", {
 
     app.DataIO.addListener(this.data.dt)
       .then(() => {
+        console.log(1);
         ctx.connected = true
         app.eventManager.addEventListener("datachange", this.onDataChange)
         app.DataIO.getData(this.data.dt, 10, this.offset)
       })
+      
   },
 
   onCreate: function() {
