@@ -1,10 +1,7 @@
-const {  DataTypes } = require("sequelize")
+const { DataTypes } = require("sequelize")
 
 function getDTModel(dt_id) {
   let model = models.conn.sequelize_dt.define(`dt_${dt_id}`, {
-    field: {
-      type: DataTypes.TEXT
-    },
     value: {
       type: DataTypes.TEXT
     },
@@ -19,45 +16,35 @@ function getDTModel(dt_id) {
   return model
 }
 
-module.exports = class DataTableIOService{
-  static async getData(dt_id,limit=5,offset=0){
+module.exports = class DataTableIOService {
+  static async getData(dt_id, limit = 5, offset = 0) {
     try {
       let model = await getDTModel(dt_id)
       return await model.findAll({
-        limit:limit,
-        offset:0
-      })
-    } catch (err) {
-      throw {
-        name:"Action Error"
-      }
-    }
-    
-  }
-  
-  static async getAllFieldName(dt_id){
-    try {
-      let model = await getDTModel(dt_id)
-      return await model.findAll({
-         attributes:[[sequelize.fn('DISTINCT', sequelize.col('fields'))]]
+        orderBy: [
+          ["lastUpdate", "DESC"]
+        ],
+        limit: limit,
+        offset: offset
       })
     } catch (err) {
       throw {
         name: "Action Error"
       }
     }
+
   }
-  
-  static async setData(dt_id,field,value){
+
+  static async setData(dt_id, value) {
     try {
       let model = await getDTModel(dt_id)
-       await model.create({
-        field:field,
-        value:value,
-        lastUpdate:Date.now()
+      let data = await model.create({
+        value: value,
+        lastUpdate: Date.now()
       })
       return {
-        field,value
+        value,
+        timestamps: data.lastUpdate
       }
     } catch (err) {
       throw {
@@ -65,5 +52,5 @@ module.exports = class DataTableIOService{
       }
     }
   }
-  
+
 }

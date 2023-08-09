@@ -81,19 +81,30 @@ Turtle.createComponent("page-admin-edit-dt", {
           `
           ctx.ref("dt-data").addChild(tr)
       }else{
-        (document.querySelector(`[data-field="field_${data.fields}"]`) || document.createElement("tr")).innerHTML = `
+        (document.querySelector(`[data-field="field_${data.data.field}"]`) ).innerHTML = `
           <tr>
               <td>${data.data.field}</td>
               <td>${data.data.value}</td>
           </tr>
         `
       }
-      
     }
-
-
+    
     app.DataIO.addListener(this.data.dt)
-      .then((field) => {
+      .then((fields) => {
+        ctx.data.fields.push(...fields)
+        fields.forEach(field=>{
+          let tr = document.createElement("tr")
+          tr.dataset.field = `field_${field}`
+          tr.innerHTML = `
+            <tr>
+              <td>${ field}</td>
+              <td> Loading . . . </td>
+            </tr>
+          `
+          ctx.ref("dt-data").addChild(tr)
+        })
+        
         ctx.connected = true
         app.eventManager.addEventListener("datachange", this.onDataChange)
         //app.DataIO.getData(this.data.dt, 10, this.offset)

@@ -271,34 +271,7 @@ class TouchDataIO {
   }
 
   addListener(dt_id) {
-    return new Promise((resolve, reject) => {
-      let ctx = this
-      ctx.socket.on("add-listener success",function(data){
-        let fields = data.fields ?? []
-        let dt_id = data.dt_id
-        ctx.data[dt_id] = {}
-        fields.forEach((name)=>{
-          ctx.data[dt_id][name] = []
-        })
-        ctx.listening[dt_id] ={
-          fields:fields
-        }
-        
-        socket.on(`set_${dt_id}`,function(d){
-          ctx.data[dt_id][d.data.field].push(d.data.value)
-          ctx.app.eventManager.emitEvent("datachange",{
-            dt_id:dt_id,
-            data:d.data
-          })
-        })
-        
-        resolve(fields)
-      })
-      
-      ctx.socket.emit("listener:add",{
-        dt_id:dt_id
-      })
-    })
+    
   }
 
   removeListener(dt_id) {

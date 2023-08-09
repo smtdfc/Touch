@@ -19,147 +19,89 @@ module.exports = function(fastify) {
         }
       })
 
-      socket.on("listener:add", async function(data) {
+      socket.on("add_listener", async function(data) {
         let dt_id = data.dt_id
         if (!socket.data.auth) {
-          socket.emit("add-listener err", {
-            name: "Auth Error",
+          socket.emit("add_listener:error", {
+            name: "Auth Err",
             message: "Unauthorized !"
           })
         } else {
-          let role = await AuthService.getUserRole(socket.data.auth.user_id)
+          let role = await AuthService.getUserRole(socket.auth.user_id)
           if (role == "admin") {
             socket.data.listeners.push(dt_id)
-            socket.emit("add-listener success", {
-              dt_id: dt_id,
-              fields:await DatatableIOService.getAllFieldName(dt_id)
-            })
             socket.join(dt_id)
-          } else {
-            socket.emit("add-listener err", {
-              name: "Permission Error",
-              message: "Access has been blocked !"
+            socket.emit("add_listener:success", {
+              dt_id
             })
           }
         }
       })
-
-      socket.on("listener:remove", async function(data) {
+      socket.on("remove_listener", async function(data) {
         let dt_id = data.dt_id
         if (!socket.data.auth) {
-          socket.emit("remove-listener err", {
-            name: "Auth Error",
+          socket.emit("remove_listener:error", {
+            name: "Auth Err",
             message: "Unauthorized !"
           })
         } else {
-          let role = await AuthService.getUserRole(socket.data.auth.user_id)
+          let role = await AuthService.getUserRole(socket.auth.user_id)
           if (role == "admin") {
-            socket.data.listeners = socket.data.listeners.filter(id => id != dt_id)
-            socket.emit("remove-listener success", {
-              dt_id: dt_id
-            })
+            socket.data.listeners = socket.data.listeners.filter(n=> n!=dt_id)
             socket.leave(dt_id)
-          } else {
-            socket.emit("remove-listener err", {
-              name: "Permission Error",
-              message: "Access has been blocked !"
+            socket.emit("remove_listener:success", {
+              dt_id
             })
           }
         }
       })
-      
-      socket.on("get dt",async function (data) {
+      socket.on("get_dt_data", async function(data) {
         let dt_id = data.dt_id
         if (!socket.data.auth) {
-          socket.emit("get-dt err", {
-            name: "Auth Error",
+          socket.emit("get_dt_data:error", {
+            name: "Auth Err",
             message: "Unauthorized !"
           })
         } else {
-          if (socket.data.listeners.includes(dt_id)) {
-            try {
-              let res = await DatatableIOService.getData(
+          let role = await AuthService.getUserRole(socket.auth.user_id)
+          if (role == "admin") {
+            if (socket.data.listeners.includes(dt_id)) {
+              let list = await DatatableIOService.getData(
                 dt_id,
                 data.limit ?? 5,
                 data.offset ?? 0
               )
               
-              socket.emit(`set_${dt_id}`,{
+              socket.emit("get_dt_data:success",{
                 dt_id:dt_id,
-                data:res
+                data:list
               })
+            }
+          }
+        }
+
+      })
+      socket.on("set_dt_data", async function(data) {
+        let dt_id = data.dt_id
+        if (!socket.data.auth) {
+          socket.emit("set_dt_data:error", {
+            name: "Auth Err",
+            message: "Unauthorized !"
+          })
+        } else {
+          let role = await AuthService.getUserRole(socket.auth.user_id)
+          if (role == "admin") {
+            if (socket.data.listeners.includes(dt_id)) {
+             await DatatableIOService.setData(
+                dt_id,
+                JSON.stringify(data.value ?? {})
+              )
               
-            } catch (err) {
-              socket.emit("get-dt err", err)
-            }
-          } else {
-            socket.emit("get-dt err", {
-              name: "Permission Error",
-              message: "Access has been blocked !"
-            })
-          }
-        }
-      })
-      
-      socket.on("get field", async function(data) {
-        let dt_id = data.dt_id
-        if (!socket.data.auth) {
-          socket.emit("get-field err", {
-            name: "Auth Error",
-            message: "Unauthorized !"
-          })
-        } else {
-          if (socket.data.listeners.includes(dt_id)) {
-            try {
-              let res = await DatatableIOService.getAllFieldName(
-                dt_id,
-              )
-      
-              socket.emit(`field_${dt_id}`, {
-                dt_id: dt_id,
-                data: res
+              fastify.io.to(dt_id).emit(`set_${dt_id}`,{
+                dt_id:dt_id,
+                value:JSON.stringify(data.value ?? {})
               })
-      
-            } catch (err) {
-              socket.emit("get-field err", err)
             }
-          } else {
-            socket.emit("get-field err", {
-              name: "Permission Error",
-              message: "Access has been blocked !"
-            })
-          }
-        }
-      })
-      
-      socket.on("set dt", async function(data) {
-        let dt_id = data.dt_id
-        if (!socket.data.auth) {
-          socket.emit("set-dt err", {
-            name: "Auth Error",
-            message: "Unauthorized !"
-          })
-        } else {
-          if (socket.data.listeners.includes(dt_id)) {
-            try {
-              await DatatableIOService.setData(
-                dt_id,
-                data.field,
-                data.value
-              )
-              fastify.io.to(dt_id).emit(`set_${dt_id}`, {
-                dt_id,
-                field: data.field,
-                value: data.value
-              })
-            } catch (err) {
-              socket.emit("set-dt err", err)
-            }
-          } else {
-            socket.emit("set-dt err", {
-              name: "Permission Error",
-              message: "Access has been blocked !"
-            })
           }
         }
       })

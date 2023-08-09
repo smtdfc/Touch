@@ -4,9 +4,6 @@ const {  DataTypes } = require("sequelize")
 
 async function createDTModel(dt_id){
   let model = models.conn.sequelize_dt.define(`dt_${dt_id}`,{
-    field:{
-      type:DataTypes.TEXT
-    },
     value:{
       type:DataTypes.TEXT
     },
@@ -43,7 +40,6 @@ class DatatablesService {
         }
       }
     }
-    
     return dt
   }
   
