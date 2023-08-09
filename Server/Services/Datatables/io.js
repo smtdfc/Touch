@@ -35,6 +35,19 @@ module.exports = class DataTableIOService{
     
   }
   
+  static async getAllFieldName(dt_id){
+    try {
+      let model = await getDTModel(dt_id)
+      return await model.findAll({
+         attributes:[[sequelize.fn('DISTINCT', sequelize.col('fields'))]]
+      })
+    } catch (err) {
+      throw {
+        name: "Action Error"
+      }
+    }
+  }
+  
   static async setData(dt_id,field,value){
     try {
       let model = await getDTModel(dt_id)

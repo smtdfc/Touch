@@ -31,7 +31,8 @@ module.exports = function(fastify) {
           if (role == "admin") {
             socket.data.listeners.push(dt_id)
             socket.emit("add-listener success", {
-              dt_id: dt_id
+              dt_id: dt_id,
+              fields:await DatatableIOService.getAllFieldName(dt_id)
             })
             socket.join(dt_id)
           } else {
@@ -93,6 +94,37 @@ module.exports = function(fastify) {
             }
           } else {
             socket.emit("get-dt err", {
+              name: "Permission Error",
+              message: "Access has been blocked !"
+            })
+          }
+        }
+      })
+      
+      socket.on("get field", async function(data) {
+        let dt_id = data.dt_id
+        if (!socket.data.auth) {
+          socket.emit("get-field err", {
+            name: "Auth Error",
+            message: "Unauthorized !"
+          })
+        } else {
+          if (socket.data.listeners.includes(dt_id)) {
+            try {
+              let res = await DatatableIOService.getAllFieldName(
+                dt_id,
+              )
+      
+              socket.emit(`field_${dt_id}`, {
+                dt_id: dt_id,
+                data: res
+              })
+      
+            } catch (err) {
+              socket.emit("get-field err", err)
+            }
+          } else {
+            socket.emit("get-field err", {
               name: "Permission Error",
               message: "Access has been blocked !"
             })

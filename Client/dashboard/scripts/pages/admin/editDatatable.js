@@ -69,7 +69,6 @@ Turtle.createComponent("page-admin-edit-dt", {
 
     this.connected = false
     this.onDataChange = function(data) {
-      console.log(data);
       if(!ctx.data.fields.includes(data.data.field)){
         ctx.data.fields.push(data.data.field)
         let tr = document.createElement("tr")
@@ -82,7 +81,7 @@ Turtle.createComponent("page-admin-edit-dt", {
           `
           ctx.ref("dt-data").addChild(tr)
       }else{
-        document.querySelector(`[data-field="field_${data.fields}"]`).innerHTML = `
+        (document.querySelector(`[data-field="field_${data.fields}"]`) || document.createElement("tr")).innerHTML = `
           <tr>
               <td>${data.data.field}</td>
               <td>${data.data.value}</td>
@@ -94,11 +93,10 @@ Turtle.createComponent("page-admin-edit-dt", {
 
 
     app.DataIO.addListener(this.data.dt)
-      .then(() => {
-        console.log(1);
+      .then((field) => {
         ctx.connected = true
         app.eventManager.addEventListener("datachange", this.onDataChange)
-        app.DataIO.getData(this.data.dt, 10, this.offset)
+        //app.DataIO.getData(this.data.dt, 10, this.offset)
       })
       
   },
