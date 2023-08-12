@@ -8,8 +8,12 @@ class TouchClientAppAuth{
     try {
       let response= await axios({
         method:"post",
-        url:`${this.base}/api/1/auth/login`
-        
+        url:`${this.base}/api/1/auth/login`,
+        data:{
+          username:username,
+          password:password,
+          info:window.navigator.userAgent
+        }
       })
     } catch (err) {}
   }
@@ -31,4 +35,4 @@ let tapp = createApp({
   base:"https://jolly-good-anger.glitch.me"
 })
 
-tapp.auth.login()
+tapp.auth.login("smtdfc","123456")

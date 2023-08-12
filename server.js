@@ -20,7 +20,7 @@ fastify.register(require('@fastify/static'), {
 
 global.models ={}
 require("./Server/Models/main.js")
-
+require("./Server/Routes/main.js")(fastify)
 
 fastify.listen({port:3000, host: "0.0.0.0" },
 	function(err, address) {
