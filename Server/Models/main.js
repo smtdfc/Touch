@@ -1,10 +1,10 @@
 const { Sequelize, DataTypes } = require("sequelize")
-const configs = require("configs.js")
+const configs = require("./configs.js")
 
 models.conn = {}
 models.conn.touchDB = new Sequelize(configs.touch_db)
 
-models.Users = models.conn.define("users", {
+models.Users = models.conn.touchDB.define("users", {
   user_id: {
     type: DataTypes.TEXT,
     primaryKey: true
