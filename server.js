@@ -1,3 +1,4 @@
+require("dotenv").config()
 const path = require("path");
 const fastify = require("fastify")({
 	logger: false,
@@ -18,6 +19,8 @@ fastify.register(require('@fastify/static'), {
 
 
 global.models ={}
+require("./Server/Models/main.js")
+
 
 fastify.listen({port:3000, host: "0.0.0.0" },
 	function(err, address) {
