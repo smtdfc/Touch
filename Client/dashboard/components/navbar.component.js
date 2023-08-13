@@ -12,6 +12,7 @@ app.staticComponent("main-navbar",function(controller){
   
   controller.onRender =function(){
     controller.refreshUI()
+    TouchApp.on("authstatechange",controller.refreshUI)
   }
   
   return `

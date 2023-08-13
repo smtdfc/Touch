@@ -3,11 +3,11 @@ function getResponseErr(err) {
   return err.response.data.error
 }
 
-function shouldReAuth(err){
-  if(["Auth Error","Token Error","Permission Error"].includes(getResponseErr(err).name)){
+function shouldReAuth(err) {
+  if (["Auth Error", "Token Error", "Permission Error"].includes(getResponseErr(err).name)) {
     return true
   }
-  
+
   return false
 }
 
@@ -46,7 +46,11 @@ class TouchClientAppAuth {
       username: null,
       user_id: null,
       role: null,
-
+      reset: function() {
+        this.usernameb = null
+        this.user_id = null
+        this.role = null
+      }
     }
   }
 
@@ -87,36 +91,100 @@ class TouchClientAppAuth {
         method: "post",
         url: `${this.base}/api/v1/auth/info`,
         headers: {
-          authorization:`token ${TouchCookieManager.getCookie("at")}`
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
         }
       })
-      
+
       let data = response.data.results
       this.#user.username = data.name
       this.#user.user_id = data.id
       this.#user.role = data.role
       return this.#user
     } catch (err) {
-      
+      if (shouldReAuth(err)) {
+        let res = await this.retryWithNewToken(this.info, [], this)
+        if (res.error) {
+          this.#user.reset()
+          this.app.emitEvent("authstatechange", this.currentUser)
+        } else {
+          return res.returnValue
+        }
+
+        return
+      }
+      throw err
+    }
+
+
+  }
+  async logout() {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/auth/logout`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: {
+          refreshToken: `${TouchCookieManager.getCookie("rt")}`
+        }
+      })
+      this.#user.reset()
+      TouchCookieManager.eraseCookie("at")
+      TouchCookieManager.eraseCookie("rt")
+      this.app.emitEvent("authstatechange", this.currentUser)
+      return this.#user
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let res = await this.retryWithNewToken(this.info, [], this)
+        if (res.success) return res.returnValue
+        throw res.error
+      }
+      throw err
+    }
+  }
+  async token() {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/auth/token`,
+        data: {
+          refreshToken: `${TouchCookieManager.getCookie("rt")}`
+        }
+      })
+
+      let tokens = response.data.results.tokens
+      TouchCookieManager.setCookie("at", tokens.accessToken)
+      TouchCookieManager.setCookie("rt", tokens.refreshToken)
+      return this.#user
+    } catch (err) {
+      throw getResponseErr(err)
     }
   }
 
-async token(){
-  try {
-    let response = await axios({
-      method: "post",
-      url: `${this.base}/api/v1/auth/token`,
-      data: {
-        refreshToken: `${TouchCookieManager.getCookie("rt")}`
-      }
-    })
-  
-    
-    return this.#user
-  } catch (err) {
-    throw getResponseErr(err)
+  async retryWithNewToken(callback, args, ctx) {
+    let results = {
+      success: false,
+      returnValue: null,
+      error: null
+    }
+
+    try {
+      await this.token()
+    } catch (err) {
+      results.error = err
+      return results
+    }
+
+    try {
+      results.returnValue = await callback.bind(ctx)(...args)
+      results.success = true
+    } catch (err) {
+      results.error = err
+    }
+
+    return results
   }
-}
 }
 
 class TouchClientApp {
@@ -148,4 +216,3 @@ function createApp(configs) {
 var TouchApp = createApp({
   base: "https://jolly-good-anger.glitch.me"
 })
-

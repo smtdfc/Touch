@@ -48,7 +48,7 @@ module.exports = class AuthController{
     }
     
     try {
-      let result = await AuthService.logout(request.user.user_id,request.refreshToken)
+      let result = await AuthService.logout(request.user.user_id,request.body.refreshToken)
       return generateSuccessResponse(reply, 200, result)
     } catch (err) {
       return generateErrResponse(reply, 400, err)

@@ -91,7 +91,7 @@ module.exports = class AuthService {
   }
 
   static async newToken(refreshToken) {
-    let token = await models.LoginHistory.findAll({
+    let token = await models.LoginHistory.findOne({
       where: {
         token: refreshToken
       }
@@ -117,7 +117,7 @@ module.exports = class AuthService {
   }
   
   static async logout(user_id,refreshToken){
-    let session = await models.LoginHistory.findAll({
+    let session = await models.LoginHistory.findOne({
       where: {
         user_id:user_id,
         token: refreshToken

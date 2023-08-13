@@ -8,6 +8,10 @@ function showMsg(msg){
   document.getElementById("messages").appendChild(message)
 }
 
+function isAdmin(){
+  return TouchApp.auth.currentUser.user_id != null && TouchApp.auth.currentUser.role =="admin"
+}
+
 function showLoader() {
   document.getElementById("main-loader").classList.remove("d-none")
 }

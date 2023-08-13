@@ -32,6 +32,13 @@ export async function initRouter() {
       </div>
     `
   })
-
+app.router.on("notallow", function(controller) {
+  controller.router.element.innerHTML = `
+      <div class="text-align-center">
+        <h1 style="font-size:100px">403</h1>
+        <p>You are not authorized to access this page ! That's all we know!</p>
+      </div>
+    `
+})
   app.router.start()
 }
