@@ -26,8 +26,21 @@ app.staticComponent("admin-sidebar-items",function(controller){
 })
 
 app.staticComponent("main-sidebar",function(controller){
+  controller.refreshUI = function(){
+    if(TouchApp.auth.currentUser.role == "admin"){
+      controller.ref("sidebar").HTML = `
+        <admin-sidebar-items></admin-sidebar-items>
+      `
+    }
+    if(TouchApp.auth.currentUser.user_id != null){
+      controller.ref("sidebar").classList.remove("d-none")
+      
+    }else{
+      controller.ref("sidebar").classList.add("d-none")
+    }
+  }
   controller.onRender = function(){
-    controller.ref("sidebar").classList.add("d-none")
+    controller.refreshUI()
   }
   return`
     <div class="sidebar sidebar-icon " id="main-sidebar" ref="sidebar"></div>

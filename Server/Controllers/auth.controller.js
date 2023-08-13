@@ -17,7 +17,7 @@ module.exports = class AuthController{
   
   static async token(request,reply){
     try {
-      let result = await AuthService.token(request.body.refreshToken)
+      let result = await AuthService.newToken(request.body.refreshToken)
       return generateSuccessResponse(reply, 200, result)
     } catch (err) {
       return generateErrResponse(reply, 400, err)
