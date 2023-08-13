@@ -10,7 +10,7 @@ module.exports = async function (request, reply) {
         let info = await TokenService.verify(token, process.env.ACCESSTOKEN_SECRET)
         request.user = info
       } catch (err) {
-        return generateErrResponse(reply,400,err)
+        return generateErrResponse(reply,err)
       }
     }
   }

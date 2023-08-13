@@ -1,5 +1,34 @@
 const TokenService = require("./token.js")
 module.exports = class AuthService {
+  static async userObj(user_id){
+    
+  }
+  
+  static async role(user_id){
+    let user = await models.Users.findOne({
+      where: {
+        user_id: user_id
+      },
+      attributes:["role"],
+      raw: true
+    })
+
+    if (!user) {
+      throw {
+        name: "Auth Error",
+        message: "Incorrect username or password !"
+      }
+    } else {
+      if (user.status == "lock") {
+        throw {
+          name: "Auth Error",
+          message: "Account has been locked  !"
+        }
+      }
+    }
+    return user.role
+
+  }
   static async info(user_id) {
     let user = await models.Users.findOne({
       where: {

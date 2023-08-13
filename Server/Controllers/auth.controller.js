@@ -9,39 +9,39 @@ module.exports = class AuthController{
       let password = request.body.password
       let info = request.body.info
       let result = await AuthService.login(username,password,info)
-      return generateSuccessResponse(reply,200,result)
+      return generateSuccessResponse(reply,result)
     } catch (err) {
-      return generateErrResponse(reply,400,err)
+      return generateErrResponse(reply,err)
     }
   }
   
   static async token(request,reply){
     try {
       let result = await AuthService.newToken(request.body.refreshToken)
-      return generateSuccessResponse(reply, 200, result)
+      return generateSuccessResponse(reply, result)
     } catch (err) {
-      return generateErrResponse(reply, 400, err)
+      return generateErrResponse(reply, err)
     }
   }
   
   static async info(request,reply){
     if (!request.user) {
-      return generateErrResponse(reply,403,{
+      return generateErrResponse(reply,{
         name:"Permission Error",
         message:"Access has been blocked !"
       })
     }
     try {
       let result = await AuthService.info(request.user.user_id)
-      return generateSuccessResponse(reply, 200, result)
+      return generateSuccessResponse(reply, result)
     } catch (err) {
-      return generateErrResponse(reply, 400, err)
+      return generateErrResponse(reply, err)
     }
   }
   
   static async logout (request, reply) {
     if (!request.user) {
-      return generateErrResponse(reply, 403, {
+      return generateErrResponse(reply, {
         name: "Permission Error",
         message: "Access has been blocked !"
       })
@@ -49,9 +49,9 @@ module.exports = class AuthController{
     
     try {
       let result = await AuthService.logout(request.user.user_id,request.body.refreshToken)
-      return generateSuccessResponse(reply, 200, result)
+      return generateSuccessResponse(reply, result)
     } catch (err) {
-      return generateErrResponse(reply, 400, err)
+      return generateErrResponse(reply, err)
     }
   }
 }

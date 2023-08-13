@@ -66,7 +66,7 @@ models.DataTables = models.conn.touchDB.define("datatables", {
   timestamps: false,
 })
 
-models.DataTables_User = models.conn.touchDB.define("datatables_users", {
+models.DataTables_Users = models.conn.touchDB.define("datatables_users", {
 user_id: {
     type: DataTypes.TEXT,
     references: {
@@ -86,5 +86,10 @@ user_id: {
   timestamps: false,
 })
 
-models.Users.belongsToMany(models.DataTables,{primaryKey:'dt_id', through:models.DataTables_User})
-models.DataTables.belongsToMany(models.Users,{primaryKey:'user_id', through:models.DataTables_User})
+models.Users.belongsToMany(models.DataTables,{foreignKey:'dt_id', through:models.DataTables_Users})
+models.DataTables.belongsToMany(models.Users,{foreignKey:'user_id', through:models.DataTables_Users})
+async function setup() {
+  await models.DataTables_Users.sync({ alter: true })
+}
+
+setup()
