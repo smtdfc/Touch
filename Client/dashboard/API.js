@@ -187,11 +187,61 @@ class TouchClientAppAuth {
   }
 }
 
+class DTManager {
+  constructor(app) {
+    this.app = app
+    this.base = app.server
+  }
+
+  async list(limit = 5, offset = 0) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/datatables/list`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { limit, offset }
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.list, [limit, offset], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw err
+    }
+  }
+  
+  async create(name) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/datatables/create`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { name }
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.create, [name], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw err
+    }
+  }
+  
+}
 class TouchClientApp {
   constructor(configs) {
     this.configs = configs
     this.server = configs.base
     this.auth = new TouchClientAppAuth(this)
+    this.datatables = new DTManager(this)
     this.events = {}
   }
 

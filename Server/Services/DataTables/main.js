@@ -15,7 +15,7 @@ module.exports = class DTService{
     }
   }
   
-  static getByOwners(user_id,limit=5,offset=0){
+  static async getByOwners(user_id,limit=5,offset=0){
     try {
       let list = await models.DataTables.findAll({
         includes:{
@@ -33,6 +33,29 @@ module.exports = class DTService{
       throw {
         name: "Action Error",
         message: "Cannot get list datatables !"
+      }
+    }
+  }
+  
+  static async create(createBy,name){
+    let dt_id = (Math.floor(Math.random()*999999)*Date.now()).toString(16)
+    try {
+      let dt = await models.DataTables.create({
+        dt_id:dt_id,
+        name:name,
+        createBy:createBy,
+        status: "active"
+      })
+      
+      dt.addOwner({
+        user_id:createBy
+      })
+      
+      return dt
+    } catch (err) {
+      throw {
+        name: "Action Error",
+        message: "Cannot create datatables !"
       }
     }
   }

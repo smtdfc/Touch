@@ -38,4 +38,25 @@ module.exports = class DTController {
     }
 
   }
+  
+  static async create(request, reply) {
+    if (!request.user) {
+      return generateErrResponse(reply, {
+        name: "Permission Error",
+        message: "Access has been blocked !"
+      })
+    }
+    
+    try {
+      let info = await DTService.create(
+        request.user.user,
+        request.body.name ?? "no name",
+      )
+      return generateSuccessResponse(reply,info)
+    } catch (err) {
+      return generateErrResponse(reply, err)
+    }
+    
+  }
+
 }

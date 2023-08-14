@@ -87,7 +87,7 @@ user_id: {
 })
 
 models.Users.belongsToMany(models.DataTables,{foreignKey:'dt_id', through:models.DataTables_Users})
-models.DataTables.belongsToMany(models.Users,{foreignKey:'user_id', through:models.DataTables_Users})
+models.DataTables.belongsToMany(models.Users,{foreignKey:'user_id', through:models.DataTables_Users,as:"owner"})
 async function setup() {
   await models.DataTables_Users.sync({ alter: true })
 }
