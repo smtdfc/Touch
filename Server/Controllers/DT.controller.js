@@ -49,7 +49,7 @@ module.exports = class DTController {
     
     try {
       let info = await DTService.create(
-        request.user.user,
+        request.user._user,
         request.body.name ?? "no name",
       )
       return generateSuccessResponse(reply,info)

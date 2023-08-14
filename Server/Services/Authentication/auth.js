@@ -4,13 +4,11 @@ module.exports = class AuthService {
     
   }
   
-  static async role(user_id){
+  static async user(user_id){
     let user = await models.Users.findOne({
       where: {
         user_id: user_id
       },
-      attributes:["role"],
-      raw: true
     })
 
     if (!user) {
@@ -26,7 +24,7 @@ module.exports = class AuthService {
         }
       }
     }
-    return user.role
+    return user
 
   }
   static async info(user_id) {

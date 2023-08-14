@@ -14,8 +14,9 @@ function getRole(){
         })
       }
       try {
-        let role = await AuthService.role(request.user.user_id)
-        request.user.role = role
+        let user = await AuthService.user(request.user.user_id)
+        request.user.role = user.role
+        request.user._user = user
       } catch (err) {
         return generateErrResponse(reply, err)
       }
