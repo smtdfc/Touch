@@ -14,10 +14,10 @@ module.exports = class DTController {
     if (request.user.role == "admin") {
       try {
         let list = await DTService.getAll(
-          request.body.limit??5,
-          request.body.offset??0
+          request.body.limit ?? 5,
+          request.body.offset ?? 0
         )
-        return generateSuccessResponse(reply,list)
+        return generateSuccessResponse(reply, list)
       } catch (err) {
         return generateErrResponse(reply, err)
       }
@@ -27,10 +27,10 @@ module.exports = class DTController {
       try {
         let list = await DTService.getByOwners(
           request.user.user_id,
-          request.body.limit??5,
-          request.body.offset??0
+          request.body.limit ?? 5,
+          request.body.offset ?? 0
         )
-        return generateSuccessResponse(reply,list)
+        return generateSuccessResponse(reply, list)
 
       } catch (err) {
         return generateErrResponse(reply, err)
@@ -38,7 +38,7 @@ module.exports = class DTController {
     }
 
   }
-  
+
   static async create(request, reply) {
     if (!request.user) {
       return generateErrResponse(reply, {
@@ -46,17 +46,68 @@ module.exports = class DTController {
         message: "Access has been blocked !"
       })
     }
-    
+
     try {
       let info = await DTService.create(
         request.user._user,
         request.body.name ?? "no name",
       )
-      return generateSuccessResponse(reply,info)
+      return generateSuccessResponse(reply, info)
     } catch (err) {
       return generateErrResponse(reply, err)
     }
+
+  }
+
+  static async remove(request, reply) {
+    if (!request.user) {
+      return generateErrResponse(reply, {
+        name: "Permission Error",
+        message: "Access has been blocked !"
+      })
+    }
+    if (request.user.role == "admin") {
+      try {
+        if (!request.body.dt_id) {
+          throw {
+            name: "Action Error",
+            message: "Cannot remove datatables !"
+          }
+        }
+        
+        let results = await DTService.remove(
+          request.body.dt_id
+        )
+        
+        return generateSuccessResponse(reply, info)
+      } catch (err) {
+        return generateErrResponse(reply, err)
+      }
+    }
     
+    if ( request.user.role == "user") {
+      try {
+        if (!request.body.dt_id) {
+          throw {
+            name: "Action Error",
+            message: "Cannot remove datatables !"
+          }
+        }
+        let createBy = await DTService.getCreator(request.body.dt_id)
+        if(createBy != request.user.user_id){
+          throw {
+            name: "Action Error",
+            message: "You do not have permission to delete this table !!"
+          }
+        }
+        let results = await DTService.remove(
+          request.body.dt_id
+        )
+        return generateSuccessResponse(reply, info)
+      } catch (err) {
+        return generateErrResponse(reply, err)
+      }
+    }
   }
 
 }

@@ -31,5 +31,6 @@ module.exports = function(fastify) {
   fastify.post(`/api/v${configs.ver}/auth/logout`, AuthController.logout)
   fastify.post(`/api/v${configs.ver}/datatables/list`,getRole(),DTController.list)
   fastify.post(`/api/v${configs.ver}/datatables/create`,DTController.create)
+fastify.post(`/api/v${configs.ver}/datatables/remove`,DTController.remove)
 
 }
