@@ -1,5 +1,35 @@
-const {user} = require("../Authentication/auth.js")
+const { user } = require("../Authentication/auth.js")
 module.exports = class DTService {
+  static async getDT(dt_id, accessLevel) {
+    let dt = await models.DataTables.findOne({
+      where: {
+        dt_id: dt_id
+      }
+    })
+    if (dt) {
+      if (dt.status == "banned" && accessLevel != 3) {
+        throw {
+          name: "Action Error",
+          message: "Datatable has been banned !"
+        }
+      }
+
+      if (dt.status == "locked" && accessLevel != 2) {
+        throw {
+          name: "Action Error",
+          message: "Datatable has been locked !"
+        }
+      }
+
+      return dt
+    } else {
+      throw {
+        name: "Action Error",
+        message: "Datatable doesn't exist !"
+      }
+    }
+  }
+  
   static async getAll(limit = 5, offset = 0) {
     try {
       let list = await models.DataTables.findAll({
@@ -47,9 +77,7 @@ module.exports = class DTService {
         createBy: createBy.user_id,
         status: "active"
       })
-
       dt.addOwner(createBy)
-
       return dt
     } catch (err) {
       throw {
@@ -60,181 +88,49 @@ module.exports = class DTService {
   }
 
   static async remove(dt_id, accessLevel = 0) {
-
-    let dt = await models.DataTables.findOne({
-      where: {
-        dt_id: dt_id
-      }
-    })
-    if (dt) {
-      if (dt.status == "banned" && accessLevel != 3) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been banned !"
-        }
-      }
-
-      if (dt.status == "locked" && accessLevel != 2) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been locked !"
-        }
-      }
-
-      await dt.destroy()
-      return dt
-    } else {
-      throw {
-        name: "Action Error",
-        message: "Datatable doesn't exist !"
-      }
-    }
+    let dt = await this.getDT(dt_id, accessLevel)
+    await dt.destroy()
+    return dt
   }
 
   static async info(dt_id, accessLevel = 0) {
-    let dt = await models.DataTables.findOne({
-      where: {
-        dt_id: dt_id
-      }
-    })
-    if (dt) {
-      if (dt.status == "banned" && accessLevel != 3) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been banned !"
-        }
-      }
-
-      if (dt.status == "locked" && accessLevel < 1) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been locked !"
-        }
-      }
-
-      return dt
-    } else {
-      throw {
-        name: "Action Error",
-        message: "Datatable doesn't exist !"
-      }
-    }
-
+    let dt = await this.getDT(dt_id, accessLevel)
+    return dt
   }
 
   static async removeOwners(dt_id, owner, accessLevel = 0) {
-    let dt = await models.DataTables.findOne({
+    let dt = await this.getDT(dt_id, accessLevel)
+    return await dt.removeOwner({
       where: {
-        dt_id: dt_id
+        user_id: owner
       }
     })
-    if (dt) {
-      if (dt.status == "banned" && accessLevel != 3) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been banned !"
-        }
-      }
-
-      if (dt.status == "locked" && accessLevel < 1) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been locked !"
-        }
-      }
-
-      return await dt.removeOwner({
-        where: {
-          user_id: owner
-        },
-      })
-
-    } else {
-      throw {
-        name: "Action Error",
-        message: "Datatable doesn't exist !"
-      }
-    }
-
   }
+
   static async addOwner(dt_id, owner, accessLevel = 0) {
-    let dt = await models.DataTables.findOne({
-      where: {
-        dt_id: dt_id
-      }
-    })
-    if (dt) {
-      if (dt.status == "banned" && accessLevel != 3) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been banned !"
-        }
-      }
-
-      if (dt.status == "locked" && accessLevel < 1) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been locked !"
-        }
-      }
-      let owner = await user(owner)
-       await dt.addOwner(owner)
-       return {
-         dt_id,
-         owner
-       }
-    } else {
-      throw {
-        name: "Action Error",
-        message: "Datatable doesn't exist !"
-      }
+    let dt = await this.getDT(dt_id, accessLevel)
+    let owner = await user(owner)
+    await dt.addOwner(owner)
+    return {
+      dt_id,
+      owner
     }
-
   }
+
   static async owners(dt_id, accessLevel = 0) {
-    let dt = await models.DataTables.findOne({
-      where: {
-        dt_id: dt_id
-      }
+    let dt = await this.getDT(dt_id, accessLevel)
+    return await dt.getOwner({
+      attributes: ["user_id", "name"],
+      raw: true
     })
-    if (dt) {
-      if (dt.status == "banned" && accessLevel != 3) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been banned !"
-        }
-      }
-
-      if (dt.status == "locked" && accessLevel < 1) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been locked !"
-        }
-      }
-
-      return await dt.getOwner({
-        attributes: ["user_id", "name"],
-        raw: true
-      })
-
-    } else {
-      throw {
-        name: "Action Error",
-        message: "Datatable doesn't exist !"
-      }
-    }
 
   }
+
   static async isOwner(dt_id, user_id) {
-    let dt = await models.DataTables.findOne({
+    let dt = await models.DataTables_Users.findOne({
       where: {
-        dt_id: dt_id
-      },
-      includes: {
-        model: models.Users,
-        where: {
-          user_id: user_id
-        }
+        dt_id: dt_id,
+        user_id: user_id
       },
       raw: true
     })
@@ -242,37 +138,9 @@ module.exports = class DTService {
     if (!dt) return false
     return true
   }
+  
   static async getCreator(dt_id, accessLevel = 0) {
-    let dt = await models.DataTables.findOne({
-      where: {
-        dt_id: dt_id
-      },
-      attributes: ["status", "createBy"],
-      raw: true
-    })
-    if (dt) {
-      if (dt.status == "banned" && accessLevel != 3) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been banned !"
-        }
-      }
-
-      if (dt.status == "locked" && accessLevel < 1) {
-        throw {
-          name: "Action Error",
-          message: "Datatable has been locked !"
-        }
-      }
-
-      return dt.createBy
-    } else {
-      throw {
-        name: "Action Error",
-        message: "Datatable doesn't exist !"
-      }
-    }
-
-
+    let dt = await this.getDT(dt_id, accessLevel)
+    return dt.createBy
   }
 }

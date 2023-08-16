@@ -31,13 +31,20 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
     `
     controller.ref("dt-owners").addChild(tr)
   }
-
+  
   controller.onRender = function() {
+    controller.ref("add-owner-form").on("submit",function(e){
+      e.preventDefault()
+      let user_id = controller.ref("owner-id").val
+      TouchApp.datatables.addOwner(dt_id,user_id)
+    })
+    
     TouchApp.datatables.owners(dt_id)
       .then((list) => {
         list.forEach(controller.addOwner)
       })
   }
+  
   return `
     <h1>Edit DataTable</h1>
     <span>Datatables ID : <span> ${dt_id} </span></span>
@@ -82,7 +89,7 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
        <div>
          <h2>Owners</h2>
          <br>
-         <button class="btn btn-success">Add owner</button>
+         <button class="btn btn-success" data-action="toggle-modal" data-modal="#modal-add-owner-dt" >Add owner</button>
           <div class="table-responsive">
             <table class="table table-border" ref="dt-owners" style="width: 98%;">
               <tr>
@@ -93,7 +100,24 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
             </table>
           </div>
         </div>
-
      </div>
+    <div class="modal" id="modal-add-owner-dt">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-header-text">Add owner</h3>
+          <button class="modal-close-btn fa fa-times" data-action="toggle-modal" data-modal="#modal-add-owner-dt"></button>
+        </div>
+        <div class="modal-body">
+          <form action="#" class="form" ref="add-owner-form">
+            <div>
+              <label for="" class="form-label">User ID</label><br>
+              <input type="text" class="form-input" style="width:90%;" ref="owner-id">
+            </div>
+            <button class="btn btn-rounded btn-info" data-action="toggle-modal" data-modal="#modal-add-owner-dt">Add</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
   `
 })
