@@ -295,12 +295,6 @@ module.exports = class DTController {
           }
         }
         let createBy = await DTService.getCreator(request.body.dt_id)
-        if (createBy != request.user.user_id) {
-          throw {
-            name: "Action Error",
-            message: "You do not have permission to remove owner of table !"
-          }
-        }
         if(createBy == request.body.user_id){
           throw {
             name: "Action Error",

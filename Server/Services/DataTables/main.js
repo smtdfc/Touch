@@ -115,11 +115,7 @@ module.exports = class DTService {
         message: "Owner doesn't exists !"
       }
     }
-    return await dt.removeOwner({
-      where: {
-        user_id: owner
-      }
-    })
+    return await dt.removeOwner(owner)
   }
 
   static async addOwner(dt_id, owner, accessLevel = 0) {

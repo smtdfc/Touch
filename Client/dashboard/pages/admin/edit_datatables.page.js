@@ -30,20 +30,21 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
        <button class="remove-btn btn btn-danger" data-id="${info.user_id}">Remove</button>
       </td>
     `
-    
+
     controller.ref("dt-owners").addChild(tr)
     tr.select(".remove-btn").on("click", function(e) {
       let user_id = e.target.dataset.id
-      TouchApp.datatables.removeOwner(dt_id,user_id)
-        .then(()=>{
-          tr.remove()
+      showLoader()
+      TouchApp.datatables.removeOwner(dt_id, user_id)
+        .then(() => {
+          document.getElementById(`_${user_id}`).remove()
         })
-        
-        .catch((err)=>{
+
+        .catch((err) => {
           alert(`Cannot remove owner \n${err.message}`)
         })
-        
-        .finally(()=>{
+
+        .finally(() => {
           hideLoader()
         })
     })
