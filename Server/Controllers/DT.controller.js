@@ -237,15 +237,6 @@ module.exports = class DTController {
           }
         }
         
-        let res = await DTService.isOwner(request.body.dt_id, request.body.user_id)
-        if (res) {
-          throw {
-            name: "Action Error",
-            message: "Owner already exist !"
-          }
-        }
-        
-        
         let results = await DTService.addOwner(
           request.body.dt_id,
           request.body.user_id,
@@ -272,14 +263,6 @@ module.exports = class DTController {
           throw {
             name: "Action Error",
             message: "You do not have permission to add owner for table !"
-          }
-        }
-        
-        let res = await DTService.isOwner(request.body.dt_id, request.body.user_id)
-        if (res) {
-          throw {
-            name: "Action Error",
-            message: "Owner already exist !"
           }
         }
         

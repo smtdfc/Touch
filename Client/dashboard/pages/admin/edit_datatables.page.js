@@ -31,20 +31,35 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
     `
     controller.ref("dt-owners").addChild(tr)
   }
-  
+
   controller.onRender = function() {
-    controller.ref("add-owner-form").on("submit",function(e){
+    controller.ref("add-owner-form").on("submit", function(e) {
       e.preventDefault()
+      showLoader()
       let user_id = controller.ref("owner-id").val
-      TouchApp.datatables.addOwner(dt_id,user_id)
+      TouchApp.datatables.addOwner(dt_id, user_id)
+      .then((user)=>{
+        
+      })
+      
+        .catch(err => {
+          console.log(1);
+          alert(`Cannot add owner \n ${err.message}`)
+        })
+
+        .finally(() => {
+          hideLoader()
+        })
     })
     
     TouchApp.datatables.owners(dt_id)
       .then((list) => {
         list.forEach(controller.addOwner)
       })
+
+
   }
-  
+
   return `
     <h1>Edit DataTable</h1>
     <span>Datatables ID : <span> ${dt_id} </span></span>

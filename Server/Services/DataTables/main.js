@@ -117,10 +117,21 @@ module.exports = class DTService {
         message:err.message
       }
     }
+    
+    if(await dt.hasOwner(owner)){
+      throw {
+        name: "Action Error",
+        message:"Owner already exists !"
+      }
+    }
+    
     await dt.addOwner(owner)
     return {
       dt_id,
-      owner
+      owner:{
+        user_id:owner.user_id,
+        name:owner.name
+      }
     }
   }
 
