@@ -53,3 +53,24 @@
   border-color: #00FFBA61;
   border-bottom-color: #00FF54;
 }
+
+.dot{
+  margin: 0px 5px;
+  padding: 5px;
+  width: 12px;
+  height: 12px;
+  background: #00FF7DD6;
+  border-radius:50%;
+}
+
+.dot.dot-danger{
+  background: red;
+}
+
+.dot.dot-info {
+  background: #00FFEDD6;
+}
+
+.dot.dot-warn{
+  background: #C8B700;
+}

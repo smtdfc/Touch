@@ -6,6 +6,7 @@ app.staticComponent("admin-dt-page", function(controller) {
     if (ids[info.dt_id]) return
     ids[info.dt_id] = true
     let tr = Turtle.createElement("tr")
+    tr.id = `_${info.dt_id}`
     tr.HTML = `
             <td>${info.dt_id}</td>
             <td>${info.name}</td>
@@ -24,7 +25,19 @@ app.staticComponent("admin-dt-page", function(controller) {
     
     tr.select(".remove-btn").on("click", function(e) {
       let dt_id = e.target.dataset.id
+      showLoader()
       TouchApp.datatables.remove(dt_id)
+        .then(()=>{
+          document.getElementById(`_${dt_id}`).remove()
+        })
+        
+        .catch((err)=>{
+          showMsg(err.message)
+        })
+        
+        .finally(()=>{
+          hideLoader()
+        })
     })
   }
 

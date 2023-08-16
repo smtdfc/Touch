@@ -165,5 +165,59 @@ module.exports = class DTController {
       }
     }
   }
+  static async owners(request, reply) {
+    if (!request.user) {
+      return generateErrResponse(reply, {
+        name: "Permission Error",
+        message: "Access has been blocked !"
+      })
+    }
+    if (request.user.role == "admin") {
+      try {
+        if (!request.body.dt_id) {
+          throw {
+            name: "Action Error",
+            message: "Cannot all owner of datatable !"
+          }
+        }
+
+        let results = await DTService.owners(
+          request.body.dt_id,
+          3
+        )
+
+        return generateSuccessResponse(reply, results)
+      } catch (err) {
+        return generateErrResponse(reply, err)
+      }
+    }
+
+    if (request.user.role == "user") {
+      try {
+        if (!request.body.dt_id) {
+          throw {
+            name: "Action Error",
+            message: "Cannot get info of datatable !"
+          }
+        }
+
+        let res = await DTService.isOwner(request.body.dt_id, request.user.user)
+        if (!res) {
+          throw {
+            name: "Action Error",
+            message: "You do not have permission to get owners of this table !!"
+          }
+        }
+
+        let results = await DTService.owners(
+          request.body.dt_id,
+          1
+        )
+        return generateSuccessResponse(reply, results)
+      } catch (err) {
+        return generateErrResponse(reply, err)
+      }
+    }
+  }
 
 }
