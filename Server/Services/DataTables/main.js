@@ -100,6 +100,21 @@ module.exports = class DTService {
 
   static async removeOwners(dt_id, owner, accessLevel = 0) {
     let dt = await this.getDT(dt_id, accessLevel)
+    try {
+      owner = await user(owner,true)
+    } catch (err) {
+      throw {
+        name: "Action Error",
+        message: err.message
+      }
+    }
+    
+    if (!(await dt.hasOwner(owner))) {
+      throw {
+        name: "Action Error",
+        message: "Owner doesn't exists !"
+      }
+    }
     return await dt.removeOwner({
       where: {
         user_id: owner
@@ -110,7 +125,7 @@ module.exports = class DTService {
   static async addOwner(dt_id, owner, accessLevel = 0) {
     let dt = await this.getDT(dt_id, accessLevel)
     try{
-     owner = await user(owner)
+     owner = await user(owner,true)
     }catch(err){
       throw{
         name:"Action Error",

@@ -329,7 +329,7 @@ class DTManager {
         },
         data: { dt_id, user_id }
       })
-      return response.data.results
+      return response.data.results.owner
     } catch (err) {
       if (shouldReAuth(err)) {
         let result = await this.app.auth.retryWithNewToken(this.addOwner, [dt_id, user_id], this)

@@ -307,14 +307,6 @@ module.exports = class DTController {
             message: "You are the creator of this datatable !"
           }
         }
-        let res = await DTService.isOwner(request.body.dt_id, request.body.user_id)
-        if (!res) {
-          throw {
-            name: "Action Error",
-            message: "Owner does not exist !"
-          }
-        }
-        
         
         let results = await DTService.removeOwners(
           request.body.dt_id,
@@ -350,13 +342,7 @@ module.exports = class DTController {
             message: "You are the creator of this datatable !"
           }
         }
-        let res = await DTService.isOwner(request.body.dt_id, request.body.user_id)
-        if (!res) {
-          throw {
-            name: "Action Error",
-            message: "Owner does not exist !"
-          }
-        }
+        
         
         let results = await DTService.removeOwners(
           request.body.dt_id,

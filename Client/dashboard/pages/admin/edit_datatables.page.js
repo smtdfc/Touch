@@ -21,6 +21,7 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
 
   controller.addOwner = function(info) {
     let tr = Turtle.createElement("tr")
+    tr.id = `_${info.user_id}`
     tr.HTML = `
       <td>${info.user_id}</td>
       <td>${info.name}</td>
@@ -29,7 +30,23 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
        <button class="remove-btn btn btn-danger" data-id="${info.user_id}">Remove</button>
       </td>
     `
+    
     controller.ref("dt-owners").addChild(tr)
+    tr.select(".remove-btn").on("click", function(e) {
+      let user_id = e.target.dataset.id
+      TouchApp.datatables.removeOwner(dt_id,user_id)
+        .then(()=>{
+          tr.remove()
+        })
+        
+        .catch((err)=>{
+          alert(`Cannot remove owner \n${err.message}`)
+        })
+        
+        .finally(()=>{
+          hideLoader()
+        })
+    })
   }
 
   controller.onRender = function() {
@@ -38,10 +55,10 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
       showLoader()
       let user_id = controller.ref("owner-id").val
       TouchApp.datatables.addOwner(dt_id, user_id)
-      .then((user)=>{
-        
-      })
-      
+        .then((user) => {
+          controller.addOwner(user)
+        })
+
         .catch(err => {
           console.log(1);
           alert(`Cannot add owner \n ${err.message}`)
@@ -51,7 +68,7 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
           hideLoader()
         })
     })
-    
+
     TouchApp.datatables.owners(dt_id)
       .then((list) => {
         list.forEach(controller.addOwner)
