@@ -276,7 +276,26 @@ class DTManager {
       throw err
     }
   }
-  
+  async owners (dt_id) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/datatables/owners`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { dt_id }
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.owners, [dt_id], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw err
+    }
+  }
   
 }
 class TouchClientApp {
