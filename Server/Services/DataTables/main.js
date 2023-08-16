@@ -109,7 +109,14 @@ module.exports = class DTService {
 
   static async addOwner(dt_id, owner, accessLevel = 0) {
     let dt = await this.getDT(dt_id, accessLevel)
-    let owner = await user(owner)
+    try{
+     owner = await user(owner)
+    }catch(err){
+      throw{
+        name:"Action Error",
+        message:err.message
+      }
+    }
     await dt.addOwner(owner)
     return {
       dt_id,

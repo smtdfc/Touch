@@ -112,7 +112,7 @@ class TouchClientAppAuth {
 
         return
       }
-      throw err
+      throw getResponseErr(err)
     }
 
 
@@ -140,7 +140,7 @@ class TouchClientAppAuth {
         if (res.success) return res.returnValue
         throw res.error
       }
-      throw err
+      throw getResponseErr(err)
     }
   }
   async token() {
@@ -210,7 +210,7 @@ class DTManager {
         if (result.success) return result.returnValue
         else throw result.error
       }
-      throw err
+      throw getResponseErr(err)
     }
   }
   
@@ -231,7 +231,7 @@ class DTManager {
         if (result.success) return result.returnValue
         else throw result.error
       }
-      throw err
+      throw getResponseErr(err)
     }
   }
   
@@ -252,7 +252,7 @@ class DTManager {
         if (result.success) return result.returnValue
         else throw result.error
       }
-      throw err
+      throw getResponseErr(err)
     }
   }
   
@@ -273,7 +273,7 @@ class DTManager {
         if (result.success) return result.returnValue
         else throw result.error
       }
-      throw err
+      throw getResponseErr(err)
     }
   }
   
@@ -294,7 +294,7 @@ class DTManager {
         if (result.success) return result.returnValue
         else throw result.error
       }
-      throw err
+      throw getResponseErr(err)
     }
   }
   
@@ -315,7 +315,7 @@ class DTManager {
         if (result.success) return result.returnValue
         else throw result.error
       }
-      throw err
+      throw getResponseErr(err)
     }
   }
   
@@ -336,7 +336,7 @@ class DTManager {
         if (result.success) return result.returnValue
         else throw result.error
       }
-      throw err
+      throw getResponseErr(err)
     }
   }
 }

@@ -4,7 +4,7 @@ module.exports = class AuthService {
     
   }
   
-  static async user(user_id){
+  static async user(user_id,force=false){
     let user = await models.Users.findOne({
       where: {
         user_id: user_id
@@ -14,10 +14,10 @@ module.exports = class AuthService {
     if (!user) {
       throw {
         name: "Auth Error",
-        message: "Incorrect username or password !"
+        message: "Incorrect userID !"
       }
     } else {
-      if (user.status == "lock") {
+      if (user.status == "lock" && !force) {
         throw {
           name: "Auth Error",
           message: "Account has been locked  !"
