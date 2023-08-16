@@ -74,18 +74,19 @@ module.exports = class DTController {
             message: "Cannot remove datatables !"
           }
         }
-        
+
         let results = await DTService.remove(
-          request.body.dt_id
+          request.body.dt_id,
+          3
         )
-        
-        return generateSuccessResponse(reply, info)
+
+        return generateSuccessResponse(reply, results)
       } catch (err) {
         return generateErrResponse(reply, err)
       }
     }
-    
-    if ( request.user.role == "user") {
+
+    if (request.user.role == "user") {
       try {
         if (!request.body.dt_id) {
           throw {
@@ -94,16 +95,71 @@ module.exports = class DTController {
           }
         }
         let createBy = await DTService.getCreator(request.body.dt_id)
-        if(createBy != request.user.user_id){
+        if (createBy != request.user.user_id) {
           throw {
             name: "Action Error",
             message: "You do not have permission to delete this table !!"
           }
         }
         let results = await DTService.remove(
-          request.body.dt_id
+          request.body.dt_id,
+          2
         )
-        return generateSuccessResponse(reply, info)
+        return generateSuccessResponse(reply, results)
+      } catch (err) {
+        return generateErrResponse(reply, err)
+      }
+    }
+  }
+  static async info(request, reply) {
+    if (!request.user) {
+      return generateErrResponse(reply, {
+        name: "Permission Error",
+        message: "Access has been blocked !"
+      })
+    }
+    if (request.user.role == "admin") {
+      try {
+        if (!request.body.dt_id) {
+          throw {
+            name: "Action Error",
+            message: "Cannot get info of datatable !"
+          }
+        }
+
+        let results = await DTService.info(
+          request.body.dt_id,
+          3
+        )
+
+        return generateSuccessResponse(reply, results)
+      } catch (err) {
+        return generateErrResponse(reply, err)
+      }
+    }
+
+    if (request.user.role == "user") {
+      try {
+        if (!request.body.dt_id) {
+          throw {
+            name: "Action Error",
+            message: "Cannot get info of datatable !"
+          }
+        }
+
+        let res = await DTService.isOwner(request.body.dt_id, request.user.user)
+        if (!res) {
+          throw {
+            name: "Action Error",
+            message: "You do not have permission to get info of this table !!"
+          }
+        }
+
+        let results = await DTService.info(
+          request.body.dt_id,
+          1
+        )
+        return generateSuccessResponse(reply, results)
       } catch (err) {
         return generateErrResponse(reply, err)
       }

@@ -1,66 +1,67 @@
-app.staticComponent("admin-dt-page",function(controller){
+app.staticComponent("admin-dt-page", function(controller) {
   let limit = 5
   let offset = 0
-  let ids ={}
-  controller.loadData = async function(){
+  let ids = {}
+  controller.addDTInfo = function(info) {
+    if (ids[info.dt_id]) return
+    ids[info.dt_id] = true
+    let tr = Turtle.createElement("tr")
+    tr.HTML = `
+            <td>${info.dt_id}</td>
+            <td>${info.name}</td>
+            <td>${info.createBy}</td>
+            <td>${info.status}</td>
+            <td>
+              <button class="edit-btn btn btn-success" data-id="${info.dt_id}" >Edit</button>
+              <button class="remove-btn btn btn-danger" data-id="${info.dt_id}" >Remove</button>
+            </td>
+      `
+    controller.ref("table").addChild(tr)
+    tr.select(".edit-btn").on("click",function(e){
+      let dt_id = e.target.dataset.id
+      app.router.redirect(`/admin/datatables/${dt_id}/edit`)
+    })
+    
+    tr.select(".remove-btn").on("click", function(e) {
+      let dt_id = e.target.dataset.id
+      TouchApp.datatables.remove(dt_id)
+    })
+  }
+
+  controller.loadData = async function() {
     showLoader()
-    let list = await TouchApp.datatables.list(limit,offset)
-    offset+= list.length
+    let list = await TouchApp.datatables.list(limit, offset)
+    offset += list.length
     if (list.length == 0) {
       showMsg("No more data to display")
     }
-    list.forEach(i=>{
-      if(ids[i.dt_id]) return 
-      ids[i.dt_id] = true
-      let tr = Turtle.createElement("tr")
-      tr.HTML = `
-            <td>${i.dt_id}</td>
-            <td>${i.name}</td>
-            <td>${i.createBy}</td>
-            <td>${i.status}</td>
-            <td>
-              <button class="btn btn-success">Edit</button>
-              <button class="btn btn-danger">Remove</button>
-            </td>
-      `
-      controller.ref("table").addChild(tr)
+    list.forEach(i => {
+      controller.addDTInfo(i)
     })
-    
+
     hideLoader()
   }
-  
-  controller.onRender = async function(){
+
+  controller.onRender = async function() {
     controller.loadData()
-    controller.ref("load-more-btn").on("click",controller.loadData)
-    controller.ref("create-dt-form").on("submit",async function(e){
+    controller.ref("load-more-btn").on("click", controller.loadData)
+    controller.ref("create-dt-form").on("submit", async function(e) {
       e.preventDefault()
       let name = controller.ref("dt-name").val
       showLoader()
       TouchApp.datatables.create(name)
-        .then((i)=>{
-          ids[i.dt_id] = true
-          let tr = Turtle.createElement("tr")
-          tr.HTML = `
-            <td>${i.dt_id}</td>
-            <td>${i.name}</td>
-            <td>${i.createBy}</td>
-            <td>${i.status}</td>
-            <td>
-              <button class="btn btn-success">Edit</button>
-              <button class="btn btn-danger">Remove</button>
-            </td>
-                `
-          controller.ref("table").addChild(tr)
+        .then((i) => {
+          controller.addDTInfo(i)
         })
-        
-        .catch(()=>{
+
+        .catch(() => {
           alert("Cannot create new datatable !")
         })
-        
-        .finally (()=>{
+
+        .finally(() => {
           hideLoader()
         })
-      
+
     })
   }
   return `

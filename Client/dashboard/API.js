@@ -235,6 +235,49 @@ class DTManager {
     }
   }
   
+   async remove(dt_id) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/datatables/remove`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { dt_id }
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.remove, [dt_id], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw err
+    }
+  }
+  
+  async info(dt_id) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/datatables/info`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { dt_id }
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.info, [dt_id], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw err
+    }
+  }
+  
+  
 }
 class TouchClientApp {
   constructor(configs) {
