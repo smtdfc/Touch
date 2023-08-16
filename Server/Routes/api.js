@@ -34,5 +34,6 @@ module.exports = function(fastify) {
   fastify.post(`/api/v${configs.ver}/datatables/remove`, getUser(), DTController.remove)
   fastify.post(`/api/v${configs.ver}/datatables/info`, getUser(), DTController.info)
     fastify.post(`/api/v${configs.ver}/datatables/owners`, getUser(), DTController.owners)
+fastify.post(`/api/v${configs.ver}/datatables/owners/remove`, getUser(), DTController.remove)
 
 }

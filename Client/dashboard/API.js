@@ -276,6 +276,7 @@ class DTManager {
       throw err
     }
   }
+  
   async owners (dt_id) {
     try {
       let response = await axios({
@@ -297,6 +298,26 @@ class DTManager {
     }
   }
   
+  async removeOwner(dt_id,user_id) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/datatables/owners/remove`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { dt_id ,user_id}
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.removeOwner, [dt_id,user_id], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw err
+    }
+  }
 }
 class TouchClientApp {
   constructor(configs) {
