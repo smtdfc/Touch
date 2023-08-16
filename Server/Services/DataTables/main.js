@@ -1,3 +1,4 @@
+const {user} = require("../Authentication/auth.js")
 module.exports = class DTService {
   static async getAll(limit = 5, offset = 0) {
     try {
@@ -121,7 +122,7 @@ module.exports = class DTService {
 
   }
 
-    static async removeOwners(dt_id, owner, accessLevel = 0) {
+  static async removeOwners(dt_id, owner, accessLevel = 0) {
     let dt = await models.DataTables.findOne({
       where: {
         dt_id: dt_id
@@ -143,8 +144,8 @@ module.exports = class DTService {
       }
 
       return await dt.removeOwner({
-        where:{
-          user_id:owner
+        where: {
+          user_id: owner
         },
       })
 
@@ -156,7 +157,40 @@ module.exports = class DTService {
     }
 
   }
+  static async addOwner(dt_id, owner, accessLevel = 0) {
+    let dt = await models.DataTables.findOne({
+      where: {
+        dt_id: dt_id
+      }
+    })
+    if (dt) {
+      if (dt.status == "banned" && accessLevel != 3) {
+        throw {
+          name: "Action Error",
+          message: "Datatable has been banned !"
+        }
+      }
 
+      if (dt.status == "locked" && accessLevel < 1) {
+        throw {
+          name: "Action Error",
+          message: "Datatable has been locked !"
+        }
+      }
+      let owner = await user(owner)
+       await dt.addOwner(owner)
+       return {
+         dt_id,
+         owner
+       }
+    } else {
+      throw {
+        name: "Action Error",
+        message: "Datatable doesn't exist !"
+      }
+    }
+
+  }
   static async owners(dt_id, accessLevel = 0) {
     let dt = await models.DataTables.findOne({
       where: {
