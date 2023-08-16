@@ -165,6 +165,7 @@ module.exports = class DTController {
       }
     }
   }
+
   static async owners(request, reply) {
     if (!request.user) {
       return generateErrResponse(reply, {
@@ -220,4 +221,76 @@ module.exports = class DTController {
     }
   }
 
+  static async removeOwner(request, reply) {
+    if (!request.user) {
+      return generateErrResponse(reply, {
+        name: "Permission Error",
+        message: "Access has been blocked !"
+      })
+    }
+    if (request.user.role == "admin") {
+      try {
+        if (!request.body.dt_id || !request.body.user_id) {
+          throw {
+            name: "Action Error",
+            message: "Cannot all owner of datatable !"
+          }
+        }
+        
+        let res = await DTService.isOwner(request.body.dt_id, request.body.user_id)
+        if (!res) {
+          throw {
+            name: "Action Error",
+            message: "Owner does not exist !"
+          }
+        }
+        let results = await DTService.removeOwners(
+          request.body.dt_id,
+          request.body.user_id,
+          3
+        )
+
+        return generateSuccessResponse(reply, results)
+      } catch (err) {
+        return generateErrResponse(reply, err)
+      }
+    }
+
+    if (request.user.role == "user") {
+      try {
+        if (!request.body.dt_id) {
+          throw {
+            name: "Action Error",
+            message: "Cannot get info of datatable !"
+          }
+        }
+
+        let createBy = await DTService.getCreator(request.body.dt_id)
+        if (createBy != request.user.user_id) {
+          throw {
+            name: "Action Error",
+            message: "You do not have permission to remove owner of table !"
+          }
+        }
+        
+        let res = await DTService.isOwner(request.body.dt_id, request.body.user_id)
+        if (!res) {
+          throw {
+            name: "Action Error",
+            message: "Owner does not exist !"
+          }
+        }
+        
+        let results = await DTService.removeOwners(
+          request.body.dt_id,
+          request.body.user_id,
+          2
+        )
+        
+        return generateSuccessResponse(reply, results)
+      } catch (err) {
+        return generateErrResponse(reply, err)
+      }
+    }
+  }
 }

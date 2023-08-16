@@ -1,13 +1,13 @@
-app.staticComponent("admin-edit-dt-page",async function(controller){
+app.staticComponent("admin-edit-dt-page", async function(controller) {
   showLoader()
   let dt_id = app.router.info.params.id ?? null
   let info = null
-  if(!"dt_id") {
+  if (!"dt_id") {
     return `
       <h1>Error! An error occurred. Please try again later !</h1>
     `
   }
-  
+
   try {
     info = await TouchApp.datatables.info(dt_id)
   } catch (err) {
@@ -18,6 +18,26 @@ app.staticComponent("admin-edit-dt-page",async function(controller){
     `
   }
   hideLoader()
+
+  controller.addOwner = function(info) {
+    let tr = Turtle.createElement("tr")
+    tr.HTML = `
+      <td>${info.user_id}</td>
+      <td>${info.name}</td>
+      <td>
+       <button class="edit-btn btn btn-success" data-id="${info.user_id}" >Info</button> 
+       <button class="remove-btn btn btn-danger" data-id="${info.user_id}">Remove</button>
+      </td>
+    `
+    controller.ref("dt-owners").addChild(tr)
+  }
+
+  controller.onRender = function() {
+    TouchApp.datatables.owners(dt_id)
+      .then((list) => {
+        list.forEach(controller.addOwner)
+      })
+  }
   return `
     <h1>Edit DataTable</h1>
     <span>Datatables ID : <span> ${dt_id} </span></span>
@@ -62,8 +82,9 @@ app.staticComponent("admin-edit-dt-page",async function(controller){
        <div>
          <h2>Owners</h2>
          <br>
-          <div class="table-responsive" ref="dt-owners">
-            <table class="table table-border" style="width: 98%;">
+         <button class="btn btn-success">Add owner</button>
+          <div class="table-responsive">
+            <table class="table table-border" ref="dt-owners" style="width: 98%;">
               <tr>
                 <th>User ID</th>
                 <th>Username</th>
