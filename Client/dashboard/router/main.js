@@ -6,6 +6,8 @@ export async function initRouter() {
     "/": {
       title: "Home",
       callback: function(controller) {
+        
+        
         if (TouchApp.auth.currentUser.user_id == null) controller.router.redirect("/auth/login", true)
         if(TouchApp.auth.currentUser.role == "admin") controller.router.redirect("/admin/home",true)
       }

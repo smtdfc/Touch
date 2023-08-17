@@ -406,6 +406,7 @@ class DataIO {
   }
 }
 
+
 class TouchClientApp {
   constructor(configs) {
     this.configs = configs

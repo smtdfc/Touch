@@ -13,8 +13,8 @@ app.staticComponent("admin-dt-page", function(controller) {
             <td>${info.createBy}</td>
             <td>${info.status}</td>
             <td>
-              <button class="edit-btn btn btn-success" data-id="${info.dt_id}" >Edit</button>
-              <button class="remove-btn btn btn-danger" data-id="${info.dt_id}" >Remove</button>
+              <button class="edit-btn btn btn-success fa fa-pencil" data-id="${info.dt_id}" > Edit</button>
+              <button class="remove-btn btn btn-danger fa fa-trash-o" data-id="${info.dt_id}" > Remove</button>
             </td>
       `
     controller.ref("table").addChild(tr)

@@ -21,7 +21,11 @@ app.staticComponent("login-page", function(controller) {
         })
     })
   }
-
+  
+  controller.onCreate = function(){
+    if (TouchApp.auth.currentUser.user_id != null) app.router.redirect("/", true)
+  }
+  
   return `
   <div class="d-flex justify-content-center" >
   <form action="#" class="card form d-flex flex-flow-col align-items-center " style="padding:20px;" ref="form">
@@ -30,12 +34,12 @@ app.staticComponent("login-page", function(controller) {
     <br>
     <div>
       <label for="username" class="form-label">Username</label><br>
-      <input type="text" class="form-input" name="username" style="min-width: 280px;"  ref="username" require="">
+      <input type="text" class="form-input" name="username" style="min-width: 280px;"  ref="username" required="">
     </div>
     <br>
     <div>
       <label for="password" class="form-label">Password</label><br>
-      <input type="password" class="form-input" name="password" style="min-width: 280px; " ref="password" require="">
+      <input type="password" class="form-input" name="password" style="min-width: 280px; " ref="password" required="">
     </div>
     <br><br>
     <button class="btn btn-primary" style="min-width: 280px;">Login</button>

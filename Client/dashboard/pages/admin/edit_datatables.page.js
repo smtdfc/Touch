@@ -26,8 +26,8 @@ app.component("admin-edit-dt-page", async function(controller) {
       <td>${info.user_id}</td>
       <td>${info.name}</td>
       <td>
-       <button class="edit-btn btn btn-success" data-id="${info.user_id}" >Info</button> 
-       <button class="remove-btn btn btn-danger" data-id="${info.user_id}">Remove</button>
+       <button class="edit-btn btn btn-success fa fa-info" data-id="${info.user_id}" > Info</button> 
+       <button class="remove-btn btn btn-danger fa fa-user-times" data-id="${info.user_id}"> Remove</button>
       </td>
     `
 
@@ -63,7 +63,7 @@ app.component("admin-edit-dt-page", async function(controller) {
       `
     }
   }
-  
+
   controller.onDTDataChange = function(data) {
 
     let tr = Turtle.createElement("tr")
@@ -75,7 +75,7 @@ app.component("admin-edit-dt-page", async function(controller) {
      `
     controller.ref("dt-data").addChild(tr)
   }
-  
+
   controller.onRender = function() {
     controller.ref("add-owner-form").on("submit", function(e) {
       e.preventDefault()
@@ -91,6 +91,18 @@ app.component("admin-edit-dt-page", async function(controller) {
         .finally(() => {
           hideLoader()
         })
+    })
+
+    controller.ref("set-data-form").on("submit", function(e) {
+      e.preventDefault()
+      showLoader()
+      let key = controller.ref("set-data-key").val
+      let val = controller.ref("set-data-val").val
+      TouchApp.dataIO.setData(
+        key,
+        val
+      )
+      hideLoader()
     })
 
     TouchApp.datatables.owners(dt_id)
@@ -147,7 +159,8 @@ app.component("admin-edit-dt-page", async function(controller) {
          <h2>Latest Data</h2>
          <div class="d-flex align-items-center" ref="update-dt-status" ><div class="dot dot-warn"></div> <span>Connecting ...</span> </div>
          <br>
-          <div class="table-responsive" >
+         <button class="btn btn-success fa fa-pencil " data-action="toggle-modal" data-modal="#modal-set-data-dt" > Set data</button>
+         <div class="table-responsive" >
             <table class="table table-border" style="width: 98%;" ref="dt-data">
               <tr>
                 <th>Time</th>
@@ -158,10 +171,10 @@ app.component("admin-edit-dt-page", async function(controller) {
             </table>
           </div>
         </div>
-       <div>
+        <div>
          <h2>Owners</h2>
          <br>
-         <button class="btn btn-success" data-action="toggle-modal" data-modal="#modal-add-owner-dt" >Add owner</button>
+         <button class="btn btn-success fa fa-user-plus" data-action="toggle-modal" data-modal="#modal-add-owner-dt" > Add owner</button>
           <div class="table-responsive">
             <table class="table table-border" ref="dt-owners" style="width: 98%;">
               <tr>
@@ -171,7 +184,7 @@ app.component("admin-edit-dt-page", async function(controller) {
               </tr>
             </table>
           </div>
-        </div>
+         </div>
      </div>
     <div class="modal" id="modal-add-owner-dt">
       <div class="modal-content">
@@ -191,5 +204,27 @@ app.component("admin-edit-dt-page", async function(controller) {
       </div>
     </div>
 
+    <div class="modal" id="modal-set-data-dt">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-header-text">Set Data </h3>
+          <button class="modal-close-btn fa fa-times" data-action="toggle-modal" data-modal="#modal-set-data-dt"></button>
+        </div>
+        <div class="modal-body">
+          <form action="#" class="form" ref="set-data-form">
+            <div>
+              <label for="" class="form-label">Key</label><br>
+              <input type="text" class="form-input" style="width:90%;" ref="set-data-key">
+            </div>
+            <div>
+              <label for="" class="form-label">Value</label><br>
+              <input type="text" class="form-input" style="width:90%;" ref="set-data-val">
+            </div>
+
+            <button class="btn btn-rounded btn-info" data-action="toggle-modal" data-modal="#modal-set-data-dt">Set</button>
+          </form>
+        </div>
+      </div>
+    </div>
   `
 })
