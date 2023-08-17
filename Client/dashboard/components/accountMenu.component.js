@@ -14,8 +14,9 @@ app.staticComponent("account-menu", function(controller) {
           app.router.redirect("/auth/login",true)
         })
 
-        .catch(() => {
+        .catch((err) => {
           alert("Cannot logout now !")
+          showMsg(err.message)
         })
 
         .finally(() => {
