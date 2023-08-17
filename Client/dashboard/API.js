@@ -213,7 +213,7 @@ class DTManager {
       throw getResponseErr(err)
     }
   }
-  
+
   async create(name) {
     try {
       let response = await axios({
@@ -234,8 +234,8 @@ class DTManager {
       throw getResponseErr(err)
     }
   }
-  
-   async remove(dt_id) {
+
+  async remove(dt_id) {
     try {
       let response = await axios({
         method: "post",
@@ -255,7 +255,7 @@ class DTManager {
       throw getResponseErr(err)
     }
   }
-  
+
   async info(dt_id) {
     try {
       let response = await axios({
@@ -276,8 +276,8 @@ class DTManager {
       throw getResponseErr(err)
     }
   }
-  
-  async owners (dt_id) {
+
+  async owners(dt_id) {
     try {
       let response = await axios({
         method: "post",
@@ -297,8 +297,8 @@ class DTManager {
       throw getResponseErr(err)
     }
   }
-  
-  async removeOwner(dt_id,user_id) {
+
+  async removeOwner(dt_id, user_id) {
     try {
       let response = await axios({
         method: "post",
@@ -306,19 +306,19 @@ class DTManager {
         headers: {
           authorization: `token ${TouchCookieManager.getCookie("at")}`
         },
-        data: { dt_id ,user_id}
+        data: { dt_id, user_id }
       })
       return response.data.results
     } catch (err) {
       if (shouldReAuth(err)) {
-        let result = await this.app.auth.retryWithNewToken(this.removeOwner, [dt_id,user_id], this)
+        let result = await this.app.auth.retryWithNewToken(this.removeOwner, [dt_id, user_id], this)
         if (result.success) return result.returnValue
         else throw result.error
       }
       throw getResponseErr(err)
     }
   }
-  
+
   async addOwner(dt_id, user_id) {
     try {
       let response = await axios({
@@ -340,6 +340,60 @@ class DTManager {
     }
   }
 }
+
+class DataIO {
+  constructor(app) {
+    this.app = app
+    this.socket = app.socket
+    this.listenerFn = null
+    let ctx = this
+    this.socket.on("data_change", function(data) {
+      let dt_id = data.dt_id
+      ctx.app.emitEvent(`dataio:dt_${dt_id}_change`, data)
+    })
+
+  }
+
+  setListener(dt_id) {
+    return new Promise((resolve, reject) => {
+      let ctx = this
+
+
+      function onErr(err) {
+        reject(err)
+      }
+
+      this.socket.on("auth_err", onErr)
+      this.socket.on("action_err", onErr)
+
+      function onDTconnect() {
+        ctx.socket.off("action_err", onErr)
+        ctx.socket.off("auth_err", onErr)
+        ctx.socket.off("dt:set_listener:success", onDTconnect)
+        resolve()
+      }
+
+      this.socket.on("dt:set_listener:success", onDTconnect)
+      this.socket.emit("dt:set_listener", {
+        accessToken: TouchCookieManager.getCookie("at"),
+        dt_id
+      })
+    })
+  }
+
+  removeListener(dt_id) {
+    return new Promise((resolve, reject) => {
+      let ctx = this
+      this.socket.emit("dt:rm_listener", {
+        accessToken: TouchCookieManager.getCookie("at"),
+        dt_id
+      })
+
+      resolve()
+    })
+  }
+}
+
 class TouchClientApp {
   constructor(configs) {
     this.configs = configs
@@ -347,6 +401,8 @@ class TouchClientApp {
     this.auth = new TouchClientAppAuth(this)
     this.datatables = new DTManager(this)
     this.events = {}
+    this.socket = io(configs.base)
+    this.dataIO = new DataIO(this)
   }
 
   emitEvent(name, data) {
@@ -361,6 +417,17 @@ class TouchClientApp {
     this.events[name].push(callback)
   }
 
+  off(name, callback) {
+    if (!this.events[name]) this.events[name] = []
+    for (var i = 0; i < this.events[name].length; i++) {
+      if(this.events[name][i] === callback){
+        this.events[name].splice(i,1)
+        return 
+      }
+    }
+  }
+  
+  
 }
 
 function createApp(configs) {

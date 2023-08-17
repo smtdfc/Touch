@@ -7,15 +7,11 @@ const fastify = require("fastify")({
 
 fastify.register(require("@fastify/formbody"));
 fastify.register(require("@fastify/cors"))
-fastify.register(require("fastify-socket.io"), {
-  cors: {
-    origin: "*"
-  }
-})
 fastify.register(require('@fastify/static'), {
   root: path.join(__dirname, './Client/dashboard'),
   prefix: '/Client/dashboard/', 
 })
+
 require("./Server/Socket/main.js")(fastify)
 
 global.models ={}

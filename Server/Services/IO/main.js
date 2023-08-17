@@ -1,7 +1,7 @@
 const AuthService = require("../Authentication/auth.js")
 const TokenService = require("../Authentication/token.js")
 const DatatablesService = require("../DataTables/main.js")
-
+const DatatablesIOSerive = require("../DataTables/io.js")
 module.exports = function(fastify) {
   fastify.ready().then(() => {
     fastify.io.on("connection", function(socket) {
@@ -11,6 +11,8 @@ module.exports = function(fastify) {
         type: "listen_data_dt"
       }
 
+
+
       socket.on("dt:set_listener", async function(data) {
         if (!data.accessToken) {
           socket.emit("auth_err", {
@@ -19,7 +21,9 @@ module.exports = function(fastify) {
           })
           return
         }
-
+        socket.data.dt = {
+          accessLevel: 0
+        }
         //Authentication 
         try {
           socket.data.auth = await TokenService.verify(
@@ -55,6 +59,9 @@ module.exports = function(fastify) {
           socket.emit("dt:set_listener:success", {
             dt_id: data.dt_id
           })
+          socket.data.dt = {
+            accessLevel: accessLevel
+          }
           return
         } else {
           try {
@@ -68,7 +75,9 @@ module.exports = function(fastify) {
               } else {
                 accessLevel = 1
               }
-
+              socket.data.dt = {
+                accessLevel: accessLevel
+              }
               socket.join(`dt_${data.dt_id}`)
               socket.data.listening.push(data.dt_id)
               socket.emit("dt:set_listener:success", {
@@ -88,27 +97,76 @@ module.exports = function(fastify) {
           }
         }
       })
-      socket.on("dt:rm_listener",async function(data){
-        if(!socket.data.auth){
-          socket.emit("auth_err",{
-            name:"Auth Error",
-            message:"Unauthorized !"
+
+      socket.on("dt:rm_listener", async function(data) {
+        if (!socket.data.auth) {
+          socket.emit("auth_err", {
+            name: "Auth Error",
+            message: "Unauthorized !"
           })
-          return 
+          return
         }
-        
-        if(socket.data.listening.includes(data.dt_id)){
+
+        if (socket.data.listening.includes(data.dt_id)) {
           socket.leave(`dt_${data.dt_id}`)
-          socket.data.listening = socket.data.listening.filter(v => v==data.dt_id)
-        }else{
+          socket.data.listening = socket.data.listening.filter(v => v == data.dt_id)
+        } else {
           socket.emit("action_err", {
             name: "Action Error",
             message: "Cannot remove listener of Datatable !"
           })
         }
+
+        socket.data.dt = {
+          accessLevel: 0
+        }
       })
-      
-      
+
+
+
+      socket.on("dt:set_data", function(data) {
+        if (!socket.data.auth) {
+          socket.emit("auth_err", {
+            name: "Auth Error",
+            message: "Unauthorized !"
+          })
+          return
+        }
+
+        if (socket.data.listening.includes(data.dt_id)) {
+          let role = socket.data.auth.info.role
+          try {
+            let dt = await DatatablesService.getDT(
+              data.dt_id,
+              socket.data.dt.accessLevel
+            )
+          } catch (err) {
+            socket.emit("action_err", err)
+            return
+          }
+          
+          await DatatablesIOSerive.write(
+            data.dt_id,
+            data.key,
+            data.value,
+            `user_${socket.data.auth.user_id}`
+          )
+
+          fastify.io.to(`dt_${data.dt_id}`).emit("data_change", {
+            dt_id: data.dt_id,
+            key: data.key,
+            value: data.value,
+            by: `user_${socket.data.auth.user_id}`
+          })
+
+        } else {
+          socket.emit("action_err", {
+            name: "Action Error",
+            message: "Cannot set data for Datatable !"
+          })
+        }
+      })
+
     })
   })
 }

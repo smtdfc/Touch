@@ -1,4 +1,4 @@
-app.staticComponent("admin-edit-dt-page", async function(controller) {
+app.component("admin-edit-dt-page", async function(controller) {
   showLoader()
   let dt_id = app.router.info.params.id ?? null
   let info = null
@@ -50,6 +50,22 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
     })
   }
 
+  controller.changeStatus = function(status) {
+    if (status == "connected") {
+      controller.ref("update-dt-status").HTML = `
+        <div class="dot dot-success"></div> <span>Connected . Updating realtime </span>
+      `
+    }
+
+    if (status == "error") {
+      controller.ref("update-dt-status").HTML = `
+        <div class="dot dot-danger"></div> <span>Cannot connect ! </span>
+      `
+    }
+
+
+  }
+
   controller.onRender = function() {
     controller.ref("add-owner-form").on("submit", function(e) {
       e.preventDefault()
@@ -74,10 +90,28 @@ app.staticComponent("admin-edit-dt-page", async function(controller) {
       .then((list) => {
         list.forEach(controller.addOwner)
       })
+    
+    TouchApp.dataIO.setListener(dt_id)
+      .then(() => {
+        showMsg("Connected Datatable  ")
+        controller.changeStatus("connected")
+        
+        TouchApp.on(`dataio:dt_${dt_id}_change`,function(data){
+          console.log(data);
+        })
+        
+      })
 
+      .catch((err) => {
+        controller.changeStatus("error")
+      })
 
   }
 
+  controller.onRemove = function(){
+    TouchApp.dataIO.removeListener(dt_id)
+  }
+  
   return `
     <h1>Edit DataTable</h1>
     <span>Datatables ID : <span> ${dt_id} </span></span>

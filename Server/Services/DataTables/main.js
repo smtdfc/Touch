@@ -1,4 +1,34 @@
+const {  DataTypes } = require("sequelize")
 const { user } = require("../Authentication/auth.js")
+
+function defineDTModel(dt_id){
+  let model = models.conn.touchDatatablesDB.define(`dt_${dt_id}`,{
+    key:{
+      type:DataTypes.TEXT
+    },
+    value:{
+      type:DataTypes.TEXT
+    },
+    timestamp:{
+      type:DataTypes.TEXT
+    },
+    by:{
+      type:DataTypes.TEXT
+    }
+  },{
+    freezeTableName: true,
+  timestamps: false,
+  })
+  return model
+}
+
+async function createDTModel(dt_id){
+  let model = defineDTModel(dt_id)
+  await model.sync()
+  return model
+}
+
+
 module.exports = class DTService {
   static async getDT(dt_id, accessLevel) {
     let dt = await models.DataTables.findOne({
@@ -77,7 +107,8 @@ module.exports = class DTService {
         createBy: createBy.user_id,
         status: "active"
       })
-      dt.addOwner(createBy)
+      await dt.addOwner(createBy)
+      await createDTModel(dt_id)
       return dt
     } catch (err) {
       throw {
