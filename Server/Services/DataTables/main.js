@@ -29,7 +29,7 @@ module.exports = class DTService {
       }
     }
   }
-  
+
   static async getAll(limit = 5, offset = 0) {
     try {
       let list = await models.DataTables.findAll({
@@ -101,14 +101,14 @@ module.exports = class DTService {
   static async removeOwners(dt_id, owner, accessLevel = 0) {
     let dt = await this.getDT(dt_id, accessLevel)
     try {
-      owner = await user(owner,true)
+      owner = await user(owner, true)
     } catch (err) {
       throw {
         name: "Action Error",
         message: err.message
       }
     }
-    
+
     if (!(await dt.hasOwner(owner))) {
       throw {
         name: "Action Error",
@@ -120,28 +120,28 @@ module.exports = class DTService {
 
   static async addOwner(dt_id, owner, accessLevel = 0) {
     let dt = await this.getDT(dt_id, accessLevel)
-    try{
-     owner = await user(owner,true)
-    }catch(err){
-      throw{
-        name:"Action Error",
-        message:err.message
-      }
-    }
-    
-    if(await dt.hasOwner(owner)){
+    try {
+      owner = await user(owner, true)
+    } catch (err) {
       throw {
         name: "Action Error",
-        message:"Owner already exists !"
+        message: err.message
       }
     }
-    
+
+    if (await dt.hasOwner(owner)) {
+      throw {
+        name: "Action Error",
+        message: "Owner already exists !"
+      }
+    }
+
     await dt.addOwner(owner)
     return {
       dt_id,
-      owner:{
-        user_id:owner.user_id,
-        name:owner.name
+      owner: {
+        user_id: owner.user_id,
+        name: owner.name
       }
     }
   }
@@ -156,18 +156,34 @@ module.exports = class DTService {
   }
 
   static async isOwner(dt_id, user_id) {
-    let dt = await models.DataTables_Users.findOne({
+    let dt = await models.DataTables.findOne({
       where: {
-        dt_id: dt_id,
-        user_id: user_id
-      },
-      raw: true
+        dt_id: dt_id
+      }
     })
-
-    if (!dt) return false
-    return true
+    if (dt) {
+      if (dt.createBy == user_id) {
+        return [true, "creator"]
+      } else {
+        try {
+          owner = await user(owner, true)
+        } catch (err) {
+          throw {
+            name: "Action Error",
+            message: err.message
+          }
+        }
+        return [dt.hasOwner(owner), "owner"]
+      }
+      return dt
+    } else {
+      throw {
+        name: "Action Error",
+        message: "Datatable doesn't exist !"
+      }
+    }
   }
-  
+
   static async getCreator(dt_id, accessLevel = 0) {
     let dt = await this.getDT(dt_id, accessLevel)
     return dt.createBy

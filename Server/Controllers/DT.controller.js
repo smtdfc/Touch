@@ -146,7 +146,7 @@ module.exports = class DTController {
         }
 
         let res = await DTService.isOwner(request.body.dt_id, request.user.user)
-        if (!res) {
+        if (!res[0]) {
           throw {
             name: "Action Error",
             message: "You do not have permission to get info of this table !!"
@@ -200,7 +200,7 @@ module.exports = class DTController {
         }
 
         let res = await DTService.isOwner(request.body.dt_id, request.user.user)
-        if (!res) {
+        if (!res[0]) {
           throw {
             name: "Action Error",
             message: "You do not have permission to get owners of this table !!"

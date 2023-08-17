@@ -16,13 +16,13 @@ fastify.register(require('@fastify/static'), {
   root: path.join(__dirname, './Client/dashboard'),
   prefix: '/Client/dashboard/', 
 })
-
+require("./Server/Socket/main.js")(fastify)
 
 global.models ={}
 require("./Server/Models/main.js")
 fastify.addHook("preHandler",require("./Server/Services/Authentication/tokenVerify.js"))
 require("./Server/Routes/main.js")(fastify)
-
+require("./Server/Services/IO/main.js")(fastify)
 fastify.listen({port:3000, host: "0.0.0.0" },
 	function(err, address) {
 		if (err) {
