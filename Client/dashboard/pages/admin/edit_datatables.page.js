@@ -62,10 +62,20 @@ app.component("admin-edit-dt-page", async function(controller) {
         <div class="dot dot-danger"></div> <span>Cannot connect ! </span>
       `
     }
-
-
   }
+  
+  controller.onDTDataChange = function(data) {
 
+    let tr = Turtle.createElement("tr")
+    tr.HTML = `
+      <td>${new Date(Date.now()).toUTCString()}</td>
+      <td>${data.key}</td>
+      <td>${data.value}</td>
+      <td>${data.by}</td>
+     `
+    controller.ref("dt-data").addChild(tr)
+  }
+  
   controller.onRender = function() {
     controller.ref("add-owner-form").on("submit", function(e) {
       e.preventDefault()
@@ -75,12 +85,9 @@ app.component("admin-edit-dt-page", async function(controller) {
         .then((user) => {
           controller.addOwner(user)
         })
-
         .catch(err => {
-          console.log(1);
           alert(`Cannot add owner \n ${err.message}`)
         })
-
         .finally(() => {
           hideLoader()
         })
@@ -90,16 +97,12 @@ app.component("admin-edit-dt-page", async function(controller) {
       .then((list) => {
         list.forEach(controller.addOwner)
       })
-    
+
     TouchApp.dataIO.setListener(dt_id)
       .then(() => {
         showMsg("Connected Datatable  ")
         controller.changeStatus("connected")
-        
-        TouchApp.on(`dataio:dt_${dt_id}_change`,function(data){
-          console.log(data);
-        })
-        
+        TouchApp.on(`dataio:dt_${dt_id}_change`, controller.onDTDataChange)
       })
 
       .catch((err) => {
@@ -108,10 +111,11 @@ app.component("admin-edit-dt-page", async function(controller) {
 
   }
 
-  controller.onRemove = function(){
+  controller.onRemove = function() {
     TouchApp.dataIO.removeListener(dt_id)
+    TouchApp.off(`dataio:dt_${dt_id}_change`, controller.onDTDataChange)
   }
-  
+
   return `
     <h1>Edit DataTable</h1>
     <span>Datatables ID : <span> ${dt_id} </span></span>
@@ -143,12 +147,13 @@ app.component("admin-edit-dt-page", async function(controller) {
          <h2>Latest Data</h2>
          <div class="d-flex align-items-center" ref="update-dt-status" ><div class="dot dot-warn"></div> <span>Connecting ...</span> </div>
          <br>
-          <div class="table-responsive" ref="dt-data">
-            <table class="table table-border" style="width: 98%;">
+          <div class="table-responsive" >
+            <table class="table table-border" style="width: 98%;" ref="dt-data">
               <tr>
                 <th>Time</th>
-                <th>Label</th>
+                <th>Key</th>
                 <th>Data</th>
+                <th>By</th>
               </tr>
             </table>
           </div>

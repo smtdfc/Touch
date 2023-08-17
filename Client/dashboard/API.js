@@ -345,7 +345,7 @@ class DataIO {
   constructor(app) {
     this.app = app
     this.socket = app.socket
-    this.listenerFn = null
+    this.listening = null
     let ctx = this
     this.socket.on("data_change", function(data) {
       let dt_id = data.dt_id
@@ -370,6 +370,7 @@ class DataIO {
         ctx.socket.off("action_err", onErr)
         ctx.socket.off("auth_err", onErr)
         ctx.socket.off("dt:set_listener:success", onDTconnect)
+        ctx.listening = dt_id
         resolve()
       }
 
@@ -384,6 +385,7 @@ class DataIO {
   removeListener(dt_id) {
     return new Promise((resolve, reject) => {
       let ctx = this
+      ctx.listening = null
       this.socket.emit("dt:rm_listener", {
         accessToken: TouchCookieManager.getCookie("at"),
         dt_id
@@ -391,6 +393,16 @@ class DataIO {
 
       resolve()
     })
+  }
+  
+  setData(key,value){
+    if(!this.listening) return
+    this.socket.emit("dt:set_data",{
+      dt_id:this.listening,
+      key:key,
+      value:value
+    })
+    
   }
 }
 
