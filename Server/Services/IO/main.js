@@ -63,10 +63,10 @@ module.exports = function(fastify) {
 
 
 			socket.on("dt:rm_listener", function(data) {
-				if (!data.accessToken) {
+				if (!socket.data.auth) {
 					socket.emit("auth_err", {
 						name: "Auth Error",
-						message: "Missing auth information !"
+						message: "Unauthorized !"
 					})
 					return
 				}
@@ -74,10 +74,10 @@ module.exports = function(fastify) {
 			})
 
 			socket.on("dt:set_data", function(data) {
-				if (!data.accessToken) {
+				if (!socket.data.auth) {
 					socket.emit("auth_err", {
 						name: "Auth Error",
-						message: "Missing auth information !"
+						message: "Unauthorized !"
 					})
 					return
 				}

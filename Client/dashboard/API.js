@@ -224,7 +224,7 @@ class DTManager {
         },
         data: { name }
       })
-      return response.data.results
+      return response.data.results.dt
     } catch (err) {
       if (shouldReAuth(err)) {
         let result = await this.app.auth.retryWithNewToken(this.create, [name], this)
@@ -351,6 +351,12 @@ class DataIO {
       let dt_id = data.dt_id
       ctx.app.emitEvent(`dataio:dt_${dt_id}_change`, data)
     })
+    this.socket.on("auth_err", function(data) {
+      console.log(data);
+    })
+    this.socket.on("action_err", function(k) {
+      console.log(k);
+    })
 
   }
 
@@ -394,15 +400,15 @@ class DataIO {
       resolve()
     })
   }
-  
-  setData(key,value){
-    if(!this.listening) return
-    this.socket.emit("dt:set_data",{
-      dt_id:this.listening,
-      key:key,
-      value:value
+
+  setData(key, value) {
+    if (!this.listening) return
+    this.socket.emit("dt:set_data", {
+      dt_id: this.listening,
+      key: key,
+      value: value
     })
-    
+
   }
 }
 
@@ -433,14 +439,14 @@ class TouchClientApp {
   off(name, callback) {
     if (!this.events[name]) this.events[name] = []
     for (var i = 0; i < this.events[name].length; i++) {
-      if(this.events[name][i] === callback){
-        this.events[name].splice(i,1)
-        return 
+      if (this.events[name][i] === callback) {
+        this.events[name].splice(i, 1)
+        return
       }
     }
   }
-  
-  
+
+
 }
 
 function createApp(configs) {
