@@ -68,17 +68,17 @@ models.DataTables = models.conn.touchDB.define("datatables", {
 })
 
 models.DataTables_Users = models.conn.touchDB.define("datatables_users", {
-user_id: {
+  user_id: {
     type: DataTypes.TEXT,
     references: {
-      model: models.Users, 
+      model: models.Users,
       key: 'user_id'
     }
   },
   dt_id: {
     type: DataTypes.TEXT,
     references: {
-      model: models.DataTables, 
+      model: models.DataTables,
       key: 'dt_id'
     }
   }
@@ -87,10 +87,58 @@ user_id: {
   timestamps: false,
 })
 
-models.Users.belongsToMany(models.DataTables,{foreignKey:'dt_id', through:models.DataTables_Users})
-models.DataTables.belongsToMany(models.Users,{foreignKey:'user_id', through:models.DataTables_Users,as:"owner"})
+models.Users.belongsToMany(models.DataTables, { foreignKey: 'dt_id', through: models.DataTables_Users })
+models.DataTables.belongsToMany(models.Users, { foreignKey: 'user_id', through: models.DataTables_Users, as: "owner" })
+
+
+models.Devices = models.conn.touchDB.define("devices", {
+  device_id: {
+    type: DataTypes.TEXT,
+    primaryKey: true
+  },
+  device_name: {
+    type: DataTypes.TEXT,
+  },
+  createBy: {
+    type: DataTypes.TEXT,
+  },
+  status: {
+    type: DataTypes.TEXT,
+  },
+  dt_id: {
+    type: DataTypes.TEXT,
+  }
+}, {
+  freezeTableName: true,
+  timestamps: false,
+})
+
+models.Devices_Users = models.conn.touchDB.define("devices_users", {
+  user_id: {
+    type: DataTypes.TEXT,
+    references: {
+      model: models.Users,
+      key: 'user_id'
+    }
+  },
+  device_id: {
+    type: DataTypes.TEXT,
+    references: {
+      model: models.Devices,
+      key: 'device_id'
+    }
+  }
+}, {
+  freezeTableName: true,
+  timestamps: false,
+})
+
+models.Users.belongsToMany(models.Devices, { foreignKey: 'device_id', through: models.Devices_Users })
+models.Devices.belongsToMany(models.Users, { foreignKey: 'user_id', through: models.Devices_Users, as: "owner" })
+
 async function setup() {
   await models.DataTables_Users.sync({ alter: true })
+  await models.Devices_Users.sync({alter:true})
 }
 
 setup()

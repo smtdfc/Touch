@@ -1,5 +1,7 @@
+const {TouchError} = require("../Classes/Error.js")
 module.exports.generateErrResponse = function(reply,err){
   let code = 400
+  if(err instanceof TouchError){
   if(["Auth Error","Token Error"].includes(err.name)){
     code = 401
   }
@@ -7,7 +9,16 @@ module.exports.generateErrResponse = function(reply,err){
   if (["Permission Error"].includes(err.name)) {
     code = 403
   }
-  
+  }else{
+    code = 400
+    return reply.code(code).send({
+      status: "error",
+      error: {
+        name: "Action Error",
+        message: "Server error ! "
+      }
+    })
+  }
   return reply.code(code).send({
     status:"error",
     error:{

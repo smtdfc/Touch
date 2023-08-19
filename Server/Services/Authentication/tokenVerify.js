@@ -1,5 +1,5 @@
 const TokenService = require("./token.js")
-const {generateErrResponse} = require("../../utils.js")
+const {generateErrResponse} = require("../../utils/response.js")
 
 module.exports = async function (request, reply) {
   request.user = null
