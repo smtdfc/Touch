@@ -89,7 +89,7 @@ module.exports = function(fastify) {
 						`user:${socket.data.auth.user_id}`
 					)
 
-					socket.to(`dt_${data.dt_id}`).emit("data_change", {
+					fastify.io.to(`dt_${data.dt_id}`).emit("data_change", {
 						dt_id: data.dt_id,
 						key: data.key,
 						value: data.value,
