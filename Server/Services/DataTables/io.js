@@ -1,3 +1,5 @@
+const {  DataTypes } = require("sequelize")
+
 function defineDTModel(dt_id) {
   let model = models.conn.touchDatatablesDB.define(`dt_${dt_id}`, {
     key: {

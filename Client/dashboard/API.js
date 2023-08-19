@@ -372,9 +372,9 @@ class DataIO {
       this.socket.on("auth_err", onErr)
       this.socket.on("action_err", onErr)
 
-      function onDTconnect() {
-        ctx.socket.off("action_err", onErr)
-        ctx.socket.off("auth_err", onErr)
+      function onDTconnect(d) {
+       // ctx.socket.off("action_err", onErr)
+      //  ctx.socket.off("auth_err", onErr)
         ctx.socket.off("dt:set_listener:success", onDTconnect)
         ctx.listening = dt_id
         resolve()

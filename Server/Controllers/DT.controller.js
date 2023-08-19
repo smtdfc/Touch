@@ -54,7 +54,7 @@ module.exports = class DTController {
 			if (request.user._user.role == "admin") {
 				return generateSuccessResponse(reply, await dt.remove())
 			} else {
-				if (dt.isStatuses(["active", "lock"]) && t.isCreator(request.user._user)) {
+				if (dt.isStatuses(["active", "lock"]) && dt.isCreator(request.user._user)) {
 					return generateSuccessResponse(reply, await dt.remove())
 				} else {
 					throw {
@@ -81,7 +81,7 @@ module.exports = class DTController {
 			if (request.user._user.role == "admin") {
 				return generateSuccessResponse(reply, await dt.listOwner())
 			} else {
-				if (dt.isStatuses(["active", "lock"]) && t.isCreator(request.user._user)) {
+				if (dt.isStatuses(["active", "lock"]) && dt.isCreator(request.user._user)) {
 					return generateSuccessResponse(reply, await dt.listOwner())
 				} else if (dt.isStatuses(["active"]) && await dt.isOwner(request.user._user)) {
 					return generateSuccessResponse(reply, await dt.listOwner())
@@ -97,7 +97,7 @@ module.exports = class DTController {
 		}
 	}
 	
-	static async owners(request, reply) {
+	static async info(request, reply) {
 	  if (!request.user) {
 	    return generateErrResponse(reply, {
 	      name: "Permission Error",
@@ -110,7 +110,7 @@ module.exports = class DTController {
 	    if (request.user._user.role == "admin") {
 	      return generateSuccessResponse(reply, await dt.info())
 	    } else {
-	      if (dt.isStatuses(["active", "lock"]) && t.isCreator(request.user._user)) {
+	      if (dt.isStatuses(["active", "lock"]) && dt.isCreator(request.user._user)) {
 	        return generateSuccessResponse(reply, await dt.info())
 	      } else if (dt.isStatuses(["active"]) && await dt.isOwner(request.user._user)) {
 	        return generateSuccessResponse(reply, await dt.info())
@@ -141,7 +141,7 @@ module.exports = class DTController {
 				return generateSuccessResponse(reply, await dt.addOwner(user))
 			} else {
 				
-				if (dt.isStatuses(["active", "lock"]) && t.isCreator(request.user._user)) {
+				if (dt.isStatuses(["active", "lock"]) && dt.isCreator(request.user._user)) {
 					let user = await AuthService.user(request.body.user_id,false)
 					return generateSuccessResponse(reply, await dt.addOwner(user))
 				} else {
@@ -170,7 +170,7 @@ module.exports = class DTController {
 				let user = await AuthService.user(request.body.user_id, true)
 				return generateSuccessResponse(reply, await dt.removeOwner(user))
 			} else {
-				if (dt.isStatuses(["active", "lock"]) && t.isCreator(request.user._user)) {
+				if (dt.isStatuses(["active", "lock"]) && dt.isCreator(request.user._user)) {
 					let user = await AuthService.user(request.body.user_id, false)
 					return generateSuccessResponse(reply, await dt.removeOwner(user))
 				} else {

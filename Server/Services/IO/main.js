@@ -81,7 +81,7 @@ module.exports = function(fastify) {
 					})
 					return
 				}
-				if (socket.rooms.indexOf(`dt_${data.dt_id}`) >= 0) {
+				if (Object.keys(socket.rooms).includes(`dt_${data.dt_id}`) >= 0) {
 					DatatablesIOSerive.write(
 						data.dt_id,
 						data.key,
