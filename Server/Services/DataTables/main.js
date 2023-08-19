@@ -76,6 +76,12 @@ class DataTable{
 	}
 	
 	async removeOwner(user){
+	  if(user.user_id == this.dt.createBy){
+	    throw {
+	      name: "Action Error",
+	      message: "You cannot delete yourself because you are the creator of this DataTable ! !"
+	    }
+	  }
 		if (this.dt.hasOwner(user)) {
 			await this.dt.removeOwner(user)
 			return this.dt

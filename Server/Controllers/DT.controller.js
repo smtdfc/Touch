@@ -170,7 +170,6 @@ module.exports = class DTController {
 				let user = await AuthService.user(request.body.user_id, true)
 				return generateSuccessResponse(reply, await dt.removeOwner(user))
 			} else {
-	
 				if (dt.isStatuses(["active", "lock"]) && t.isCreator(request.user._user)) {
 					let user = await AuthService.user(request.body.user_id, false)
 					return generateSuccessResponse(reply, await dt.removeOwner(user))
