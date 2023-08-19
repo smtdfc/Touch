@@ -9,13 +9,6 @@ module.exports = async function (request, reply) {
       try {
         let info = await TokenService.verify(token, process.env.ACCESSTOKEN_SECRET)
         request.user = info
-        try {
-        	let user = await AuthService.user(request.user.user_id)
-        	request.user.role = user.role
-        	request.user._user = user
-        } catch (err) {
-        	return generateErrResponse(reply, err)
-        }
       } catch (err) {
         return generateErrResponse(reply,err)
       }

@@ -1,0 +1,76 @@
+.line-loader{
+  height: 5px;
+}
+
+.navbar{
+  backdrop-filter: blur(8px);
+  background: transparent;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.messages{
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  position: fixed;
+  bottom:30px;
+  left:0;
+  z-index:9999;
+  width: 100%;
+}
+
+.message{
+  
+  display: flex;
+  -webkit-animation-name: fadeInUp;
+  -moz-animation-name: fadeInUp;
+  -o-animation-name: fadeInUp;
+  animation-name: fadeInUp;
+  -webkit-animation-duration: 0.5s;
+  -moz-animation-duration: 0.5s;
+  -o-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  align-items: center;
+  background: #00FFA6B3;
+  margin: 5px;
+  padding: 16px;
+  width: 98%;
+}
+
+.sidebar-container,form{
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.5s;
+  -moz-animation-duration: 0.5s;
+  -o-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+}
+
+.circle-loader{
+  border-color: #00FFBA61;
+  border-bottom-color: #00FF54;
+}
+
+.dot{
+  margin: 0px 5px;
+  padding: 5px;
+  width: 12px;
+  height: 12px;
+  background: #00FF7DD6;
+  border-radius:50%;
+}
+
+.dot.dot-danger{
+  background: red;
+}
+
+.dot.dot-info {
+  background: #00FFEDD6;
+}
+
+.dot.dot-warn{
+  background: #C8B700;
+}
