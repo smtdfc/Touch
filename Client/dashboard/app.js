@@ -1,12 +1,16 @@
+
+
 function openFullscreen() {
   try{
+    fscreen.requestFullscreen(document.documentElement);
+/*
   if (document.documentElement.requestFullscreen) {
     document.documentElement.requestFullscreen();
-  } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
+  } else if (document.documentElement.webkitRequestFullscreen) { 
     document.documentElement.webkitRequestFullscreen();
-  } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+  } else if (document.documentElement.msRequestFullscreen) { 
     document.documentElement.msRequestFullscreen();
-  }
+  }*/
   }catch(err){
     showMsg("Unable to enter full screen mode.")
   }
@@ -70,6 +74,7 @@ app.render(`
 `)
 
 async function loader() {
+  window.fscreen = await import('https://cdn.jsdelivr.net/npm/fscreen@1.2.0/+esm')
   await TouchApp.auth.info()
   await import('./components/navbar.component.js')
   await import("./components/sidebar.component.js")
