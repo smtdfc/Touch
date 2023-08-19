@@ -1,11 +1,11 @@
 function openFullscreen() {
   try{
-  if (document.getElementById("#root").requestFullscreen) {
-    document.getElementById("#root").requestFullscreen();
-  } else if (document.getElementById("#root").webkitRequestFullscreen) { /* Safari */
-    document.getElementById("#root").webkitRequestFullscreen();
-  } else if (document.getElementById("#root").msRequestFullscreen) { /* IE11 */
-    document.getElementById("#root").msRequestFullscreen();
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen();
+  } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
+    document.documentElement.webkitRequestFullscreen();
+  } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+    document.documentElement.msRequestFullscreen();
   }
   }catch(err){
     showMsg("Unable to enter full screen mode.")
