@@ -1,3 +1,27 @@
+function openFullscreen() {
+  try{
+  if (document.getElementById("#root").requestFullscreen) {
+    document.getElementById("#root").requestFullscreen();
+  } else if (document.getElementById("#root").webkitRequestFullscreen) { /* Safari */
+    document.getElementById("#root").webkitRequestFullscreen();
+  } else if (document.getElementById("#root").msRequestFullscreen) { /* IE11 */
+    document.getElementById("#root").msRequestFullscreen();
+  }
+  }catch(err){
+    showMsg("Unable to enter full screen mode.")
+  }
+}
+
+/* Close fullscreen */
+function closeFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) { /* Safari */
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) { /* IE11 */
+    document.msExitFullscreen();
+  }
+}
 function showMsg(msg){
   let message = document.createElement("div")
   message.classList.add("message")

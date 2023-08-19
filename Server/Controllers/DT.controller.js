@@ -137,23 +137,25 @@ module.exports = class DTController {
     try {
       let dt = await await DTService.getDataTable(request.body.dt_id)
       if (request.user._user.role == "admin") {
-let user = null
-try {
-  user = await AuthService.user(request.body.user_id, true)
-} catch (err) {
-  err.name = "Action Error"
-  throw err
-}        return generateSuccessResponse(reply, await dt.addOwner(user))
+        let user = null
+        try {
+          user = await AuthService.user(request.body.user_id, true)
+        } catch (err) {
+          err.name = "Action Error"
+          throw err
+        }
+        return generateSuccessResponse(reply, await dt.addOwner(user))
       } else {
 
         if (dt.isStatuses(["active", "lock"]) && dt.isCreator(request.user._user)) {
-let user = null
-try {
-  user = await AuthService.user(request.body.user_id, true)
-} catch (err) {
-  err.name = "Action Error"
-  throw err
-}          return generateSuccessResponse(reply, await dt.addOwner(user))
+          let user = null
+          try {
+            user = await AuthService.user(request.body.user_id, true)
+          } catch (err) {
+            err.name = "Action Error"
+            throw err
+          }
+          return generateSuccessResponse(reply, await dt.addOwner(user))
         } else {
           throw {
             name: "Action Error",
