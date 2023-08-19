@@ -13,6 +13,10 @@ fastify.register(require('@fastify/static'), {
 })
 
 global.models ={}
+require("./Server/Models/main.js")
+fastify.addHook("preHandler",require("./Server/Services/Authentication/tokenVerify.js"))
+require("./Server/Routes/main.js")(fastify)
+
 fastify.listen({port:3000, host: "0.0.0.0" },
 	function(err, address) {
 		if (err) {
