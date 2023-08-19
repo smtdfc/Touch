@@ -123,6 +123,6 @@ module.exports.createDataTable =async function(name, creator){
 		status:"active"
 	})
 	await createDTModel(dt_id)
-	await dt.addOwner(owner)
+	await dt.addOwner(creator)
 	return  new DataTable(dt)
 }

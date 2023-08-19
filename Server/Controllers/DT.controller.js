@@ -97,6 +97,35 @@ module.exports = class DTController {
 		}
 	}
 	
+	static async owners(request, reply) {
+	  if (!request.user) {
+	    return generateErrResponse(reply, {
+	      name: "Permission Error",
+	      message: "Access has been blocked !"
+	    })
+	  }
+	
+	  try {
+	    let dt = await await DTService.getDataTable(request.body.dt_id)
+	    if (request.user._user.role == "admin") {
+	      return generateSuccessResponse(reply, await dt.info())
+	    } else {
+	      if (dt.isStatuses(["active", "lock"]) && t.isCreator(request.user._user)) {
+	        return generateSuccessResponse(reply, await dt.info())
+	      } else if (dt.isStatuses(["active"]) && await dt.isOwner(request.user._user)) {
+	        return generateSuccessResponse(reply, await dt.info())
+	      } else {
+	        throw {
+	          name: "Action Error",
+	          message: "You do not have permission to delete this DataTable !"
+	        }
+	      }
+	    }
+	  } catch (err) {
+	    generateErrResponse(reply, err)
+	  }
+	}
+	
 	static async addOwner(request, reply) {
 		if (!request.user) {
 			return generateErrResponse(reply, {
