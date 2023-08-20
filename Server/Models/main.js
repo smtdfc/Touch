@@ -137,6 +137,7 @@ models.Devices.belongsToMany(models.Users, { foreignKey: 'user_id', through: mod
 
 async function setup() {
 	await models.DataTables_Users.sync({ alter: true })
+	await models.Devices_Users.sync({alter:true})
 }
 
 setup()
