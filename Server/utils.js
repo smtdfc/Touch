@@ -24,3 +24,4 @@ module.exports.generateSuccessResponse = function(reply, results) {
   })
 }
 
+

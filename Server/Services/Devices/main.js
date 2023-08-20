@@ -1,98 +1,117 @@
+const Crypto = require("crypto")
 const { user } = require("../Authentication/auth.js")
+const TokenService = require("../Authentication/token.js")
+class Device {
+  constructor(device) {
+    this.device = device
+  }
 
-module.exports = class DevicesService {
-	static async getDevice(device_id, accessLevel = 0) {
-		let device = await models.Devices.findOne({
-			where: {
-				device_id: device_id
-			}
-		})
+  compareToken(token) {
+    return this.device.token == token
+  }
 
-		if (device) {
-			if (device.status == "banned" && accessLevel != 3) {
-				throw {
-					name: "Action Error",
-					message: "Device has been banned !"
-				}
-			}
+  info() {
+    return this.device
+  }
+  isStatuses(statuses = []) {
+    return statuses.includes(device.status)
+  }
 
-			if (device.status == "locked" && accessLevel != 2) {
-				throw {
-					name: "Action Error",
-					message: "Device has been locked !"
-				}
-			}
+  isCreator(user) {
+    return this.device.createBy == user.user_id
+  }
 
-			return device
-		} else {
-			throw {
-				name: "Action Error",
-				message: "Device doesn't exist !"
-			}
-		}
-	}
+  async isOwner(user) {
+    return await this.device.hasOwner(user)
+  }
 
-	static async getAll(limit = 5, offset = 0) {
-		let list = await models.Devices.findAll({
-			limit,
-			offset,
-			raw: true
-		})
+  async remove() {
+    return await this.device.destroy()
+  }
 
-		return list
-	}
+  async listOwner() {
+    return await this.device.getOwner({
+      attributes: ["user_id", "name"]
+    })
+  }
 
-	static async getByOwner(owner, limit, offset) {
-		let list = await models.Users.findAll({
-			includes: {
-				model: models.Users,
-				where: {
-					user_id: owner.user_id
-				}
-			},
-			limit: limit,
-			offset: offset,
-			raw: true
-		})
-		return list
-	}
+  async addOwner(user) {
+    if (this.device.hasOwner(user)) {
+      throw {
+        name: "Action Error",
+        message: "Owner already exists !"
+      }
+    } else {
+      await this.device.addOwner(user)
+      return {
+        device: this.device,
+        owner: owner
+      }
+    }
+  }
 
-	static async create(name, owner) {
-		let device_id = (Math.floor(Math.random() * 999999) * Date.now()).toString(16)
-		let device = await models.Devices.create({
-			device_id: device_id,
-			name: name,
-			status: "active",
-			createBy: owner.user_id
-		})
-		await device.addOwner(owner)
-		return device
-	}
+  async removeOwner(user) {
+    if (user.user_id == this.device.createBy) {
+      throw {
+        name: "Action Error",
+        message: "You cannot delete yourself because you are the creator of this device ! !"
+      }
+    }
+    if (this.device.hasOwner(user)) {
+      await this.device.removeOwner(user)
+      return this.device
+    } else {
+      throw {
+        name: "Action Error",
+        message: "Owner doesn't exist !"
+      }
+    }
+  }
+}
 
-	static async isCreator(device_id, creator) {
-		let device = await models.Devices.findOne({
-			where: {
-				device_id: device_id
-			}
-		})
-		return device.createBy == creator.user_id
-	}
+module.exports.getAllDevice = async function(limit = 5, offset = 0) {
+  let list = await models.Devices.findAll({
+    limit,
+    offset,
+    attributes: ["device_id", "name", "status", "createBy"]
+  })
 
-	static async isOwner(device_id, owner) {
-		let device = await models.Devices.findOne({
-			where: {
-				device_id: device_id
-			}
-		})
-		return await device.hasOwner(owner)
-	}
+  return list
+}
 
-	static async remove(device_id) {
-		let device = await models.Devices.findOne({
-			where: {
-				device_id: device_id
-			}
-		})
-		return await device.destroy()
-	}
+module.exports.getDevice = async function(device_id) {
+  let device = await models.Devices.findOne({
+    where: {
+      device_id: device_id
+    }
+  })
+
+  if (!device) {
+    throw {
+      name: "Action Error",
+      message: "Device doesn't exist !"
+    }
+  } else {
+    return new Device(device)
+  }
+}
+
+
+module.exports.createDevice = async function(name, creator) {
+  let device_id = (Math.floor(Math.random() * 99999) * Date.now()).toString(16)
+  let token = Crypto
+    .randomBytes(30)
+    .toString('base64')
+    .slice(0, 30)
+
+  let device = await models.DataTables.create({
+    device_id: device_id,
+    name: name,
+    createBy: creator.user_id,
+    status: "active",
+    token:token
+  })
+  
+  await device.addOwner(creator)
+  return new Device(device)
 }
