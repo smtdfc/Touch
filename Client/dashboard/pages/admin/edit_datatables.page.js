@@ -152,7 +152,7 @@ app.component("admin-edit-dt-page", async function(controller) {
             <p> Datatable Status : ${info.status}</p>
           </div>
           <div>
-            <p>Create by : ${info.createBy}</p>
+            <p>Create by user: ${info.createBy}</p>
           </div>
         </div>
        <div>
