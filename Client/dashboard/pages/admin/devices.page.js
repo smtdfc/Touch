@@ -61,8 +61,9 @@ let limit = 5
     controller.ref("create-device-form").on("submit", async function(e) {
       e.preventDefault()
       let name = controller.ref("device-name").val
+      let dt_id = controller.ref("dt-id").val
       showLoader()
-      TouchApp.devices.create(name)
+      TouchApp.devices.create(name,dt_id)
         .then((i) => {
           controller.addDeviceInfo(i)
         })

@@ -14,7 +14,7 @@ class Device {
     return this.device
   }
   isStatuses(statuses = []) {
-    return statuses.includes(device.status)
+    return statuses.includes(this.device.status)
   }
 
   isCreator(user) {

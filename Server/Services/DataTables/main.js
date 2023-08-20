@@ -37,7 +37,7 @@ class DataTable{
 		return this.dt
 	}
 	isStatuses(statuses=[]){
-		return statuses.includes(dt.status)
+		return statuses.includes(this.dt.status)
 	}
 	
 	isCreator(user) {
