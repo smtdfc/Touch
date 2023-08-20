@@ -112,7 +112,7 @@ models.Devices = models.conn.touchDB.define("devices", {
 	timestamps: false,
 })
 
-models.Devices_Users = models.conn.touchDB.define("datatables_users", {
+models.Devices_Users = models.conn.touchDB.define("devices_users", {
 	user_id: {
 		type: DataTypes.TEXT,
 		references: {
