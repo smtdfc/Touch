@@ -110,7 +110,7 @@ module.exports.createDevice = async function(name, creator,dt) {
     createBy: creator.user_id,
     status: "active",
     token:token,
-    datatable:dt.dt_id
+    datatable:dt.info().dt_id
   })
   
   await device.addOwner(creator)

@@ -69,7 +69,7 @@ let limit = 5
         })
 
         .catch((err) => {
-          alert("Cannot create new device !")
+          alert(`Cannot create new device !\n${err.message}`)
         })
 
         .finally(() => {

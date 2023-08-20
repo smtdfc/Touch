@@ -38,6 +38,24 @@
   width: 98%;
 }
 
+ .message.danger{
+   display: flex;
+  -webkit-animation-name: fadeInUp;
+  -moz-animation-name: fadeInUp;
+  -o-animation-name: fadeInUp;
+  animation-name: fadeInUp;
+  -webkit-animation-duration: 0.5s;
+  -moz-animation-duration: 0.5s;
+  -o-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  align-items: center;
+  background: #FF020273;
+  margin: 5px;
+  padding: 16px;
+  width: 98%;
+ }
+
+
 .sidebar-container,form{
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
@@ -73,4 +91,9 @@
 
 .dot.dot-warn{
   background: #C8B700;
+}
+
+.accordion{
+  	--accordion-header-bg:rgba(0, 207, 255, 0.33);
+  	--accordion-icon:" ";
 }

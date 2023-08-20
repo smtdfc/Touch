@@ -50,8 +50,29 @@ app.component("admin-edit-device-page", async function(controller) {
     })
   }
 
+  controller.refreshDTInfo = function() {
+    showLoader()
+    controller.ref("datastorage-tab-note").classList.add("d-none")
+    TouchApp.datatables.info(info.datatable)
+      .then((info) => {
+        controller.ref("device-dt-name").text = info.name
+        controller.ref("device-dt-status").text = info.status
+        controller.ref("device-dt-createby").text = info.createBy
+      })
+
+      .catch((err) => {
+        showError(`Warning: The DataTable associated with this device does not appear to be working! Please double check your access to this DataTable `)
+        controller.ref("datastorage-tab-note").classList.remove("d-none")
+        controller.ref("datastorage-tab-note").text = err.message
+      })
+
+      .finally(() => {
+        hideLoader()
+      })
+  }
 
   controller.onRender = function() {
+    controller.ref("device-dtinfo-reload").on("click", controller.refreshDTInfo)
     controller.ref("add-owner-form").on("submit", function(e) {
       e.preventDefault()
       showLoader()
@@ -73,6 +94,7 @@ app.component("admin-edit-device-page", async function(controller) {
       .then((list) => {
         list.forEach(controller.addOwner)
       })
+    controller.refreshDTInfo()
   }
 
   return `
@@ -119,8 +141,34 @@ app.component("admin-edit-device-page", async function(controller) {
          <div>
           <h2>Data Storage</h2>
           <h5>The data sent from your device will be saved in the DataTable : <span>${info.datatable}</span></h5>
+          <div ref="datastorage-tab-note" class="d-none note note-danger">sbbshs</div>
+          <div class="accordion-group">
+            <div class="accordion active" id="dt-info">
+              <div class="accordion-header" data-action="toggle-accordion" data-accordion="#dt-info">
+                DataTable Infomation
+              </div>
+              <div class="accordion-body">
+               <div class="table-responsive">
+                  <table class="table table-border" style="width: 100%;">
+                    <tr>
+                      <td>Name</td>
+                      <td ref="device-dt-name">??</td>
+                    </tr>
+                    <tr>
+                      <td>CreateBy</td>
+                      <td ref="device-dt-createby">??</td>
+                    </tr>
+                    <tr>
+                      <td>Status</td>
+                      <td ref="device-dt-status">???</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="d-flex align-items-center">
-            <button class="btn btn-primary">Info</button>
+            <button ref="device-dtinfo-reload" class="btn btn-primary">Refresh</button>
             <button class="btn btn-primary">Change</button>
           </div>
          </div>

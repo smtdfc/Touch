@@ -26,6 +26,7 @@ function closeFullscreen() {
     document.msExitFullscreen();
   }
 }
+
 function showMsg(msg){
   let message = document.createElement("div")
   message.classList.add("message")
@@ -33,6 +34,17 @@ function showMsg(msg){
   setTimeout(()=>{
     message.remove()
   },5000)
+  document.getElementById("messages").appendChild(message)
+}
+
+function showError(msg) {
+  let message = document.createElement("div")
+  message.classList.add("message")
+  message.classList.add("danger")
+  message.textContent = msg
+  setTimeout(() => {
+    message.remove()
+  }, 9000)
   document.getElementById("messages").appendChild(message)
 }
 
