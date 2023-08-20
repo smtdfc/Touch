@@ -97,7 +97,7 @@ module.exports.getDevice = async function(device_id) {
 }
 
 
-module.exports.createDevice = async function(name, creator) {
+module.exports.createDevice = async function(name, creator,dt) {
   let device_id = (Math.floor(Math.random() * 99999) * Date.now()).toString(16)
   let token = Crypto
     .randomBytes(30)
@@ -109,7 +109,8 @@ module.exports.createDevice = async function(name, creator) {
     name: name,
     createBy: creator.user_id,
     status: "active",
-    token:token
+    token:token,
+    datatable:dt.dt_id
   })
   
   await device.addOwner(creator)

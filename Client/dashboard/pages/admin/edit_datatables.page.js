@@ -2,7 +2,7 @@ app.component("admin-edit-dt-page", async function(controller) {
   showLoader()
   let dt_id = app.router.info.params.id ?? null
   let info = null
-  if (!"dt_id") {
+  if (!dt_id) {
     return `
       <h1>Error! An error occurred. Please try again later !</h1>
     `

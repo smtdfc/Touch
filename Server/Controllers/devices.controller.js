@@ -1,5 +1,6 @@
 const DeviceService = require("../Services/Devices/main.js")
 const AuthService = require("../Services/Authentication/auth.js")
+const DataTableService = require("../Services/DataTables/main.js")
 const { generateErrResponse, generateSuccessResponse } = require("../utils.js")
 
 module.exports = class DevicesController {
@@ -32,10 +33,34 @@ module.exports = class DevicesController {
     }
 
     try {
-      return generateSuccessResponse(reply, await DeviceService.createDevice(
-        request.body.name,
-        request.user._user
-      ))
+      let dt = await DataTableService.getDataTable(request.body.dt_id)
+      if (request.user._user.role == "admin") {
+        if (dt.isStatuses(["banned"])) {
+          throw {
+            name: "Action Error",
+            message: "The current DataTable does not active !"
+          }
+        }
+
+        return generateSuccessResponse(reply, await DeviceService.createDevice(
+          request.body.name,
+          request.user._user,
+          dt
+        ))
+      } else if (request.user._user.role == "user") {
+        if (dt.isStatuses(["active"]) &&await dt.isOwner(request.user._user)) {
+          return generateSuccessResponse(reply, await DeviceService.createDevice(
+            request.body.name,
+            request.user._user,
+            dt
+          ))
+        } else {
+          throw {
+            name: "Action Error",
+            message: "The current DataTable does not active !"
+          }
+        }
+      }
     } catch (err) {
       generateErrResponse(reply, err)
     }
@@ -50,7 +75,7 @@ module.exports = class DevicesController {
     }
 
     try {
-      let device = await  DeviceService.getDevice(request.body.device_id)
+      let device = await DeviceService.getDevice(request.body.device_id)
       if (request.user._user.role == "admin") {
         return generateSuccessResponse(reply, await device.remove())
       } else {
@@ -77,7 +102,7 @@ module.exports = class DevicesController {
     }
 
     try {
-      let device = await  DeviceService.getDevice(request.body.device_id)
+      let device = await DeviceService.getDevice(request.body.device_id)
       if (request.user._user.role == "admin") {
         return generateSuccessResponse(reply, await device.listOwner())
       } else {
@@ -106,7 +131,7 @@ module.exports = class DevicesController {
     }
 
     try {
-      let device = await  DeviceService.getDevice(request.body.device_id)
+      let device = await DeviceService.getDevice(request.body.device_id)
       if (request.user._user.role == "admin") {
         return generateSuccessResponse(reply, await device.info())
       } else {

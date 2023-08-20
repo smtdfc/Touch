@@ -23,4 +23,10 @@ export const AdminRoutes = {
     loader: async () => { await import("../pages/admin/devices.page.js") },
     component: "admin-devices-page"
   },
+    "/admin/devices/:id/edit": {
+      title: "Edit device",
+      protect: isAdmin,
+      loader: async () => { await import("../pages/admin/edit_devices.page.js") },
+      component: "admin-edit-device-page"
+    },
 }

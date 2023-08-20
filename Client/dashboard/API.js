@@ -437,7 +437,7 @@ class DevicesManager {
     }
   }
 
-  async create(name) {
+  async create(name,dt_id) {
     try {
       let response = await axios({
         method: "post",
@@ -445,7 +445,7 @@ class DevicesManager {
         headers: {
           authorization: `token ${TouchCookieManager.getCookie("at")}`
         },
-        data: { name }
+        data: { name ,dt_id}
       })
       return response.data.results.device
     } catch (err) {

@@ -106,6 +106,13 @@ let limit = 5
             <label for="" class="form-label">Device name</label><br>
             <input type="text" class="form-input" style="width:90%;" ref="device-name">
           </div>
+          <div>
+              <label for="" class="form-label">Datatable ID</label><br>
+              <input type="text" class="form-input" style="width:90%;" ref="dt-id">
+              <p class="form-text">
+                 All data sent from your device will be saved in this DataTable. Please make sure they are not locked, banned and you must own it!
+              </p>
+          </div>
           <button class="btn btn-rounded btn-info" data-action="toggle-modal" data-modal="#modal-create-device">Create</button>
         </form>
       </div>

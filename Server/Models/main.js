@@ -106,6 +106,9 @@ models.Devices = models.conn.touchDB.define("devices", {
 	},
 	token:{
 	  type:DataTypes.TEXT
+	},
+	datatable:{
+	  type:DataTypes.TEXT
 	}
 }, {
 	freezeTableName: true,
