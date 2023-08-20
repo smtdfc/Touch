@@ -340,7 +340,6 @@ class DTManager {
     }
   }
 }
-
 class DataIO {
   constructor(app) {
     this.app = app
@@ -411,6 +410,159 @@ class DataIO {
 
   }
 }
+class DevicesManager {
+  constructor(app) {
+    this.app = app
+    this.base = app.server
+  }
+
+  async list(limit = 5, offset = 0) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/devices/list`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { limit, offset }
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.list, [limit, offset], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw getResponseErr(err)
+    }
+  }
+
+  async create(name) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/devices/create`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { name }
+      })
+      return response.data.results.device
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.create, [name], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw getResponseErr(err)
+    }
+  }
+
+  async remove(device_id) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/devices/remove`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { device_id }
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.remove, [device_id], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw getResponseErr(err)
+    }
+  }
+
+  async info(device_id) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/devices/info`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { device_id }
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.info, [device_id], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw getResponseErr(err)
+    }
+  }
+
+  async owners(device_id) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/devices/owners`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { device_id }
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.owners, [device_id], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw getResponseErr(err)
+    }
+  }
+
+  async removeOwner(device_id, user_id) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/devices/owners/remove`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { device_id, user_id }
+      })
+      return response.data.results
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.removeOwner, [device_id, user_id], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw getResponseErr(err)
+    }
+  }
+
+  async addOwner(device_id, user_id) {
+    try {
+      let response = await axios({
+        method: "post",
+        url: `${this.base}/api/v1/devices/owners/add`,
+        headers: {
+          authorization: `token ${TouchCookieManager.getCookie("at")}`
+        },
+        data: { device_id, user_id }
+      })
+      return response.data.results.owner
+    } catch (err) {
+      if (shouldReAuth(err)) {
+        let result = await this.app.auth.retryWithNewToken(this.addOwner, [device_id, user_id], this)
+        if (result.success) return result.returnValue
+        else throw result.error
+      }
+      throw getResponseErr(err)
+    }
+  }
+}
 
 
 class TouchClientApp {
@@ -419,6 +571,7 @@ class TouchClientApp {
     this.server = configs.base
     this.auth = new TouchClientAppAuth(this)
     this.datatables = new DTManager(this)
+    this.devices = new DevicesManager(this)
     this.events = {}
     this.socket = io(configs.base)
     this.dataIO = new DataIO(this)

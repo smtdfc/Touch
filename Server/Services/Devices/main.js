@@ -104,7 +104,7 @@ module.exports.createDevice = async function(name, creator) {
     .toString('base64')
     .slice(0, 30)
 
-  let device = await models.DataTables.create({
+  let device = await models.Devices.create({
     device_id: device_id,
     name: name,
     createBy: creator.user_id,

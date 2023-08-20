@@ -6,7 +6,7 @@ app.staticComponent("admin-sidebar-items", function(controller) {
       <li><a href="#/admin/home" ><i class="icon fa fa-home"></i><span>Home</span></a></li>
       <li><a href="#/admin/datatables/list" ><i class="icon fa fa-database"></i><span>Data Storage</span></a></li>
       <li><a href="#/admin/dashboard" ><i class="icon fa fa-dashboard"></i><span>Dashboard</span></a></li>
-      <li><a href="#/admin/devices" ><i class="icon fa fa-microchip"></i><span>Devices</span></a></li>
+      <li><a href="#/admin/devices/list" ><i class="icon fa fa-microchip"></i><span>Devices</span></a></li>
       <li><a href="#/admin/users" ><i class="icon fa fa-users"></i><span>Users</span></a></li>
     </ul>
   </div>
