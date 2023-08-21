@@ -44,5 +44,5 @@ module.exports = function(fastify) {
 	fastify.post(`/api/v${configs.ver}/devices/owners`, getUser(), DevicesController.owners)
 	fastify.post(`/api/v${configs.ver}/devices/owners/remove`, getUser(), DevicesController.removeOwner)
 	fastify.post(`/api/v${configs.ver}/devices/owners/add`, getUser(), DevicesController.addOwner)
-
+	fastify.post(`/api/v${configs.ver}/devices/change_datatable`, getUser(), DevicesController.changeDataTable)
 }

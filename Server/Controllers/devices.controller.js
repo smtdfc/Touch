@@ -48,7 +48,7 @@ module.exports = class DevicesController {
           dt
         ))
       } else if (request.user._user.role == "user") {
-        if (dt.isStatuses(["active"]) &&await dt.isOwner(request.user._user)) {
+        if (dt.isStatuses(["active"]) && await dt.isOwner(request.user._user)) {
           return generateSuccessResponse(reply, await DeviceService.createDevice(
             request.body.name,
             request.user._user,
@@ -226,6 +226,38 @@ module.exports = class DevicesController {
           throw {
             name: "Action Error",
             message: "You do not have permission to delete this Device !"
+          }
+        }
+      }
+    } catch (err) {
+      generateErrResponse(reply, err)
+    }
+  }
+
+  static async changeDataTable(request, reply) {
+    try {
+      let device = await DeviceService.getDevice(request.body.device_id)
+      let dt = await DataTableService.getDataTable(request.body.dt_id)
+      if (request.user._user.role == "admin") {
+        if (dt.isStatuses(["banned"])) {
+          throw {
+            name: "Action Error",
+            message: "The current DataTable does not active !"
+          }
+        }
+
+        return generateSuccessResponse(reply, await device.changeDataTable(
+          request.body.dt_id
+        ))
+      } else if (request.user._user.role == "user") {
+        if (dt.isStatuses(["active"]) && await dt.isOwner(request.user._user)) {
+          return generateSuccessResponse(reply, await device.changeDataTable(
+            request.body.dt_id
+          ))
+        } else {
+          throw {
+            name: "Action Error",
+            message: "The current DataTable does not active !"
           }
         }
       }

@@ -50,6 +50,11 @@ class Device {
     }
   }
 
+  async changeDataTable(dt_id){
+    this.device.datatable = dt_id
+    await this.device.save()
+  }
+  
   async removeOwner(user) {
     if (user.user_id == this.device.createBy) {
       throw {
