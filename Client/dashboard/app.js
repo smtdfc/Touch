@@ -1,17 +1,19 @@
-
+const App = new Turtle.TurtleApp(
+  document.querySelector("#root")
+)
 
 function openFullscreen() {
-  try{
+  try {
     fscreen.requestFullscreen(document.documentElement);
-/*
-  if (document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen();
-  } else if (document.documentElement.webkitRequestFullscreen) { 
-    document.documentElement.webkitRequestFullscreen();
-  } else if (document.documentElement.msRequestFullscreen) { 
-    document.documentElement.msRequestFullscreen();
-  }*/
-  }catch(err){
+    /*
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.documentElement.webkitRequestFullscreen) { 
+        document.documentElement.webkitRequestFullscreen();
+      } else if (document.documentElement.msRequestFullscreen) { 
+        document.documentElement.msRequestFullscreen();
+      }*/
+  } catch (err) {
     showMsg("Unable to enter full screen mode.")
   }
 }
@@ -20,20 +22,22 @@ function openFullscreen() {
 function closeFullscreen() {
   if (document.exitFullscreen) {
     document.exitFullscreen();
-  } else if (document.webkitExitFullscreen) { /* Safari */
+  } else if (document.webkitExitFullscreen) {
+    /* Safari */
     document.webkitExitFullscreen();
-  } else if (document.msExitFullscreen) { /* IE11 */
+  } else if (document.msExitFullscreen) {
+    /* IE11 */
     document.msExitFullscreen();
   }
 }
 
-function showMsg(msg){
+function showMsg(msg) {
   let message = document.createElement("div")
   message.classList.add("message")
   message.textContent = msg
-  setTimeout(()=>{
+  setTimeout(() => {
     message.remove()
-  },5000)
+  }, 5000)
   document.getElementById("messages").appendChild(message)
 }
 
@@ -48,8 +52,8 @@ function showError(msg) {
   document.getElementById("messages").appendChild(message)
 }
 
-function isAdmin(){
-  return TouchApp.auth.currentUser.user_id != null && TouchApp.auth.currentUser.role =="admin"
+function isAdmin() {
+  return TouchApp.auth.currentUser.user_id != null && TouchApp.auth.currentUser.role == "admin"
 }
 
 function showLoader() {
@@ -60,7 +64,7 @@ function hideLoader() {
   document.getElementById("main-loader").classList.add("d-none")
 }
 
-window.addEventListener("offline",function(e){
+window.addEventListener("offline", function(e) {
   showMsg("You are offline ! Some functions may not work or not work properly!")
 })
 
@@ -68,39 +72,20 @@ window.addEventListener("online", function(e) {
   showMsg("Connection is back !")
 })
 
-var app = Turtle.initApp(document.getElementById("root"))
-app.use(Turtle.RouterModule)
 
-app.render(`
-  <main-navbar></main-navbar>
-  <account-menu></account-menu>
-  <div class="sidebar-container " style="margin-top:100px;">
-    <main-sidebar></main-sidebar>
-    <div id="messages" class="messages"></div>
-    <div class="container" style="padding: 16px;" id="content">
-      <div class="d-flex justify-content-center">
-       <div class="circle-loader"></div>
-      </div>
-    </div>
-  </div>
-`)
 
-async function loader() {
-  window.fscreen = await import('https://cdn.jsdelivr.net/npm/fscreen@1.2.0/+esm')
+async function main() {
   await TouchApp.auth.info()
-  await import('./components/navbar.component.js')
-  await import("./components/sidebar.component.js")
-  await import("./components/accountMenu.component.js")
-  return {
-    initRouter:(await import("./router/main.js")).initRouter
-  }
+  await import("./components/navbar.js")
+  await import("./components/container.js")
+  await import("./components/accountMenu.js")
+  App.render(`
+    <div id="messages"></div>
+    <main-navbar></main-navbar>
+    <account-menu></account-menu>
+    <br><br><br><br>
+    <main-container></main-container>
+  `)
 }
 
-loader()
-  .then((r) => {
-    showLoader()
-    return r.initRouter()
-  })
-  .then(() => {
-    hideLoader()
-  })
+main()

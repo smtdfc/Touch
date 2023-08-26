@@ -47,7 +47,7 @@ class TouchClientAppAuth {
       user_id: null,
       role: null,
       reset: function() {
-        this.usernameb = null
+        this.username = null
         this.user_id = null
         this.role = null
       }
