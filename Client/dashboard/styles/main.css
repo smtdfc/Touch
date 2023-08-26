@@ -97,3 +97,7 @@
   	--accordion-header-bg:rgba(0, 207, 255, 0.33);
   	--accordion-icon:" ";
 }
+
+.icon {
+  padding: 10px;
+}
