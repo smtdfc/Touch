@@ -2,7 +2,11 @@ Turtle.component("main-container",function($){
   
   $.adminItems = function(){
     return `
-      <li><a href="#">Hello</a></li>
+      <li><a href="#/admin/home">Home</a></li>
+      <li><a href="#/admin/datatables/list">DataTables</a></li>
+      <li><a href="#/admin/devices/list">Devices</a></li>
+      <li><a href="#/admin/dashboards/list">Dashboards</a></li>
+
     `
   }
   
@@ -14,6 +18,7 @@ Turtle.component("main-container",function($){
   
   $.onRender = function(){
     $.refreshUI()
+    TouchApp.on("authstatechange",$.refreshUI)
   }
   
   return `

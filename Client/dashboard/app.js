@@ -2,6 +2,10 @@ const App = new Turtle.TurtleApp(
   document.querySelector("#root")
 )
 
+window.addEventListener("error",function(){
+  showError("Oops!")
+})
+
 function openFullscreen() {
   try {
     fscreen.requestFullscreen(document.documentElement);
@@ -72,20 +76,27 @@ window.addEventListener("online", function(e) {
   showMsg("Connection is back !")
 })
 
+App.render(`
+    <div class="line-loader" id="page-loader">
+      <span class="bar"></span>
+    </div>
+    <main-navbar></main-navbar>
+    <account-menu></account-menu>
+    <br><br><br><br>
+    <main-container></main-container>
+    <div class="messages" id="messages"></div>
+`)
 
-
+showMsg("Starting . . . .")
 async function main() {
   await TouchApp.auth.info()
   await import("./components/navbar.js")
   await import("./components/container.js")
   await import("./components/accountMenu.js")
-  App.render(`
-    <div id="messages"></div>
-    <main-navbar></main-navbar>
-    <account-menu></account-menu>
-    <br><br><br><br>
-    <main-container></main-container>
-  `)
+  await import("./routes/main.js")
+  App.router.start()
+  document.getElementById("page-loader").remove()
+  hideLoader()
 }
 
 main()

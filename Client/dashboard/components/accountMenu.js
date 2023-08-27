@@ -1,12 +1,30 @@
-Turtle.component("account-menu", function($){
-  $.refreshUI = function(){
+const toggle = TURTLE.TURTLE_UI.Actions.toggle
+Turtle.component("account-menu", function($) {
+  $.refreshUI = function() {
     $.refs.username.textContent = TouchApp.auth.currentUser.username
   }
-  
-  $.onRender = function(){
+
+  $.onRender = function() {
     $.refreshUI()
+
+    TouchApp.on("authstatechange", $.refreshUI)
+    $.refs.logout.addEventListener("click", function() {
+      showLoader()
+      toggle({ toggle: "#account-menu" }, null)
+      TouchApp.auth.logout()
+        .then(() => {
+          App.router.redirect("/auth/login", true)
+        })
+        .catch((err) => {
+          alert(`Cannot logout now \n${err.message}`)
+          showError(err.message)
+        })
+        .finally(() => {
+          hideLoader()
+        })
+    })
   }
-  
+
   return `
     <div class="offcanvas offcanvas-right" id="account-menu">
       <div class="offcanvas-header">

@@ -1,7 +1,6 @@
-
 Turtle.component("main-navbar", function($) {
   $.refreshUI = function() {
-    if (isAdmin() || 1) {
+    if (isAdmin()) {
       $.refs.toggleBtn.classList.remove("d-none")
       $.refs.avatar.classList.remove("d-none")
     } else {
@@ -12,6 +11,7 @@ Turtle.component("main-navbar", function($) {
 
   $.onRender = function() {
     $.refreshUI()
+    TouchApp.on("authstatechange",$.refreshUI)
   }
   return `
     <nav class="navbar">
@@ -21,6 +21,9 @@ Turtle.component("main-navbar", function($) {
       </div>
       <div class="navbar-items" style="padding:0px 10px;">
         <img src="./assets/images/avatar.jpg" alt="" class="navbar-avatar" data-toggle="#account-menu" ${Turtle.ref("avatar")} >
+      </div>
+      <div class="line-loader" id="main-loader">
+        <span class="bar"></span>
       </div>
     </nav>
   `
