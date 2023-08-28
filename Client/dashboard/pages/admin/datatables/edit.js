@@ -1,6 +1,49 @@
 let dt_id = null
 let dt_info = {}
 
+Turtle.component("dt-edit-data-tab", function($) {
+  $.addRow = function(info) {
+    
+    let tr = document.createElement("tr")
+    tr.innerHTML = `
+      <td>${new Date().toUTCString()}</td>
+      <td>${info.key}</td>
+      <td>${info.value}</td>
+      <td>${info.by}</td>
+    `
+    $.refs.rows.appendChild(tr)
+  }
+  
+  $.onDataAdded = function(info){
+    $.addRow(info)
+  }
+  
+  $.onRemove = function(){
+    console.log(dt_id);
+    TouchApp.off(`dataio:dt_${dt_id}_change`,$.onDataAdded)
+  }
+  TouchApp.on(`dataio:dt_${dt_id}_change`,$.onDataAdded)
+  
+  
+  return `
+    <h3>Real-time data reader </h3>
+    <div class="table-responsive">
+      <table class="table table-border" style="width:100%" >
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Key</th>
+            <th>Value</th>
+            <th>By</th>
+          </tr>
+        </thead>
+        <tbody ${Turtle.ref("rows")}>
+          
+        </tbody>
+      </table>
+    </div>
+  `
+})
 
 Turtle.component("dt-edit-owner-tab", function($) {
   $.addRow = function(info) {
@@ -42,20 +85,20 @@ Turtle.component("dt-edit-owner-tab", function($) {
     let owner = $.refs.owner.value
     console.log(owner);
     showLoader()
-    TouchApp.datatables.addOwner(dt_id,owner)
-      .then((info)=>{
-        
-        console.log(info);
+    TouchApp.datatables.addOwner(dt_id, owner)
+      .then((info) => {
+        $.addRow(info)
       })
-      .catch((err)=>{
+      .catch((err) => {
         showMsg(err.message)
       })
-      .finally(()=>{
+      .finally(() => {
         hideLoader()
       })
   }
 
   $.onRender = function() {
+    
     $.refs.form.addEventListener("submit", function(e) {
       e.preventDefault()
       $.addOwner()
@@ -105,6 +148,7 @@ Turtle.component("dt-edit-overview-tab", function($) {
   $.onRender = function() {
     TouchApp.datatables.info(dt_id)
       .then(info => {
+        
         dt_info = info
         $.refs.id.textContent = info.dt_id
         $.refs.name.textContent = info.name
@@ -113,6 +157,8 @@ Turtle.component("dt-edit-overview-tab", function($) {
       })
 
       .catch((err) => {
+        alert(err.message)
+        window.history.back()
         showMsg(err.message)
       })
   }
@@ -136,13 +182,21 @@ Turtle.component("dt-edit-overview-tab", function($) {
 
 Turtle.component("admin-edit-dt-page", function($) {
   dt_id = App.router.info.params.id
+  
+  $.onRender = function(){
+    TouchApp.dataIO.setListener(dt_id)
+  }
+  
+  $.onRemove = function(){
+    TouchApp.dataIO.removeListener(dt_id)
+  }
   return `
     <h1>Edit DataTable</h1> 
     <p> DataTable ID: ${dt_id}</p>
     <div class="tab" id="dt-edit-tab">
       <ul class="tab-items">
         <li class="active" data-opentab="#dt-edit-tab" data-idx=0 >Overview</li>
-        <li>Data </li>
+        <li data-opentab="#dt-edit-tab" data-idx=1 >Data </li>
         <li data-opentab="#dt-edit-tab" data-idx=2>Owners</li>
       </ul>
       <div class="tab-contents" style="padding:0">

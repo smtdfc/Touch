@@ -1,5 +1,7 @@
 let dt_table = null
 let dt_info = {}
+let limit = 5
+let offset = 0
 window.editDT = function(ctx) {
   let dt_id = ctx.dataset.dt
   App.router.redirect(`/admin/datatables/${dt_id}/edit`)
@@ -12,6 +14,7 @@ window.removeDT = function(ctx) {
   showLoader()
   TouchApp.datatables.remove(dt_id)
     .then(() => {
+      offset--
       document.querySelector(`#_${dt_id}`).remove()
     })
     .catch((err) => {
@@ -33,7 +36,7 @@ function createRow(info) {
     <td>
       <div class="d-flex align-items-center" style="min-width:50px">
         <div class="btn btn-outline-success  " data-dt="${info.dt_id}" onclick="editDT(this)">  <i class="icon fa fa-pencil"></i></div>
-        <div class="btn btn-outline-danger ${TouchApp.auth.currentUser.user_id == info.createBy ? "" : "d-none"} " data-dt="${info.dt_id}" onclick="removeDT(this)"> <i class="icon fa fa-trash"></i>  </div>
+        <div class="btn btn-outline-danger ${(TouchApp.auth.currentUser.role == "admin" || TouchApp.auth.currentUser.user_id == info.createBy) ? "" : "d-none"} " data-dt="${info.dt_id}" onclick="removeDT(this)"> <i class="icon fa fa-trash"></i>  </div>
       </div>
     </td>
   `
@@ -85,12 +88,12 @@ Turtle.component("create-dt-modal", function($) {
 })
 
 Turtle.component("list-dt-table", function($) {
-  let limit = 5
-  let offset = 0
+  
   $.loadMore = function() {
     showLoader()
     TouchApp.datatables.list(limit, offset)
       .then(list => {
+        if(!list) return
         offset += list.length
         list.forEach((item) => {
           if (dt_info[item.dt_id]) return
@@ -115,6 +118,8 @@ Turtle.component("list-dt-table", function($) {
   $.onRemove = function() {
     dt_table = null
     dt_info = {}
+    limit = 5
+    offset = 0
   }
 
   return `
