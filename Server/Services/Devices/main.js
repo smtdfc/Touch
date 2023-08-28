@@ -36,7 +36,7 @@ class Device {
   }
 
   async addOwner(user) {
-    if (this.device.hasOwner(user)) {
+    if (await this.device.hasOwner(user)) {
       throw {
         name: "Action Error",
         message: "Owner already exists !"
@@ -62,7 +62,7 @@ class Device {
         message: "You cannot delete yourself because you are the creator of this device ! !"
       }
     }
-    if (this.device.hasOwner(user)) {
+    if(await this.device.hasOwner(user)) {
       await this.device.removeOwner(user)
       return this.device
     } else {

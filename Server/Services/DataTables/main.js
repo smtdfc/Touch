@@ -62,7 +62,7 @@ class DataTable{
 	}
 	
 	async addOwner(user){
-		if(this.dt.hasOwner(user)){
+		if(await this.dt.hasOwner(user)){
 			throw{
 				name:"Action Error",
 				message:"Owner already exists !"
@@ -71,7 +71,7 @@ class DataTable{
 			await this.dt.addOwner(user)
 			return{
 				dt:this.dt,
-				owner:owner
+				owner:user
 			}
 		}
 	}
@@ -83,7 +83,7 @@ class DataTable{
 	      message: "You cannot delete yourself because you are the creator of this DataTable ! !"
 	    }
 	  }
-		if (this.dt.hasOwner(user)) {
+		if (await this.dt.hasOwner(user)) {
 			await this.dt.removeOwner(user)
 			return this.dt
 		} else {

@@ -4,11 +4,12 @@ module.exports = class AuthService {
     
   }
   
-  static async user(user_id,force=false){
+  static async user(user_id,force=false,attr=["name","user_id"]){
     let user = await models.Users.findOne({
       where: {
         user_id: user_id
       },
+      attributes:attr
     })
 
     if (!user) {
