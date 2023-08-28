@@ -106,7 +106,7 @@ module.exports = class DTController {
     }
 
     try {
-      let dt = await await DTService.getDataTable(request.body.dt_id)
+      let dt =  await DTService.getDataTable(request.body.dt_id)
       if (request.user._user.role == "admin") {
         return generateSuccessResponse(reply, await dt.info())
       } else {
@@ -135,7 +135,7 @@ module.exports = class DTController {
     }
 
     try {
-      let dt = await await DTService.getDataTable(request.body.dt_id)
+      let dt = await DTService.getDataTable(request.body.dt_id)
       if (request.user._user.role == "admin") {
         let user = null
         try {

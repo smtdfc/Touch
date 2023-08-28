@@ -6,7 +6,6 @@ Turtle.component("main-container",function($){
       <li><a href="#/admin/datatables/list">DataTables</a></li>
       <li><a href="#/admin/devices/list">Devices</a></li>
       <li><a href="#/admin/dashboards/list">Dashboards</a></li>
-
     `
   }
   
@@ -30,7 +29,7 @@ Turtle.component("main-container",function($){
           </ul>
         </div>
       </div>
-      <div class="container" id="content">
+      <div class="container" id="content" style="padding:10px;" >
         <div class="d-flex justify-content-center" style="padding:75px;" >
           <div class="circle-loader loader-info"></div>
         </div>

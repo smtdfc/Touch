@@ -36,6 +36,7 @@ class DataTable{
 	info(){
 		return this.dt
 	}
+	
 	isStatuses(statuses=[]){
 		return statuses.includes(this.dt.status)
 	}
