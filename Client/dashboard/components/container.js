@@ -2,8 +2,8 @@ Turtle.component("main-container", function($) {
   $.genrateMenu = function() {
     let role = TouchApp.auth.currentUser.role
     let menu = [
-      { title: "Home", roles: ["admin", "user"], link: "#/home" },
-      { title: "DataTables", roles: ["admin", "user"], link: "#/datatables/list" },
+      { title: "Home", icon:"home", roles: ["admin", "user"], link: "#/home" },
+      { title: "DataTables", icon:"table", roles: ["admin", "user"], link: "#/datatables/list" },
     ]
     let fragment = document.createDocumentFragment()
     for (var i = 0; i < menu.length; i++) {
@@ -12,7 +12,11 @@ Turtle.component("main-container", function($) {
         let a = document.createElement("a")
         a.className = "list-group-item list-group-item-action"
         a.href = item.link
-        a.textContent = item.title
+        a.style.fontSize = "20px"
+        a.innerHTML = `
+          <i class="sidebar-icon fa fa-${item.icon}"></i>
+          ${item.title}
+        `
         fragment.appendChild(a)
       }
     }
@@ -43,10 +47,15 @@ Turtle.component("main-container", function($) {
               }
             })}>
         </button>
-        <br><br>
+        <br>
         <ul class="list-group list-group-flush bg-transparent" ${Turtle.ref("sidebarItems")} ></ul>
       </div>
       <div class="content" id="page-contents"></div>
     </div>
+    <nav class="navbar bg-body-tertiary">
+      <div class="container-fluid">
+        Touch Dashboard version 0.0.1
+      </div>
+    </nav>
    `
 })

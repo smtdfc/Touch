@@ -35,7 +35,7 @@
   .sidebar {
     padding-top: 26px;
     flex: 260px;
-    max-height: 90vh;
+    max-height: 100vh;
     overflow-y: scroll;
   }
 
@@ -53,6 +53,7 @@
   width: 40px;
   height: 40px;
   vertical-align: middle;
+  border-radius: 50%;
 }
 
 .content{
@@ -122,4 +123,8 @@
 
 th{
   min-width: 100px;
+}
+
+.sidebar-icon{
+  font-size: 25px;
 }

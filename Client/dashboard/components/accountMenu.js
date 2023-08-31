@@ -1,6 +1,6 @@
 Turtle.component("account-menu", function($) {
   $.refresh = function() {
-
+    $.refs.username.textContent = TouchApp.auth.currentUser.username
   }
 
   $.onSignOutBtnClick = function() {
@@ -9,7 +9,7 @@ Turtle.component("account-menu", function($) {
       $.refs.offcanvas
     )
     bsOffcanvas.hide()
-    showMsg("Signing out...")
+    showMsg("Signing out ....")
     TouchApp.auth.logout()
       .then(()=>{
         app.router.redirect("/auth/login",true)
@@ -23,6 +23,12 @@ Turtle.component("account-menu", function($) {
         hideLoader()
       })
   }
+  
+  $.onRender = function(){
+    $.refresh()
+    TouchApp.on("authstatechange",$.refresh)
+  }
+  
   return `
     <div class="offcanvas offcanvas-end" tabindex="-1" id="account-menu" aria-labelledby="accountMenuLabel" ${Turtle.ref("offcanvas")}>
       <div class="offcanvas-header">
@@ -32,7 +38,7 @@ Turtle.component("account-menu", function($) {
       <div class="offcanvas-body">
         <div class="d-flex flex-column align-items-center justify-content-center text-center">
           <img src="./assets/images/avatar.jpg" alt="avatar" class="avatar" >
-          <h5>@<span ${Turtle.ref("username")}></span></h5>
+          <p>@<span ${Turtle.ref("username")}></span></p>
         </div>
         <br>
         <button class="btn btn-outline-danger text-center w-100" ${Turtle.events({click:$.onSignOutBtnClick})} >

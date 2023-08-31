@@ -18,6 +18,9 @@ Turtle.component("main-navbar", function($) {
   }
 
   return `
+    <div class="line-loader d-none" id="main-loader">
+      <div class="bar"></div>
+    </div>
     <nav class="navbar navbar-expand-lg bg-white sticky-top" ${Turtle.ref("navbar")}>
       <div class="container-fluid ">
         <div class="navbar-brand text-center">
@@ -27,15 +30,15 @@ Turtle.component("main-navbar", function($) {
               click:function(){
                 document.getElementById("main-sidebar").classList.toggle("active")
               }
-          })}>
+           })}
+          >
             <i class="fa fa-bars"></i>
           </button>
           Touch
         </div>
-        <img class="avatar" src="./assets/images/avatar.jpg" alt="" data-bs-toggle="offcanvas" href="#account-menu" ${Turtle.ref("navbarAvatar")} >
-      </div>
-      <div class="line-loader d-none" id="main-loader">
-        <div class="bar"></div>
+        <div class="nav pull-right">
+          <img class="avatar" src="./assets/images/avatar.jpg" alt="" data-bs-toggle="offcanvas" href="#account-menu" ${Turtle.ref("navbarAvatar")} >
+       </div>
       </div>
     </nav>
     <account-menu></account-menu>
