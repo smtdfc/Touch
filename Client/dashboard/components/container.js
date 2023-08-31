@@ -1,39 +1,52 @@
-Turtle.component("main-container",function($){
-  
-  $.adminItems = function(){
-    return `
-      <li><a href="#/admin/home">Home</a></li>
-      <li><a href="#/admin/datatables/list">DataTables</a></li>
-      <li><a href="#/admin/devices/list">Devices</a></li>
-      <li><a href="#/admin/dashboards/list">Dashboards</a></li>
-    `
+Turtle.component("main-container", function($) {
+  $.genrateMenu = function() {
+    let role = TouchApp.auth.currentUser.role
+    let menu = [
+      { title: "Home", roles: ["admin", "user"], link: "#/home" },
+      { title: "DataTables", roles: ["admin", "user"], link: "#/datatables/list" },
+    ]
+    let fragment = document.createDocumentFragment()
+    for (var i = 0; i < menu.length; i++) {
+      let item = menu[i]
+      if (item.roles == "*" || item.roles.includes(role)) {
+        let a = document.createElement("a")
+        a.className = "list-group-item list-group-item-action"
+        a.href = item.link
+        a.textContent = item.title
+        fragment.appendChild(a)
+      }
+    }
+    $.refs.sidebarItems.textContent = ""
+    $.refs.sidebarItems.appendChild(fragment)
   }
-  
-  $.refreshUI = function (){
-    $.refs.sidebar.classList.remove("d-none")
-     if(isAdmin()) $.refs.items.innerHTML = $.adminItems()
-     else $.refs.sidebar.classList.add("d-none")
+
+  $.refresh = function() {
+    if (TouchApp.isNotLogin()) $.refs.sidebar.classList.add("d-none")
+    else {
+      $.refs.sidebar.classList.remove("d-none")
+      $.genrateMenu()
+    }
   }
-  
-  $.onRender = function(){
-    $.refreshUI()
-    TouchApp.on("authstatechange",$.refreshUI)
+
+  $.onRender = function() {
+    $.refresh()
+    TouchApp.on("authstatechange", $.refresh)
   }
-  
+
   return `
-    <div class="sidebar-container">
-      <div class="sidebar sidebar-icon" id="main-sidebar" ${Turtle.ref("sidebar")}>
-        <button class="sidebar-close-btn fa fa-times" data-toggle="#main-sidebar"></button>
-        <div class="sidebar-content">
-          <ul class="sidebar-nav-items" ${Turtle.ref("items")} >
-          </ul>
-        </div>
+    <div class="wrapper">
+      <div class="sidebar bg-secondary-subtle" id="main-sidebar" ${Turtle.ref("sidebar")}>
+        <button class="btn-close d-md-none" id="close-sidebar-btn"
+            ${Turtle.events({
+              click:function(){
+                $.refs.sidebar.classList.toggle("active")
+              }
+            })}>
+        </button>
+        <br><br>
+        <ul class="list-group list-group-flush bg-transparent" ${Turtle.ref("sidebarItems")} ></ul>
       </div>
-      <div class="container" id="content" style="padding:10px;" >
-        <div class="d-flex justify-content-center" style="padding:75px;" >
-          <div class="circle-loader loader-info"></div>
-        </div>
-      </div>
+      <div class="content" id="page-contents"></div>
     </div>
-  `
+   `
 })

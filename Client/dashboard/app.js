@@ -1,102 +1,55 @@
-const App = new Turtle.TurtleApp(
+const app = new Turtle.TurtleApp(
   document.querySelector("#root")
 )
 
-window.addEventListener("error",function(){
-  showError("Oops!")
-})
+import("./components/navbar.js")
+import("./components/container.js")
 
-function openFullscreen() {
-  try {
-    fscreen.requestFullscreen(document.documentElement);
-    /*
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else if (document.documentElement.webkitRequestFullscreen) { 
-        document.documentElement.webkitRequestFullscreen();
-      } else if (document.documentElement.msRequestFullscreen) { 
-        document.documentElement.msRequestFullscreen();
-      }*/
-  } catch (err) {
-    showMsg("Unable to enter full screen mode.")
-  }
-}
+async function init(arg) {
+  await TouchApp.auth.info()
 
-/* Close fullscreen */
-function closeFullscreen() {
-  if (document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if (document.webkitExitFullscreen) {
-    /* Safari */
-    document.webkitExitFullscreen();
-  } else if (document.msExitFullscreen) {
-    /* IE11 */
-    document.msExitFullscreen();
-  }
-}
-
-function showMsg(msg) {
-  let message = document.createElement("div")
-  message.classList.add("message")
-  message.textContent = msg
-  setTimeout(() => {
-    message.remove()
-  }, 5000)
-  document.getElementById("messages").appendChild(message)
-}
-
-function showError(msg) {
-  let message = document.createElement("div")
-  message.classList.add("message")
-  message.classList.add("danger")
-  message.textContent = msg
-  setTimeout(() => {
-    message.remove()
-  }, 9000)
-  document.getElementById("messages").appendChild(message)
-}
-
-function isAdmin() {
-  return TouchApp.auth.currentUser.user_id != null && TouchApp.auth.currentUser.role == "admin"
 }
 
 function showLoader() {
-  document.getElementById("main-loader").classList.remove("d-none")
+  document.querySelector("#main-loader").classList.remove("d-none")
 }
 
 function hideLoader() {
-  document.getElementById("main-loader").classList.add("d-none")
+  document.querySelector("#main-loader").classList.add("d-none")
 }
 
-window.addEventListener("offline", function(e) {
-  showMsg("You are offline ! Some functions may not work or not work properly!")
-})
+function showMsg(msg){
+  let m = document.createElement("div")
+  m.className = "alert alert-info"  
+  m.innerHTML = msg
+  document.getElementById("messages").appendChild(m)
+  setTimeout(()=>{
+    m.remove()
+  },2000)
+}
 
-window.addEventListener("online", function(e) {
-  showMsg("Connection is back !")
-})
+function showErr(msg) {
+  let m = document.createElement("div")
+  m.className = "alert alert-danger"
+  m.innerHTML = msg
+  document.getElementById("messages").appendChild(m)
+  setTimeout(() => {
+    m.remove()
+  }, 2000)
+}
 
-App.render(`
-    <div class="line-loader" id="page-loader">
-      <span class="bar"></span>
-    </div>
-    <main-navbar></main-navbar>
-    <account-menu></account-menu>
-    <br><br><br><br>
-    <main-container></main-container>
-    <div class="messages" id="messages"></div>
+app.render(`
+  <div class="line-loader">
+    <div class="bar"></div>
+  </div>
 `)
 
-showMsg("Starting . . . .")
-async function main() {
-  await TouchApp.auth.info()
-  await import("./components/navbar.js")
-  await import("./components/container.js")
-  await import("./components/accountMenu.js")
-  await import("./routes/main.js")
-  App.router.start()
-  document.getElementById("page-loader").remove()
-  hideLoader()
-}
-
-main()
+init(1)
+  .then(() => {
+    app.render(`
+      <main-navbar></main-navbar>
+      <main-container></main-container>
+      <div class="fixed-bottom vstack gap-2 col-md-5 mx-auto p-1" id="messages"></div>
+    `)
+    import("./router/main.js")
+  })

@@ -598,8 +598,16 @@ class TouchClientApp {
       }
     }
   }
-
-
+  
+  isNotLogin(){
+    return this.auth.currentUser.user_id == null
+  }
+  
+  isLogin(){
+    return this.auth.currentUser.user_id != null
+  }
+  
+  
 }
 
 function createApp(configs) {

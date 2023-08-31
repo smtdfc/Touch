@@ -1,47 +1,44 @@
-const toggle = TURTLE.TURTLE_UI.Actions.toggle
 Turtle.component("account-menu", function($) {
-  $.refreshUI = function() {
-    $.refs.username.textContent = TouchApp.auth.currentUser.username
+  $.refresh = function() {
+
   }
 
-  $.onRender = function() {
-    $.refreshUI()
-
-    TouchApp.on("authstatechange", $.refreshUI)
-    $.refs.logout.addEventListener("click", function() {
-      showLoader()
-      toggle({ toggle: "#account-menu" }, null)
-      TouchApp.auth.logout()
-        .then(() => {
-          App.router.redirect("/auth/login", true)
-        })
-        .catch((err) => {
-          alert(`Cannot logout now \n${err.message}`)
-          showError(err.message)
-        })
-        .finally(() => {
-          hideLoader()
-        })
-    })
-  }
-
-  return `
-    <div class="offcanvas offcanvas-right" id="account-menu">
-      <div class="offcanvas-header">
-        <h3>Account</h3>
-        <button class="offcanvas-toggle-btn fa fa-times" data-toggle="#account-menu"></button>
-      </div>
+  $.onSignOutBtnClick = function() {
+    showLoader()
+    const bsOffcanvas = bootstrap.Offcanvas.getInstance(
+      $.refs.offcanvas
+    )
+    bsOffcanvas.hide()
+    showMsg("Signing out...")
+    TouchApp.auth.logout()
+      .then(()=>{
+        app.router.redirect("/auth/login",true)
+      })
       
+      .catch(({name,msg})=>{
+        showErr(msg)
+      })
+      
+      .finally(()=>{
+        hideLoader()
+      })
+  }
+  return `
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="account-menu" aria-labelledby="accountMenuLabel" ${Turtle.ref("offcanvas")}>
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="accountMenuLabel">Account</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
       <div class="offcanvas-body">
-        <div class="d-flex justify-content-center text-align-center">
-          <div class="avatar flex-flow-col">
-            <img src="./assets/images/avatar.jpg" alt="">
-            <span ${Turtle.ref("username")} >${TouchApp.auth.currentUser.username}</span>
-            <br>
-          </div>
+        <div class="d-flex flex-column align-items-center justify-content-center text-center">
+          <img src="./assets/images/avatar.jpg" alt="avatar" class="avatar" >
+          <h5>@<span ${Turtle.ref("username")}></span></h5>
         </div>
         <br>
-        <button ${Turtle.ref("logout")} class="btn btn-outline-danger fa fa-sign-out " style="width: 100%;"> Logout</button>
+        <button class="btn btn-outline-danger text-center w-100" ${Turtle.events({click:$.onSignOutBtnClick})} >
+          <i class="fa fa-sign-out"></i>
+          Sign out
+        </button>
       </div>
     </div>
   `

@@ -1,30 +1,43 @@
+import "./accountMenu.js"
 Turtle.component("main-navbar", function($) {
-  $.refreshUI = function() {
-    if (isAdmin()) {
-      $.refs.toggleBtn.classList.remove("d-none")
-      $.refs.avatar.classList.remove("d-none")
+  $.refresh = function() {
+    if (TouchApp.isNotLogin()) {
+      $.refs.navbar.classList.remove("shadow")
+      $.refs.navbarBtn.classList.add("d-none")
+      $.refs.navbarAvatar.classList.add("d-none")
     } else {
-      $.refs.toggleBtn.classList.add("d-none")
-      $.refs.avatar.classList.add("d-none")
+      $.refs.navbar.classList.add("shadow")
+      $.refs.navbarBtn.classList.remove("d-none")
+      $.refs.navbarAvatar.classList.remove("d-none")
     }
   }
 
   $.onRender = function() {
-    $.refreshUI()
-    TouchApp.on("authstatechange",$.refreshUI)
+    $.refresh()
+    TouchApp.on("authstatechange", $.refresh)
   }
+
   return `
-    <nav class="navbar">
-      <div class="navbar-brand" style="padding:0px 5px;">
-        <button class="navbar-toggle-btn fa fa-bars" data-toggle="#main-sidebar" ${Turtle.ref("toggleBtn")}></button>
-        <h3>Touch</h3>
+    <nav class="navbar navbar-expand-lg bg-white sticky-top" ${Turtle.ref("navbar")}>
+      <div class="container-fluid ">
+        <div class="navbar-brand text-center">
+          <button class="btn d-md-none" id="open-sidebar-btn"
+           ${Turtle.ref("navbarBtn")}
+           ${Turtle.events({
+              click:function(){
+                document.getElementById("main-sidebar").classList.toggle("active")
+              }
+          })}>
+            <i class="fa fa-bars"></i>
+          </button>
+          Touch
+        </div>
+        <img class="avatar" src="./assets/images/avatar.jpg" alt="" data-bs-toggle="offcanvas" href="#account-menu" ${Turtle.ref("navbarAvatar")} >
       </div>
-      <div class="navbar-items" style="padding:0px 10px;">
-        <img src="./assets/images/avatar.jpg" alt="" class="navbar-avatar" data-toggle="#account-menu" ${Turtle.ref("avatar")} >
-      </div>
-      <div class="line-loader" id="main-loader">
-        <span class="bar"></span>
+      <div class="line-loader d-none" id="main-loader">
+        <div class="bar"></div>
       </div>
     </nav>
+    <account-menu></account-menu>
   `
 })
