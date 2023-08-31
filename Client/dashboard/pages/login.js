@@ -26,7 +26,7 @@ Turtle.component("login-page", function($) {
   return `
     <main class="text-center" style="display:flex; align-items:center; justify-content:center;">
       <form style="width:100%; max-width:380px;" ${Turtle.events({submit:$.onSubmit})}>
-        <img class="mb-4" src="../assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
+        <img class="mb-4" src="./assets/images/icon.png" alt="" width="72" height="57">
         <h1 class="mb-3">Sign in</h1>
         <div class="alert alert-danger d-none" role="alert" ${Turtle.ref("alert")}></div>
         <div class="form-floating">

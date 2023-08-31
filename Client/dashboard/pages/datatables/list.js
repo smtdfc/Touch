@@ -125,6 +125,5 @@ Turtle.component("list-datatable-page", function($) {
         </div>
       </div>
     </div>
-
   `
 })
