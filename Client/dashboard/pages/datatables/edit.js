@@ -1,3 +1,74 @@
+Turtle.component("edit-dt-owners-tab",function($){
+  let dt_id = app.router.info.params.id
+  $.addRow = function(info){
+    let tr = document.createElement("tr")
+    tr.innerHTML =`
+      <td>${info.user_id}</td>
+      <td>${info.name}</td>
+      <td class="d-flex align-items-center">
+        <button class="m-1 btn btn-sm btn-success info-btn">Info</button>
+        <button class="m-1 btn btn-sm btn-danger rm-btn">Remove</button>
+      </td>
+    `
+    
+    tr.querySelector(".rm-btn").addEventListener("click",function(){
+      function accept (){
+        showLoader()
+        TouchApp.datatables.removeOwner(dt_id,info.user_id)
+          .then(()=>{
+            tr.remove()
+          })
+          
+          .catch((err)=>{
+            showErr(err.message)
+          })
+          
+          .finally(()=>{
+            hideLoader()
+          })
+      }
+      
+      showConfirm({
+        title: "Are you sure ?",
+        content: `This will remove the user "${info.name}" from the list of owners of this DataTable and they will not be able to access this DataTable!`,
+        acceptBtn: "Remove",
+        btnAcceptType: "outline-danger",
+        onAccept: accept
+      })
+      
+    })
+    
+    $.refs.table.appendChild(tr)
+  }
+  
+  $.onRender = function(){
+    TouchApp.datatables.owners(dt_id)
+      .then((list)=>{
+        list.forEach(i=>$.addRow(i))
+      })
+      
+      .catch((err)=>{
+        showErr(err.message)
+      })
+  }
+  
+  return `
+    <hr>
+    <div class="table-responsive">
+      <table class="table ">
+        <thead>
+          <tr>
+            <th scope="col">User ID</th>
+            <th scope="col">Username</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody ${Turtle.ref("table")}></tbody>
+      </table>
+    </div>
+  `
+})
+
 Turtle.component("edit-dt-data-tab", function($) {
   let dt_id = app.router.info.params.id
   $.changeStatus = function(status) {
@@ -87,7 +158,7 @@ Turtle.component("edit-datatable-page", async function($) {
     <div class="nav nav-underline" id="nav-tab" role="tablist"  >
       <button class="nav-link active" id="nav-overview-tab" data-bs-toggle="tab" data-bs-target="#nav-overview" type="button" role="tab" aria-controls="nav-overview" aria-selected="true">Overview</button>
       <button class="nav-link" id="nav-data-tab" data-bs-toggle="tab" data-bs-target="#nav-data" type="button" role="tab" aria-controls="nav-data" aria-selected="false">Data</button>
-      <button class="nav-link" id="nav-owners-tab" data-bs-toggle="tab" data-bs-target="#nav-owner" type="button" role="tab" aria-controls="nav-owners" aria-selected="false">Owners</button>
+      <button class="nav-link" id="nav-owners-tab" data-bs-toggle="tab" data-bs-target="#nav-owners" type="button" role="tab" aria-controls="nav-owners" aria-selected="false">Owners</button>
       <button class="nav-link" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings" type="button" role="tab" aria-controls="nav-settings" aria-selected="false" >Settings</button>
     </div>
   </nav>
@@ -105,8 +176,11 @@ Turtle.component("edit-datatable-page", async function($) {
       <h5>Data</h5>
       <edit-dt-data-tab></edit-dt-data-tab>
     </div>
-    <div class="tab-pane fade" id="nav-owners" role="tabpanel" aria-labelledby="nav-owners-tab" tabindex="0">...</div>
-    <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab" tabindex="0">...</div>
+    <div class="tab-pane fade p-3" id="nav-owners" role="tabpanel" aria-labelledby="nav-owners-tab" tabindex="0">
+      <h5>Owners</h5>
+      <edit-dt-owners-tab></edit-dt-owners-tab>
+    </div>
+    <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab" tabindex="0">..7q.</div>
   </div>
   `
 })
