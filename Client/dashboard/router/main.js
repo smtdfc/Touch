@@ -26,4 +26,14 @@ app.router.on("notfound",function(err){
   `
 })
 
+
+app.router.on("notallow", function(err) {
+  err.router.element.innerHTML = `
+    <div class="text-center m-5">
+      <h1 style="font-size: 100px;">403</h1><br>
+      <h3>Access has been denied !</h3>
+      <a class="btn" href="#/auth/login">Goto login page</a>
+    </div>
+  `
+})
 app.router.start()

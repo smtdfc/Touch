@@ -7,8 +7,17 @@
  .list-group-item {
   border: none;
   background: transparent;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+
+}
+
+.list-group-item>i{
+  margin: 0px 10px;
 }
  .list-group-item:hover{
+  border-radius: 5px;
   background: rgba(0, 0, 0, 0.2)
 }
 

@@ -1,4 +1,5 @@
 function getResponseErr(err) {
+  console.log(err);
   if (err.code == "ERR_NETWORK") return { message: "Can not connect to server !" }
   return err.response.data.error
 }
@@ -346,6 +347,16 @@ class DataIO {
     this.socket = app.socket
     this.listening = null
     let ctx = this
+    window.addEventListener("offline",function(){
+      ctx.app.emitEvent(`dataio:disconnected`, {
+        cause:"Network error"
+      })
+    })
+    
+    window.addEventListener("online",function(){
+     if(ctx.listening) ctx.setListener(ctx.listening)
+    })
+    
     this.socket.on("data_change", function(data) {
       let dt_id = data.dt_id
       ctx.app.emitEvent(`dataio:dt_${dt_id}_change`, data)
@@ -372,8 +383,6 @@ class DataIO {
       this.socket.on("action_err", onErr)
 
       function onDTconnect(d) {
-       // ctx.socket.off("action_err", onErr)
-      //  ctx.socket.off("auth_err", onErr)
         ctx.socket.off("dt:set_listener:success", onDTconnect)
         ctx.listening = dt_id
         resolve()

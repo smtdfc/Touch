@@ -18,7 +18,7 @@ Turtle.component("main-navbar", function($) {
   }
 
   return `
-    <div class="line-loader d-none" id="main-loader">
+    <div class="position-fixed fixed-top w-100 line-loader d-none" id="main-loader">
       <div class="bar"></div>
     </div>
     <nav class="navbar navbar-expand-lg bg-white sticky-top" ${Turtle.ref("navbar")}>

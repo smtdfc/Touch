@@ -5,7 +5,7 @@ const app = new Turtle.TurtleApp(
 import("./components/navbar.js")
 import("./components/container.js")
 import("./components/confirmModal.js")
-
+import("./components/noConnectMessage.js")
 async function init(arg) {
   await TouchApp.auth.info()
 
@@ -112,9 +112,10 @@ app.render(`
 init(1)
   .then(() => {
     app.render(`
+      <no-connect-message></no-connect-message>
       <main-navbar></main-navbar>
       <main-container></main-container>
-      <div class="fixed-bottom vstack gap-2 col-md-5 mx-auto p-1" id="messages"></div>
+      <div class="fixed-bottom vstack gap-2 col-md-5 mx-auto p-1" id="messages" style="z-index:1400" ></div>
     `)
     import("./router/main.js")
 

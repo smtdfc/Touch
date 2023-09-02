@@ -1,10 +1,29 @@
+let dt_ids = {}
+
+
+async function openEditDataTableModal(component, dt_id) {
+  showLoader()
+  let offcanvas = document.createElement("edit-dt")
+  offcanvas.props = {
+    self: offcanvas,
+    dt_id: dt_id,
+    info: await TouchApp.datatables.info(dt_id)
+  }
+  hideLoader()
+  component.appendChild(offcanvas)
+}
+
 Turtle.component("list-datatable-page", function($) {
-  let limit = 10
+  let pages = 1
   let offset = 0
-  let dt_ids = {}
+  let limit = 10
+
+  $.update = function() {}
+
   $.addRow = function(info) {
+    $.update()
     if (dt_ids[info.dt_id]) return
-    dt_ids[info.dt_id] = true
+    dt_ids[info.dt_id] = info
     let tr = document.createElement("tr")
     tr.innerHTML = `
       <td>${info.dt_id}</td>
@@ -16,16 +35,24 @@ Turtle.component("list-datatable-page", function($) {
         <button data-role="remove"class="btn btn-sm btn-danger m-1">Remove</button>
       </td>
     `
-    tr.querySelector(`button[data-role=edit]`).addEventListener("click", function() {
 
+    tr.querySelector(`button[data-role=edit]`).addEventListener("click", function() {
+      app.router.redirect(`/datatables/${info.dt_id}/edit`)
     })
 
     tr.querySelector(`button[data-role=remove]`).addEventListener("click", function() {
       function accept() {
         showLoader()
+        tr.querySelector(`button[data-role=remove]`).disabled = true
+        tr.querySelector(`button[data-role=edit]`).disabled = true
         TouchApp.datatables.remove(info.dt_id)
           .then(() => {
+            if ($.refs.table.children.length < 5) {
+              $.loadMore()
+            }
             tr.remove()
+            if (offset != 0) offset = offset - 1
+            $.update()
           })
 
           .catch((err) => {
@@ -61,25 +88,33 @@ Turtle.component("list-datatable-page", function($) {
   }
 
   $.onRender = function() {
-    $.loadMore()
+
+    for (var i = 0; i < pages; i++) {
+      $.loadMore()
+    }
+
   }
-  
-  $.create = function(){
+
+  $.create = function() {
     let name = $.refs.dtName.value
     showLoader()
     TouchApp.datatables.create(name)
-      .then(info=>{
+      .then(info => {
         $.addRow(info)
         showMsg("DataTable has been created !")
       })
-      
-      .catch((err)=>{
+
+      .catch((err) => {
         showErr(err.message)
       })
-      
-      .finally(()=>hideLoader())
+
+      .finally(() => hideLoader())
   }
-  
+
+  $.onRemove = function() {
+    dt_ids = {}
+  }
+
   return `
     <h1>List DataTable</h1>
     <br>
@@ -87,7 +122,7 @@ Turtle.component("list-datatable-page", function($) {
       <i class="fa fa-plus"></i>
       New
     </button>
-    <br>
+    <br><br>
     <div class="table-responsive">
       <table class="table" style="width:100%;">
         <thead>
@@ -125,5 +160,7 @@ Turtle.component("list-datatable-page", function($) {
         </div>
       </div>
     </div>
+
+
   `
 })
